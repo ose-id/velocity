@@ -187,24 +187,48 @@ function Sidebar({ activePage, setActivePage }) {
 
 // === HOME PAGE ===
 // (sekarang HANYA project cards, tanpa Status & Log)
-function HomePage({ buttons, baseDir, onClone, loading, activeButtonId, onOpenColorMenu }) {
+function HomePage({ buttons, baseDir, onClone, loading, activeButtonId, onOpenColorMenu, effectiveGrid, onToggleGrid }) {
+  const gridClass = effectiveGrid === 3 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 md:grid-cols-2';
+
   return (
     <div className="flex-1 flex flex-col gap-4 p-4 overflow-auto custom-scroll">
-      <div className="flex items-center justify-between mb-1">
+      <div className="flex items-start justify-between mb-1">
         <div>
           <h1 className="text-lg font-semibold text-neutral-100">Home</h1>
           <p className="text-xs text-neutral-500 mt-1">
             Total <span className="text-neutral-300 font-medium">{buttons.length}</span> repo. Pilih tombol untuk clone repo &amp; buka editor.
           </p>
         </div>
-        <div className="text-right">
-          <div className="text-[11px] text-neutral-500">Base directory</div>
-          <div className="text-xs font-mono text-neutral-300 max-w-xs truncate">{baseDir || 'Not set (gunakan Configuration)'}</div>
+        <div className="flex flex-col items-end gap-2">
+          <div className="text-right">
+            <div className="text-[11px] text-neutral-500">Base directory</div>
+            <div className="text-xs font-mono text-neutral-300 max-w-xs truncate">{baseDir || 'Not set (gunakan Configuration)'}</div>
+          </div>
+          
+          {/* Grid Toggle Switch Tab */}
+          <div className="flex items-center bg-neutral-900/80 p-0.5 rounded-lg border border-neutral-800/50">
+            <button
+              type="button"
+              onClick={() => effectiveGrid !== 2 && onToggleGrid()}
+              className={['flex items-center justify-center w-7 h-6 rounded-md transition-all', effectiveGrid === 2 ? 'bg-neutral-700 text-neutral-100 shadow-sm' : 'text-neutral-500 hover:text-neutral-300'].join(' ')}
+              title="2 Columns"
+            >
+              <Icon icon="mdi:view-grid-outline" className="text-sm" />
+            </button>
+            <button
+              type="button"
+              onClick={() => effectiveGrid !== 3 && onToggleGrid()}
+              className={['flex items-center justify-center w-7 h-6 rounded-md transition-all', effectiveGrid === 3 ? 'bg-neutral-700 text-neutral-100 shadow-sm' : 'text-neutral-500 hover:text-neutral-300'].join(' ')}
+              title="3 Columns"
+            >
+              <Icon icon="mdi:view-grid" className="text-sm" />
+            </button>
+          </div>
         </div>
       </div>
 
       {/* PROJECT CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className={`grid ${gridClass} gap-3`}>
         {buttons.map((btn) => {
           const isActive = activeButtonId === btn.id && loading;
           const colorId = btn.color || 'neutral';
@@ -762,6 +786,8 @@ function App() {
   const [baseDir, setBaseDir] = useState('');
   const [editor, setEditor] = useState('vscode');
   const [fontSize, setFontSize] = useState('default');
+  const [preferredGrid, setPreferredGrid] = useState(3); // 2 or 3
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [loading, setLoading] = useState(false);
   const [activeButtonId, setActiveButtonId] = useState(null);
   const [logs, setLogs] = useState([]); // [{id, timestamp, message}]
@@ -810,6 +836,22 @@ function App() {
 
     init();
   }, []);
+
+  // WINDOW RESIZE LISTENER
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // CALCULATE EFFECTIVE GRID
+  // Jika window < 1024px (lg), paksa 2 col. Jika >= 1024, pakai preferredGrid.
+  const effectiveGrid = windowWidth < 1024 ? 2 : preferredGrid;
+
+  const handleToggleGrid = () => {
+    // Toggle hanya mengubah preferredGrid
+    setPreferredGrid((prev) => (prev === 3 ? 2 : 3));
+  };
 
   // AUTO SAVE CONFIG
   useEffect(() => {
@@ -1091,7 +1133,16 @@ function App() {
         <Sidebar activePage={activePage} setActivePage={setActivePage} />
 
         {activePage === 'home' ? (
-          <HomePage buttons={buttons} baseDir={baseDir} onClone={handleCloneClick} loading={loading} activeButtonId={activeButtonId} onOpenColorMenu={handleOpenColorMenu} />
+          <HomePage
+            buttons={buttons}
+            baseDir={baseDir}
+            onClone={handleCloneClick}
+            loading={loading}
+            activeButtonId={activeButtonId}
+            onOpenColorMenu={handleOpenColorMenu}
+            effectiveGrid={effectiveGrid}
+            onToggleGrid={handleToggleGrid}
+          />
         ) : activePage === 'activity' ? (
           <ActivityPage lastResult={lastResult} logs={logs} onClearLogs={handleClearLogs} />
         ) : (
