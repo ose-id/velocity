@@ -212,14 +212,26 @@ function HomePage({ buttons, baseDir, onClone, loading, activeButtonId, onOpenCo
 
           const hasUrl = !!btn.repoUrl;
 
+          const handleMouseMove = (e) => {
+            if (!hasUrl) return;
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            e.currentTarget.style.setProperty('--x', `${x}px`);
+            e.currentTarget.style.setProperty('--y', `${y}px`);
+          };
+
           return (
             <button
               key={btn.id}
               type="button"
-              onClick={() => onClone(btn)}
+              onClick={() => {
+                if (!hasUrl) return;
+                onClone(btn);
+              }}
               onContextMenu={(e) => onOpenColorMenu && onOpenColorMenu(btn, e)}
-              disabled={loading || !hasUrl}
-              title={!hasUrl ? 'Repo URL belum di-set' : ''}
+              onMouseMove={handleMouseMove}
+              disabled={loading}
               className={[
                 'group relative flex flex-col items-start gap-1 rounded-xl border px-3 py-3 text-left transition',
                 colorStyles.card,
@@ -227,7 +239,17 @@ function HomePage({ buttons, baseDir, onClone, loading, activeButtonId, onOpenCo
                 !hasUrl ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
               ].join(' ')}
             >
-              <div className="flex items-center justify-between w-full gap-2">
+              {/* Spotlight Effect */}
+              {hasUrl && (
+                <div
+                  className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
+                  style={{
+                    background: `radial-gradient(600px circle at var(--x) var(--y), rgba(255,255,255,0.1), transparent 40%)`,
+                  }}
+                />
+              )}
+
+              <div className="relative z-10 flex items-center justify-between w-full gap-2">
                 <div className="flex items-center gap-2">
                   <div className={['h-7 w-7 rounded-lg flex items-center justify-center', colorStyles.iconBg].join(' ')}>
                     <Icon icon="mdi:download-network-outline" className="text-neutral-100 text-lg" />
@@ -238,16 +260,24 @@ function HomePage({ buttons, baseDir, onClone, loading, activeButtonId, onOpenCo
                   </div>
                 </div>
 
-                <Icon icon="mdi:arrow-right" className="text-neutral-200/70 group-hover:text-neutral-50 text-lg" />
+                <Icon icon="mdi:arrow-right" className={['text-neutral-200/70 group-hover:text-neutral-50 text-lg mr-3', hasUrl ? 'animate-move-x' : ''].join(' ')} />
               </div>
 
-              <div className={['mt-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5', colorStyles.pill].join(' ')}>
+              {/* Custom Tooltip for disabled state */}
+              {!hasUrl && (
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-neutral-900 border border-neutral-800 rounded-md shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-20">
+                  <div className="text-[10px] text-neutral-200 whitespace-nowrap">Repo URL belum di-set</div>
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-4 border-transparent border-t-neutral-800" />
+                </div>
+              )}
+
+              <div className={['relative z-10 mt-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5', colorStyles.pill].join(' ')}>
                 <Icon icon="mdi:folder-outline" className="text-neutral-200 text-xs" />
                 <span className="text-[11px] text-neutral-50 font-mono truncate max-w-[190px]">{btn.folderName || 'auto-folder'}</span>
               </div>
 
               {btn.useSsh && (
-                <div className="mt-1 inline-flex items-center gap-1 rounded-full bg-black/30 px-2 py-0.5">
+                <div className="relative z-10 mt-1 inline-flex items-center gap-1 rounded-full bg-black/30 px-2 py-0.5">
                   <Icon icon="mdi:lock-outline" className="text-[10px] text-neutral-200" />
                   <span className="text-[10px] text-neutral-200">SSH enabled</span>
                 </div>

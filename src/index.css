@@ -75,3 +75,13 @@
 .font-size-large .text-xs {
   font-size: 0.9rem;
 }
+
+/* === ANIMATIONS === */
+@keyframes move-x {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(3px); }
+}
+
+.animate-move-x {
+  animation: move-x 2s ease-in-out infinite;
+}
