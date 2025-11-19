@@ -193,7 +193,9 @@ function HomePage({ buttons, baseDir, onClone, loading, activeButtonId, onOpenCo
       <div className="flex items-center justify-between mb-1">
         <div>
           <h1 className="text-lg font-semibold text-neutral-100">Home</h1>
-          <p className="text-xs text-neutral-500 mt-1">Pilih tombol untuk clone repo &amp; buka editor.</p>
+          <p className="text-xs text-neutral-500 mt-1">
+            Total <span className="text-neutral-300 font-medium">{buttons.length}</span> repo. Pilih tombol untuk clone repo &amp; buka editor.
+          </p>
         </div>
         <div className="text-right">
           <div className="text-[11px] text-neutral-500">Base directory</div>
@@ -208,14 +210,22 @@ function HomePage({ buttons, baseDir, onClone, loading, activeButtonId, onOpenCo
           const colorId = btn.color || 'neutral';
           const colorStyles = getButtonColorStyles(colorId);
 
+          const hasUrl = !!btn.repoUrl;
+
           return (
             <button
               key={btn.id}
               type="button"
               onClick={() => onClone(btn)}
               onContextMenu={(e) => onOpenColorMenu && onOpenColorMenu(btn, e)}
-              disabled={loading}
-              className={['group relative flex flex-col items-start gap-1 rounded-xl border px-3 py-3 text-left transition cursor-pointer', colorStyles.card, loading ? 'opacity-90' : ''].join(' ')}
+              disabled={loading || !hasUrl}
+              title={!hasUrl ? 'Repo URL belum di-set' : ''}
+              className={[
+                'group relative flex flex-col items-start gap-1 rounded-xl border px-3 py-3 text-left transition',
+                colorStyles.card,
+                loading ? 'opacity-90' : '',
+                !hasUrl ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
+              ].join(' ')}
             >
               <div className="flex items-center justify-between w-full gap-2">
                 <div className="flex items-center gap-2">
