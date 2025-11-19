@@ -385,8 +385,6 @@ function ConfigPage({
   onPickDirectory,
   onAddButton,
   onRemoveButton,
-  autoRun,
-  onChangeAutoRun,
 }) {
   // === PAGINATION STATE ===
   const [currentPage, setCurrentPage] = useState(1);
@@ -711,23 +709,7 @@ function ConfigPage({
           </div>
         </div>
 
-        {/* Auto-run / Startup */}
-        <div className="border-t border-neutral-900 pt-4 mt-2">
-          <div className="flex items-start gap-3">
-            <div className="mt-1.5">
-              <Icon icon="mdi:power-plug-outline" className="text-neutral-300 text-lg" />
-            </div>
-            <div className="flex-1 space-y-2">
-              <h2 className="text-sm font-semibold text-neutral-100">Startup</h2>
-              <p className="text-[11px] text-neutral-500">Aktifkan agar Clone Tools otomatis berjalan ketika Windows baru dinyalakan.</p>
 
-              <label className="inline-flex items-center gap-2 text-[11px] text-neutral-200 cursor-pointer">
-                <input type="checkbox" checked={!!autoRun} onChange={(e) => onChangeAutoRun(e.target.checked)} className="h-3 w-3 accent-emerald-500 cursor-pointer" />
-                <span>Jalankan Clone Tools otomatis saat Windows mulai</span>
-              </label>
-            </div>
-          </div>
-        </div>
       </section>
     </div>
   );
@@ -738,7 +720,6 @@ function App() {
   const [activePage, setActivePage] = useState('home');
   const [buttons, setButtons] = useState([]);
   const [baseDir, setBaseDir] = useState('');
-  const [autoRun, setAutoRun] = useState(false);
   const [editor, setEditor] = useState('vscode');
   const [fontSize, setFontSize] = useState('default');
   const [loading, setLoading] = useState(false);
@@ -778,7 +759,6 @@ function App() {
           setBaseDir(cfg.baseDir || '');
           setEditor(cfg.editor || 'vscode');
           setFontSize(cfg.fontSize || 'default');
-          setAutoRun(!!cfg.autoRun);
           if (cfg.configPath) setConfigPath(cfg.configPath);
         }
       } catch (err) {
@@ -806,7 +786,6 @@ function App() {
           buttons,
           editor,
           fontSize,
-          autoRun,
         });
         if (!cancelled) {
           if (saved && saved.configPath) {
@@ -830,7 +809,7 @@ function App() {
     return () => {
       cancelled = true;
     };
-  }, [baseDir, buttons, editor, fontSize, autoRun, configInitialized]);
+  }, [baseDir, buttons, editor, fontSize, configInitialized]);
 
   const handleWindowControl = async (action) => {
     try {
@@ -904,10 +883,7 @@ function App() {
     appendLog(`[INFO] Editor changed to ${newEditor}.`);
   };
 
-  const handleChangeAutoRun = (value) => {
-    setAutoRun(value);
-    appendLog(`[INFO] Auto-run on startup ${value ? 'enabled' : 'disabled'}.`);
-  };
+
 
   const handleChangeFontSize = (mode) => {
     setFontSize(mode);
@@ -1094,8 +1070,6 @@ function App() {
             onPickDirectory={handlePickDirectory}
             onAddButton={handleAddButton}
             onRemoveButton={handleRemoveButton}
-            autoRun={autoRun}
-            onChangeAutoRun={handleChangeAutoRun}
           />
         )}
       </div>

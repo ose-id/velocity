@@ -20,7 +20,6 @@ function getConfigPath() {
 const DEFAULT_CONFIG = {
   baseDir: path.join(os.homedir(), 'Downloads'),
   editor: 'vscode',
-  autoRun: false,
   buttons: [
     {
       id: 'A',
@@ -152,9 +151,7 @@ function ensureConfigShape(raw) {
   if (!cfg.editor) {
     cfg.editor = DEFAULT_CONFIG.editor;
   }
-  if (typeof cfg.autoRun !== 'boolean') {
-    cfg.autoRun = DEFAULT_CONFIG.autoRun;
-  }
+
   return cfg;
 }
 
@@ -233,27 +230,7 @@ function openInEditor(targetPath, editorId) {
   child.unref();
 }
 
-// === AUTORUN ===
-function applyAutoRunSetting(autoRun) {
-  // Jangan pasang auto-run kalau masih mode dev,
-  // supaya Windows nggak ngejalanin "npm/electron dev" saat login.
-  if (!app.isPackaged) {
-    console.log('[autoRun] Skip setLoginItemSettings di mode dev');
-    return;
-  }
 
-  try {
-    console.log('[autoRun] setLoginItemSettings, autoRun =', autoRun, 'execPath =', process.execPath);
-    app.setLoginItemSettings({
-      openAtLogin: !!autoRun,
-      openAsHidden: false, // boleh false aja, kita yang atur show sendiri
-      path: process.execPath, // pastikan yang dipanggil exe final
-      args: [],
-    });
-  } catch (err) {
-    console.error('Failed to apply autoRun setting', err);
-  }
-}
 
 // === WINDOW ===
 function createWindow() {
@@ -435,7 +412,6 @@ ipcMain.handle('get-config', () => {
 
 ipcMain.handle('save-config', (_event, newConfig) => {
   const saved = saveConfig(newConfig);
-  applyAutoRunSetting(saved.autoRun);
   return {
     ...saved,
     configPath: getConfigPath(),
@@ -529,7 +505,6 @@ ipcMain.handle('clone-repo', async (_event, args) => {
 // === APP LIFECYCLE ===
 app.whenReady().then(() => {
   const cfg = loadConfig();
-  applyAutoRunSetting(cfg.autoRun);
   createWindow();
 });
 
