@@ -1,0 +1,32 @@
+{
+  "baseDir": "C:\\Users\\User\\Downloads",
+  "buttons": [
+    {
+      "id": "A",
+      "label": "Nuxt Starter",
+      "repoUrl": "https://github.com/adydetra/nuxt-starter.git",
+      "folderName": "nuxt-starter",
+      "useSsh": false,
+      "color": "emerald"
+    },
+    {
+      "id": "B",
+      "label": "Project B – Empty",
+      "repoUrl": "",
+      "folderName": "project-b",
+      "useSsh": false,
+      "color": "neutral"
+    },
+    {
+      "id": "C",
+      "label": "Project C – Empty",
+      "repoUrl": "",
+      "folderName": "project-c",
+      "useSsh": false,
+      "color": "neutral"
+    }
+  ],
+  "editor": "vscode",
+  "fontSize": "default",
+  "autoRun": false
+}
