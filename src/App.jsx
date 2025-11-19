@@ -295,17 +295,17 @@ function HomePage({ buttons, baseDir, onClone, loading, activeButtonId, onOpenCo
                 </div>
               )}
 
-              <div className={['relative z-10 mt-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5', colorStyles.pill].join(' ')}>
-                <Icon icon="mdi:folder-outline" className="text-neutral-200 text-xs" />
-                <span className="text-[11px] text-neutral-50 font-mono truncate max-w-[190px]">{btn.folderName || 'auto-folder'}</span>
-              </div>
-
-              {btn.useSsh && (
-                <div className="relative z-10 mt-1 inline-flex items-center gap-1 rounded-full bg-black/30 px-2 py-0.5">
-                  <Icon icon="mdi:lock-outline" className="text-[10px] text-neutral-200" />
-                  <span className="text-[10px] text-neutral-200">SSH enabled</span>
+              <div className="relative z-10 mt-2 flex items-center justify-between w-full">
+                <div className={['inline-flex items-center gap-1 rounded-full px-2 py-0.5', colorStyles.pill].join(' ')}>
+                  <Icon icon="mdi:folder-outline" className="text-neutral-200 text-xs" />
+                  <span className="text-[11px] text-neutral-50 font-mono truncate max-w-[150px]">{btn.folderName || 'auto-folder'}</span>
                 </div>
-              )}
+
+                <div className="inline-flex items-center gap-1 rounded-full bg-black/30 px-2 py-0.5">
+                  <Icon icon={btn.useSsh ? 'mdi:lock-outline' : 'mdi:lock-open-variant-outline'} className="text-[10px] text-neutral-200" />
+                  <span className="text-[10px] text-neutral-200">{btn.useSsh ? 'SSH enabled' : 'SSH disabled'}</span>
+                </div>
+              </div>
 
               {isActive && (
                 <div className="absolute inset-0 rounded-xl bg-black/35 flex items-center justify-center">
