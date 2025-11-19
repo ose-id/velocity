@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // === SSH URL helper ===
 function toSshUrl(httpsUrl) {
@@ -185,6 +186,8 @@ function Sidebar({ activePage, setActivePage }) {
   );
 }
 
+
+
 // === HOME PAGE ===
 // (sekarang HANYA project cards, tanpa Status & Log)
 function HomePage({ buttons, baseDir, onClone, loading, activeButtonId, onOpenColorMenu, effectiveGrid, onToggleGrid }) {
@@ -228,8 +231,16 @@ function HomePage({ buttons, baseDir, onClone, loading, activeButtonId, onOpenCo
       </div>
 
       {/* PROJECT CARDS */}
-      <div className={`grid ${gridClass} gap-3`}>
-        {buttons.map((btn) => {
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={effectiveGrid}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className={`grid ${gridClass} gap-3`}
+        >
+          {buttons.map((btn) => {
           const isActive = activeButtonId === btn.id && loading;
           const colorId = btn.color || 'neutral';
           const colorStyles = getButtonColorStyles(colorId);
@@ -318,7 +329,8 @@ function HomePage({ buttons, baseDir, onClone, loading, activeButtonId, onOpenCo
             </button>
           );
         })}
-      </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
