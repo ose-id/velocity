@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
-import { BUTTON_COLOR_OPTIONS, getButtonColorStyles } from '../../utils/constants';
+import { BUTTON_COLOR_OPTIONS, GROUP_PRESETS } from '../../utils/constants';
 import Button from '../atoms/Button';
 import IconButton from '../atoms/IconButton';
 import BaseInput from '../atoms/BaseInput';
@@ -49,6 +49,7 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
             <tr className="border-b border-neutral-800 text-[11px] text-neutral-500">
               <th className="text-left py-2 pr-3 font-normal">ID</th>
               <th className="text-left py-2 pr-3 font-normal">Label</th>
+              <th className="text-left py-2 pr-3 font-normal">Group</th>
               <th className="text-left py-2 pr-3 font-normal">Repo URL</th>
               <th className="text-left py-2 pr-3 font-normal">Folder Name</th>
               <th className="text-left py-2 pr-3 font-normal">Color</th>
@@ -72,6 +73,20 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
                       className="w-44"
                       placeholder={`Button ${btn.id}`}
                     />
+                  </td>
+                  <td className="py-2 pr-3">
+                    <select
+                      value={btn.group || ''}
+                      onChange={(e) => handleButtonChange(rowIndex, 'group', e.target.value)}
+                      className="w-24 rounded-md bg-neutral-950 border border-neutral-800 px-2 py-1 text-[11px] text-neutral-100 focus:outline-none focus:ring-1 focus:ring-neutral-500 cursor-pointer"
+                    >
+                      <option value="">(None)</option>
+                      {GROUP_PRESETS.map((g) => (
+                        <option key={g} value={g}>
+                          {g}
+                        </option>
+                      ))}
+                    </select>
                   </td>
                   <td className="py-2 pr-3">
                     <BaseInput
@@ -132,7 +147,7 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
 
             {buttons.length === 0 && (
               <tr>
-                <td colSpan={7} className="py-4 text-center text-[11px] text-neutral-500">
+                <td colSpan={8} className="py-4 text-center text-[11px] text-neutral-500">
                   Belum ada button. Klik &quot;Add&quot; untuk membuat konfigurasi baru.
                 </td>
               </tr>

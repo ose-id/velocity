@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { toSshUrl } from './utils/helpers';
+import { arrayMove } from '@dnd-kit/sortable';
 
 // Organisms
 import TopBar from './components/organisms/TopBar';
@@ -240,6 +241,17 @@ function App() {
     setButtons((prev) => prev.filter((btn) => btn.id !== id));
   };
 
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      setButtons((items) => {
+        const oldIndex = items.findIndex((i) => i.id === active.id);
+        const newIndex = items.findIndex((i) => i.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
   // === ACTION: Clone via Git ===
   const performCloneViaGit = async (btn) => {
     if (!window.electronAPI || !window.electronAPI.cloneRepo) return;
@@ -372,6 +384,7 @@ function App() {
             onOpenColorMenu={handleOpenColorMenu}
             effectiveGrid={effectiveGrid}
             onToggleGrid={handleToggleGrid}
+            onDragEnd={handleDragEnd}
           />
         ) : activePage === 'activity' ? (
           <ActivityPage lastResult={lastResult} logs={logs} onClearLogs={handleClearLogs} />

@@ -19,32 +19,28 @@ export const BUTTON_COLOR_STYLES = {
     iconBg: 'bg-emerald-900',
   },
   sky: {
-    card: 'border-sky-800/60 bg-sky-950/60 hover:bg-sky-900/70',
+    card: 'border-sky-900/60 bg-sky-950/60 hover:bg-sky-900/70',
     pill: 'bg-sky-900/70',
     iconBg: 'bg-sky-900',
   },
   blue: {
-    card: 'border-blue-800/60 bg-blue-950/60 hover:bg-blue-900/70',
+    card: 'border-blue-900/60 bg-blue-950/60 hover:bg-blue-900/70',
     pill: 'bg-blue-900/70',
     iconBg: 'bg-blue-900',
   },
   red: {
-    card: 'border-red-800/60 bg-red-950/60 hover:bg-red-900/70',
+    card: 'border-red-900/60 bg-red-950/60 hover:bg-red-900/70',
     pill: 'bg-red-900/70',
     iconBg: 'bg-red-900',
   },
   violet: {
-    card: 'border-violet-800/60 bg-violet-950/60 hover:bg-violet-900/70',
+    card: 'border-violet-900/60 bg-violet-950/60 hover:bg-violet-900/70',
     pill: 'bg-violet-900/70',
     iconBg: 'bg-violet-900',
   },
-  // Fallback
-  default: {
-    card: 'border-neutral-800 bg-neutral-900/60 hover:bg-neutral-800/80',
-    pill: 'bg-neutral-800/70',
-    iconBg: 'bg-neutral-800',
-  }
 };
+
+export const GROUP_PRESETS = ['Starter', 'Work', 'Tools'];
 
 export function getButtonColorStyles(colorId) {
   return BUTTON_COLOR_STYLES[colorId] || BUTTON_COLOR_STYLES.neutral;
