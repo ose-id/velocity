@@ -250,6 +250,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.cjs'),
       nodeIntegration: false,
       contextIsolation: true,
+      webSecurity: false, // Allow loading local files (file://)
     },
   });
 
@@ -424,6 +425,18 @@ ipcMain.handle('pick-directory', async () => {
   const result = await dialog.showOpenDialog(mainWindow, {
     title: 'Select base directory',
     properties: ['openDirectory', 'createDirectory'],
+  });
+  if (result.canceled || !result.filePaths.length) return null;
+  return result.filePaths[0];
+});
+
+// Pick image dialog
+ipcMain.handle('pick-image', async () => {
+  if (!mainWindow) return null;
+  const result = await dialog.showOpenDialog(mainWindow, {
+    title: 'Select background image',
+    properties: ['openFile'],
+    filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'webp'] }],
   });
   if (result.canceled || !result.filePaths.length) return null;
   return result.filePaths[0];

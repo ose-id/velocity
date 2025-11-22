@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 import NavItem from '../molecules/NavItem';
 
-export default function Sidebar({ activePage, setActivePage }) {
+export default function Sidebar({ activePage, setActivePage, transparent }) {
   const items = [
     { id: 'home', label: 'Home', icon: 'mdi:home-outline' },
     { id: 'activity', label: 'Activity', icon: 'mdi:clock-outline' },
@@ -12,7 +12,11 @@ export default function Sidebar({ activePage, setActivePage }) {
   const year = new Date().getFullYear();
 
   return (
-    <div className="h-full w-56 bg-neutral-950 border-r border-neutral-900 flex flex-col">
+    <div
+      className={`h-full w-56 border-r border-neutral-900 flex flex-col ${
+        transparent ? 'bg-transparent' : 'bg-neutral-950'
+      }`}
+    >
       <div className="px-4 py-4 border-b border-neutral-900">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-xl bg-neutral-800 flex items-center justify-center">

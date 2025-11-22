@@ -17,6 +17,15 @@ export default function ConfigPage({
   onPickDirectory,
   onAddButton,
   onRemoveButton,
+  backgroundImage,
+  onPickBackgroundImage,
+  onRemoveBackgroundImage,
+  bgSidebar,
+  setBgSidebar,
+  bgOpacity,
+  setBgOpacity,
+  bgBlur,
+  setBgBlur,
 }) {
   return (
     <div className="flex-1 flex flex-col gap-4 p-4 overflow-auto custom-scroll">
@@ -55,6 +64,15 @@ export default function ConfigPage({
         onChangeFontSize={onChangeFontSize}
         saving={saving}
         lastSavedLabel={lastSavedLabel}
+        backgroundImage={backgroundImage}
+        onPickBackgroundImage={onPickBackgroundImage}
+        onRemoveBackgroundImage={onRemoveBackgroundImage}
+        bgSidebar={bgSidebar}
+        setBgSidebar={setBgSidebar}
+        bgOpacity={bgOpacity}
+        setBgOpacity={setBgOpacity}
+        bgBlur={bgBlur}
+        setBgBlur={setBgBlur}
       />
     </div>
   );

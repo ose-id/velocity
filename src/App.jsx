@@ -21,6 +21,10 @@ function App() {
   const [baseDir, setBaseDir] = useState('');
   const [editor, setEditor] = useState('vscode');
   const [fontSize, setFontSize] = useState('default');
+  const [backgroundImage, setBackgroundImage] = useState(null);
+  const [bgSidebar, setBgSidebar] = useState(false);
+  const [bgOpacity, setBgOpacity] = useState(60); // 0-100
+  const [bgBlur, setBgBlur] = useState(4); // 0-20
   const [preferredGrid, setPreferredGrid] = useState(3); // 2 or 3
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [loading, setLoading] = useState(false);
@@ -60,6 +64,10 @@ function App() {
           setBaseDir(cfg.baseDir || '');
           setEditor(cfg.editor || 'vscode');
           setFontSize(cfg.fontSize || 'default');
+          setBackgroundImage(cfg.backgroundImage || null);
+          setBgSidebar(cfg.bgSidebar || false);
+          setBgOpacity(cfg.bgOpacity !== undefined ? cfg.bgOpacity : 60);
+          setBgBlur(cfg.bgBlur !== undefined ? cfg.bgBlur : 4);
           if (cfg.configPath) setConfigPath(cfg.configPath);
         }
       } catch (err) {
@@ -101,6 +109,10 @@ function App() {
           buttons,
           editor,
           fontSize,
+          backgroundImage,
+          bgSidebar,
+          bgOpacity,
+          bgBlur,
         });
         if (!cancelled) {
           if (saved && saved.configPath) {
@@ -124,7 +136,7 @@ function App() {
     return () => {
       cancelled = true;
     };
-  }, [baseDir, buttons, editor, fontSize, configInitialized]);
+  }, [baseDir, buttons, editor, fontSize, backgroundImage, bgSidebar, bgOpacity, bgBlur, configInitialized]);
 
   const handleWindowControl = async (action) => {
     try {
@@ -213,6 +225,24 @@ function App() {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handlePickBackgroundImage = async () => {
+    if (!window.electronAPI || !window.electronAPI.pickImage) return;
+    try {
+      const picked = await window.electronAPI.pickImage();
+      if (picked) {
+        setBackgroundImage(picked);
+        appendLog(`[INFO] Background image set to: ${picked}`);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleRemoveBackgroundImage = () => {
+    setBackgroundImage(null);
+    appendLog('[INFO] Background image removed.');
   };
 
   const handleAddButton = () => {
@@ -369,43 +399,107 @@ function App() {
     fontSize === 'medium' ? 'font-size-medium' : fontSize === 'large' ? 'font-size-large' : 'font-size-default';
 
   return (
-    <div className={`h-screen w-screen bg-neutral-950 text-neutral-50 flex flex-col ${fontSizeClass}`}>
-      <TopBar onWindowControl={handleWindowControl} windowState={windowState} />
-      <div className="flex flex-1 min-h-0">
-        <Sidebar activePage={activePage} setActivePage={setActivePage} />
+    <div
+      className={`h-screen w-screen bg-neutral-950 text-neutral-50 flex flex-col ${fontSizeClass} relative`}
+      style={
+        backgroundImage && bgSidebar
+          ? {
+              backgroundImage: `url("file://${backgroundImage.replace(/\\/g, '/')}")`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }
+          : {}
+      }
+    >
+      {/* Global Overlay if sidebar is included */}
+      {backgroundImage && bgSidebar && (
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundColor: `rgba(0, 0, 0, ${(100 - bgOpacity) / 100})`,
+            backdropFilter: `blur(${bgBlur}px)`,
+          }}
+        />
+      )}
 
-        {activePage === 'home' ? (
-          <HomePage
-            buttons={buttons}
-            baseDir={baseDir}
-            onClone={handleCloneClick}
-            loading={loading}
-            activeButtonId={activeButtonId}
-            onOpenColorMenu={handleOpenColorMenu}
-            effectiveGrid={effectiveGrid}
-            onToggleGrid={handleToggleGrid}
-            onDragEnd={handleDragEnd}
+      <div className="relative z-10 flex flex-col h-full w-full">
+        <TopBar onWindowControl={handleWindowControl} windowState={windowState} />
+        <div className="flex flex-1 min-h-0">
+          <Sidebar
+            activePage={activePage}
+            setActivePage={setActivePage}
+            transparent={backgroundImage && bgSidebar}
           />
-        ) : activePage === 'activity' ? (
-          <ActivityPage lastResult={lastResult} logs={logs} onClearLogs={handleClearLogs} />
-        ) : (
-          <ConfigPage
-            buttons={buttons}
-            setButtons={setButtons}
-            baseDir={baseDir}
-            setBaseDir={setBaseDir}
-            editor={editor}
-            onChangeEditor={handleChangeEditor}
-            fontSize={fontSize}
-            onChangeFontSize={handleChangeFontSize}
-            saving={saving}
-            lastSavedLabel={lastSavedLabel}
-            configPath={configPath}
-            onPickDirectory={handlePickDirectory}
-            onAddButton={handleAddButton}
-            onRemoveButton={handleRemoveButton}
-          />
-        )}
+
+          {/* Main Content Area */}
+          <div
+            className="flex-1 flex flex-col min-w-0 relative"
+            style={
+              backgroundImage && !bgSidebar
+                ? {
+                    backgroundImage: `url("file://${backgroundImage.replace(/\\/g, '/')}")`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                  }
+                : {}
+            }
+          >
+            {/* Local Overlay if sidebar is NOT included */}
+            {backgroundImage && !bgSidebar && (
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundColor: `rgba(0, 0, 0, ${(100 - bgOpacity) / 100})`,
+                  backdropFilter: `blur(${bgBlur}px)`,
+                }}
+              />
+            )}
+
+            <div className="relative z-10 flex-1 flex flex-col min-h-0">
+              {activePage === 'home' ? (
+                <HomePage
+                  buttons={buttons}
+                  baseDir={baseDir}
+                  onClone={handleCloneClick}
+                  loading={loading}
+                  activeButtonId={activeButtonId}
+                  onOpenColorMenu={handleOpenColorMenu}
+                  effectiveGrid={effectiveGrid}
+                  onToggleGrid={handleToggleGrid}
+                  onDragEnd={handleDragEnd}
+                />
+              ) : activePage === 'activity' ? (
+                <ActivityPage lastResult={lastResult} logs={logs} onClearLogs={handleClearLogs} />
+              ) : (
+                <ConfigPage
+                  buttons={buttons}
+                  setButtons={setButtons}
+                  baseDir={baseDir}
+                  setBaseDir={setBaseDir}
+                  editor={editor}
+                  onChangeEditor={handleChangeEditor}
+                  fontSize={fontSize}
+                  onChangeFontSize={handleChangeFontSize}
+                  saving={saving}
+                  lastSavedLabel={lastSavedLabel}
+                  configPath={configPath}
+                  onPickDirectory={handlePickDirectory}
+                  onAddButton={handleAddButton}
+                  onRemoveButton={handleRemoveButton}
+                  backgroundImage={backgroundImage}
+                  onPickBackgroundImage={handlePickBackgroundImage}
+                  onRemoveBackgroundImage={handleRemoveBackgroundImage}
+                  bgSidebar={bgSidebar}
+                  setBgSidebar={setBgSidebar}
+                  bgOpacity={bgOpacity}
+                  setBgOpacity={setBgOpacity}
+                  bgBlur={bgBlur}
+                  setBgBlur={setBgBlur}
+                />
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       <CloneDialog

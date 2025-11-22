@@ -10,4 +10,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openAdydetra: () => ipcRenderer.invoke('open-adydetra'),
   openRepoUrl: (url) => ipcRenderer.invoke('open-repo-url', url),
   downloadZipRepo: (config) => ipcRenderer.invoke('download-zip-repo', config),
+  pickImage: () => ipcRenderer.invoke('pick-image'),
 });
