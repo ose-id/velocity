@@ -24,14 +24,14 @@ export default function BatchActionBar({ selectedCount, onCancel, onClone }) {
           <div className="flex items-center gap-2">
             <button
               onClick={onCancel}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition-colors"
+              className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={onClone}
               disabled={selectedCount < 2}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-emerald-900/20 ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-emerald-900/20 cursor-pointer ${
                 selectedCount < 2
                   ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed opacity-50'
                   : 'bg-emerald-600 text-white hover:bg-emerald-500'
