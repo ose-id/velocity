@@ -49,7 +49,9 @@ export default function ShortcutsPage({ shortcuts, onUpdateShortcut }) {
 
   const shortcutList = [
     { id: 'switchPage', label: 'Ganti Halaman', description: 'Pindah antar halaman (Home, Activity, Shortcuts, Config)' },
-    { id: 'goHome', label: 'Ke Home', description: 'Langsung kembali ke halaman Home' },
+    { id: 'openHome', label: 'Buka Home', description: 'Langsung ke halaman Home' },
+    { id: 'openActivity', label: 'Buka Activity', description: 'Langsung ke halaman Activity' },
+    { id: 'openShortcuts', label: 'Buka Shortcuts', description: 'Langsung ke halaman Shortcuts' },
     { id: 'openSettings', label: 'Buka Pengaturan', description: 'Langsung ke halaman Configuration' },
     { id: 'toggleGrid', label: 'Ubah Grid', description: 'Ganti tampilan antara 2 atau 3 kolom' },
   ];

@@ -216,9 +216,15 @@ function App() {
           const nextIdx = (idx + 1) % order.length;
           return order[nextIdx];
         });
-      } else if (pressed === shortcuts.goHome) {
+      } else if (pressed === shortcuts.openHome) {
         e.preventDefault();
         setActivePage('home');
+      } else if (pressed === shortcuts.openActivity) {
+        e.preventDefault();
+        setActivePage('activity');
+      } else if (pressed === shortcuts.openShortcuts) {
+        e.preventDefault();
+        setActivePage('shortcuts');
       } else if (pressed === shortcuts.openSettings) {
         e.preventDefault();
         setActivePage('config');
