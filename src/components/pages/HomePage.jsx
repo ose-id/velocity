@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import ProjectGrid from '../organisms/ProjectGrid';
+import BatchActionBar from '../molecules/BatchActionBar';
 
 export default function HomePage({
   buttons,
@@ -12,6 +13,11 @@ export default function HomePage({
   effectiveGrid,
   onToggleGrid,
   onDragEnd,
+  isSelectionMode,
+  selectedIds,
+  onToggleSelectionMode,
+  onToggleSelection,
+  onBatchClone
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeGroup, setActiveGroup] = useState('All');
@@ -32,7 +38,7 @@ export default function HomePage({
   });
 
   return (
-    <div className="flex-1 flex flex-col gap-4 p-4 overflow-auto custom-scroll">
+    <div className="flex-1 flex flex-col gap-4 p-4 overflow-auto custom-scroll relative">
       <div className="flex flex-col gap-4">
         <div className="flex items-start justify-between">
           <div>
@@ -133,6 +139,15 @@ export default function HomePage({
         onOpenColorMenu={onOpenColorMenu}
         effectiveGrid={effectiveGrid}
         onDragEnd={onDragEnd}
+        isSelectionMode={isSelectionMode}
+        selectedIds={selectedIds}
+        onToggleSelection={onToggleSelection}
+      />
+
+      <BatchActionBar 
+        selectedCount={selectedIds.length}
+        onCancel={onToggleSelectionMode}
+        onClone={onBatchClone}
       />
     </div>
   );

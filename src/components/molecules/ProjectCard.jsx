@@ -5,7 +5,16 @@ import { CSS } from '@dnd-kit/utilities';
 import { getButtonColorStyles } from '../../utils/constants';
 import Pill from '../atoms/Pill';
 
-export default function ProjectCard({ btn, loading, activeButtonId, onClone, onOpenColorMenu }) {
+export default function ProjectCard({ 
+  btn, 
+  loading, 
+  activeButtonId, 
+  onClone, 
+  onOpenColorMenu,
+  isSelectionMode,
+  isSelected,
+  onToggleSelection
+}) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: btn.id });
 
   const style = {
@@ -21,7 +30,7 @@ export default function ProjectCard({ btn, loading, activeButtonId, onClone, onO
   const hasUrl = !!btn.repoUrl;
 
   const handleMouseMove = (e) => {
-    if (!hasUrl) return;
+    if (!hasUrl && !isSelectionMode) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -29,25 +38,63 @@ export default function ProjectCard({ btn, loading, activeButtonId, onClone, onO
     e.currentTarget.style.setProperty('--y', `${y}px`);
   };
 
+  const handleClick = (e) => {
+    // If disabled, do nothing
+    if (!hasUrl) return;
+
+    // If we are in selection mode, any click toggles selection
+    if (isSelectionMode) {
+      onToggleSelection(btn.id);
+      return;
+    }
+    
+    // Otherwise normal behavior
+    onClone(btn);
+  };
+
+  const handleCheckboxClick = (e) => {
+    e.stopPropagation();
+    onToggleSelection(btn.id);
+  };
+
   return (
-    <div ref={setNodeRef} style={style} className="relative h-full">
-      {/* Drag Handle */}
-      <div
-        {...attributes}
-        {...listeners}
-        className="absolute top-2 right-2 z-30 p-1.5 rounded-md text-neutral-500/50 hover:text-neutral-300 hover:bg-black/20 cursor-grab active:cursor-grabbing transition-colors"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <Icon icon="mdi:drag" className="text-lg" />
+    <div ref={setNodeRef} style={style} className="relative h-full group/card">
+      {/* Top Right Actions Container */}
+      <div className="absolute top-2 right-2 z-30 flex items-center gap-1">
+        {/* Drag Handle */}
+        {!isSelectionMode && (
+          <div
+            {...attributes}
+            {...listeners}
+            className="p-1.5 rounded-md text-neutral-500/50 hover:text-neutral-300 hover:bg-black/20 cursor-grab active:cursor-grabbing transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Icon icon="mdi:drag" className="text-lg" />
+          </div>
+        )}
+
+        {/* Selection Checkbox */}
+        {hasUrl && (
+          <div 
+            className="transition-all duration-200 opacity-100 scale-100"
+            onClick={handleCheckboxClick}
+          >
+            <div className={`
+              w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors duration-200 cursor-pointer
+              ${isSelected 
+                ? 'bg-emerald-500 border-emerald-500' 
+                : 'bg-black/40 border-neutral-500/50 hover:border-neutral-300'}
+            `}>
+              {isSelected && <Icon icon="mdi:check" className="text-white text-sm" />}
+            </div>
+          </div>
+        )}
       </div>
 
       <button
         type="button"
-        onClick={() => {
-          if (!hasUrl) return;
-          onClone(btn);
-        }}
-        onContextMenu={(e) => onOpenColorMenu && onOpenColorMenu(btn, e)}
+        onClick={handleClick}
+        onContextMenu={(e) => !isSelectionMode && onOpenColorMenu && onOpenColorMenu(btn, e)}
         onMouseMove={handleMouseMove}
         disabled={loading}
         className={[
@@ -55,10 +102,11 @@ export default function ProjectCard({ btn, loading, activeButtonId, onClone, onO
           colorStyles.card,
           loading ? 'opacity-90' : '',
           !hasUrl ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
+          isSelected ? 'ring-2 ring-neutral-100 ring-offset-2 ring-offset-neutral-950' : ''
         ].join(' ')}
       >
         {/* Spotlight Effect */}
-        {hasUrl && (
+        {(hasUrl || isSelectionMode) && hasUrl && (
           <div
             className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
             style={{
@@ -67,7 +115,9 @@ export default function ProjectCard({ btn, loading, activeButtonId, onClone, onO
           />
         )}
 
-        <div className="relative z-10 flex items-center justify-between w-full gap-2 pr-6">
+        <div className="relative z-10 flex items-center justify-between w-full gap-2 pr-6"> 
+          {/* Removed pl-6, reverted to standard padding */}
+          
           <div className="flex items-center gap-2 overflow-hidden">
             <div className={['h-7 w-7 rounded-lg flex-shrink-0 flex items-center justify-center', colorStyles.iconBg].join(' ')}>
               <Icon icon="mdi:download-network-outline" className="text-neutral-100 text-lg" />

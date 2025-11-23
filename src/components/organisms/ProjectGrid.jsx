@@ -23,6 +23,9 @@ export default function ProjectGrid({
   onOpenColorMenu,
   effectiveGrid,
   onDragEnd,
+  isSelectionMode,
+  selectedIds,
+  onToggleSelection
 }) {
   const gridClass = effectiveGrid === 3 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 md:grid-cols-2';
 
@@ -57,6 +60,9 @@ export default function ProjectGrid({
                 activeButtonId={activeButtonId}
                 onClone={onClone}
                 onOpenColorMenu={onOpenColorMenu}
+                isSelectionMode={isSelectionMode}
+                isSelected={selectedIds.includes(btn.id)}
+                onToggleSelection={onToggleSelection}
               />
             ))}
           </motion.div>

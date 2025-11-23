@@ -6,6 +6,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import TopBar from './components/organisms/TopBar';
 import Sidebar from './components/organisms/Sidebar';
 import CloneDialog from './components/organisms/CloneDialog';
+import BatchCloneDialog from './components/organisms/BatchCloneDialog';
 
 // Molecules
 import ColorMenu from './components/molecules/ColorMenu';
@@ -45,6 +46,14 @@ function App() {
     buttonId: null,
     x: 0,
     y: 0,
+  });
+
+  // Selection Mode State
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [batchDialog, setBatchDialog] = useState({
+    open: false,
+    count: 0
   });
 
   // INIT
@@ -282,6 +291,131 @@ function App() {
     }
   };
 
+  // === SELECTION MODE HANDLERS ===
+  const handleToggleSelectionMode = () => {
+    setIsSelectionMode((prev) => {
+      if (prev) setSelectedIds([]); // Clear selection on exit
+      return !prev;
+    });
+  };
+
+  const handleToggleSelection = (id) => {
+    setSelectedIds((prev) => {
+      const newSelection = prev.includes(id) ? prev.filter(pid => pid !== id) : [...prev, id];
+      setIsSelectionMode(newSelection.length > 0);
+      return newSelection;
+    });
+  };
+
+  const handleBatchCloneClick = () => {
+    if (selectedIds.length === 0) return;
+    
+    if (selectedIds.length === 1) {
+      // If only 1 selected, treat as normal clone
+      const btn = buttons.find(b => b.id === selectedIds[0]);
+      if (btn) handleCloneClick(btn);
+      // Reset selection mode? Maybe keep it. Let's keep it for now.
+    } else {
+      // Open Batch Dialog
+      setBatchDialog({ open: true, count: selectedIds.length });
+    }
+  };
+
+  const processQueue = async ({ mode, groupName }) => {
+    setBatchDialog({ open: false, count: 0 });
+    
+    const selectedButtons = buttons.filter(b => selectedIds.includes(b.id));
+    if (selectedButtons.length === 0) return;
+
+    setLoading(true);
+    appendLog(`[BATCH] Starting batch clone for ${selectedButtons.length} items. Mode: ${mode}`);
+
+    // Determine target base dir
+    let targetBaseDir = baseDir;
+    if (mode === 'group' && groupName) {
+      // We rely on the backend to handle path joining, but here we might need to pass it differently.
+      // Actually, we can just append to baseDir for the IPC call if backend supports it.
+      // But backend takes absolute path. So we construct it here.
+      // Note: We need 'path' module or just string concat if we assume OS separator.
+      // Since this is frontend, we can't use 'path' module directly unless polyfilled.
+      // Better approach: Pass 'subfolder' to backend? No, backend doesn't support it yet.
+      // We will just append to baseDir string. It might be tricky with separators.
+      // Let's assume standard forward slash works or let backend handle it if we pass a relative path?
+      // No, backend expects absolute baseDir.
+      // Workaround: We will rely on the fact that we can just add the folder name.
+      // But wait, we don't know the separator.
+      // Let's assume we pass the groupName as a separate arg if we updated backend?
+      // We didn't update backend to accept 'groupName'.
+      // We updated backend to accept 'baseDir'.
+      // So we need to construct the new baseDir.
+      // Let's try to use a safe guess or just append with '/'. Electron/Node usually handles mixed separators fine.
+      targetBaseDir = baseDir ? `${baseDir}/${groupName}` : groupName; 
+    }
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const btn of selectedButtons) {
+      if (!btn.repoUrl) {
+        appendLog(`[SKIP] Button ${btn.id} has no Repo URL.`);
+        continue;
+      }
+
+      setActiveButtonId(btn.id); // Show spinner on current card
+      
+      const effectiveUrl = btn.useSsh ? toSshUrl(btn.repoUrl) : btn.repoUrl;
+      
+      try {
+        appendLog(`[QUEUE] Cloning ${btn.label || btn.id}...`);
+        
+        // We use skipOpenEditor: true and skipOpenFolder: true for batch
+        const result = await window.electronAPI.cloneRepo({
+          repoUrl: effectiveUrl,
+          folderName: btn.folderName,
+          baseDir: targetBaseDir,
+          editor,
+          options: { skipOpenEditor: true, skipOpenFolder: true }
+        });
+
+        if (result.status === 'success') {
+          successCount++;
+          appendLog(`[OK] ${btn.label || btn.id} cloned.`);
+        } else if (result.status === 'duplicate') {
+          appendLog(`[SKIP] ${btn.label || btn.id} already exists.`);
+        } else {
+          failCount++;
+          appendLog(`[FAIL] ${btn.label || btn.id}: ${result.message}`);
+        }
+      } catch (err) {
+        console.error(err);
+        failCount++;
+        appendLog(`[ERROR] ${btn.label || btn.id}: ${err.message}`);
+      }
+    }
+
+    setLoading(false);
+    setActiveButtonId(null);
+    setIsSelectionMode(false);
+    setSelectedIds([]);
+    
+    appendLog(`[BATCH] Completed. Success: ${successCount}, Failed: ${failCount}.`);
+    
+    // Post-batch actions: Open folder/editor
+    if (successCount > 0) {
+      if (mode === 'group') {
+        // Open the Group Folder
+        appendLog(`[INFO] Opening Group Folder: ${targetBaseDir}`);
+        await window.electronAPI.openFolder({ path: targetBaseDir });
+        await window.electronAPI.openInEditor({ path: targetBaseDir, editor });
+      } else {
+        // Separate mode: Open the Base Directory so user can see all cloned folders
+        appendLog(`[INFO] Opening Base Directory: ${baseDir}`);
+        await window.electronAPI.openFolder({ path: baseDir });
+        // We do NOT open editor for separate mode to avoid spam
+      }
+    }
+  };
+
   // === ACTION: Clone via Git ===
   const performCloneViaGit = async (btn) => {
     if (!window.electronAPI || !window.electronAPI.cloneRepo) return;
@@ -467,6 +601,11 @@ function App() {
                   effectiveGrid={effectiveGrid}
                   onToggleGrid={handleToggleGrid}
                   onDragEnd={handleDragEnd}
+                  isSelectionMode={isSelectionMode}
+                  selectedIds={selectedIds}
+                  onToggleSelectionMode={handleToggleSelectionMode}
+                  onToggleSelection={handleToggleSelection}
+                  onBatchClone={handleBatchCloneClick}
                 />
               ) : activePage === 'activity' ? (
                 <ActivityPage lastResult={lastResult} logs={logs} onClearLogs={handleClearLogs} />
@@ -508,6 +647,13 @@ function App() {
         onClose={() => setCloneDialog({ open: false, button: null })}
         onCloneGit={performCloneViaGit}
         onDownloadZip={handleOpenRepoForZip}
+      />
+
+      <BatchCloneDialog
+        open={batchDialog.open}
+        count={batchDialog.count}
+        onClose={() => setBatchDialog({ open: false, count: 0 })}
+        onConfirm={processQueue}
       />
 
       <ColorMenu

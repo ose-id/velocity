@@ -498,8 +498,14 @@ ipcMain.handle('clone-repo', async (_event, args) => {
 
     child.on('close', (code) => {
       if (code === 0) {
-        openFolder(targetPath);
-        openInEditor(targetPath, editorId);
+        // Check options.skipOpenFolder
+        if (!options?.skipOpenFolder) {
+          openFolder(targetPath);
+        }
+        // Check options.skipOpenEditor
+        if (!options?.skipOpenEditor) {
+          openInEditor(targetPath, editorId);
+        }
         resolve({
           status: 'success',
           message: 'Repo cloned successfully.',
@@ -513,6 +519,22 @@ ipcMain.handle('clone-repo', async (_event, args) => {
       }
     });
   });
+});
+
+ipcMain.handle('open-folder', async (_event, { path: folderPath }) => {
+  if (folderPath) {
+    openFolder(folderPath);
+    return true;
+  }
+  return false;
+});
+
+ipcMain.handle('open-in-editor', async (_event, { path: folderPath, editor }) => {
+  if (folderPath) {
+    openInEditor(folderPath, editor);
+    return true;
+  }
+  return false;
 });
 
 // === APP LIFECYCLE ===
