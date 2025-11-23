@@ -341,7 +341,7 @@ export default function OnboardingModal({ open, onFinish }) {
           <div 
             className="absolute bottom-0 right-0 w-[500px] h-[500px] pointer-events-none opacity-40"
             style={{
-              background: 'radial-gradient(circle at bottom right, #333333, transparent 70%)'
+              background: 'radial-gradient(circle at bottom right, rgba(85, 85, 85, 1), transparent 70%)'
             }}
           />
 
