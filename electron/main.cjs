@@ -66,6 +66,12 @@ const DEFAULT_CONFIG = {
       color: 'neutral',
     },
   ],
+  shortcuts: {
+    switchPage: 'Tab',
+    goHome: '',
+    openSettings: '',
+    toggleGrid: '',
+  },
 };
 
 // === UTIL: buka folder di file manager ===
@@ -173,6 +179,9 @@ function ensureConfigShape(raw) {
   }
   if (typeof cfg.onboardingShown === 'undefined') {
     cfg.onboardingShown = DEFAULT_CONFIG.onboardingShown;
+  }
+  if (!cfg.shortcuts) {
+    cfg.shortcuts = DEFAULT_CONFIG.shortcuts;
   }
 
   return cfg;
@@ -601,6 +610,17 @@ ipcMain.handle('check-requirements', async () => {
   ]);
 
   return { git, node, code };
+});
+
+// Check path exists
+ipcMain.handle('check-path-exists', async (_event, targetPath) => {
+  return fs.existsSync(targetPath);
+});
+
+// Show message box
+ipcMain.handle('show-message-box', async (_event, options) => {
+  if (!mainWindow) return { response: -1 };
+  return dialog.showMessageBox(mainWindow, options);
 });
 
 // === APP LIFECYCLE ===

@@ -14,4 +14,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openFolder: (config) => ipcRenderer.invoke('open-folder', config),
   openInEditor: (config) => ipcRenderer.invoke('open-in-editor', config),
   checkRequirements: () => ipcRenderer.invoke('check-requirements'),
+  checkPathExists: (path) => ipcRenderer.invoke('check-path-exists', path),
+  showMessageBox: (options) => ipcRenderer.invoke('show-message-box', options),
 });

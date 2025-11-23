@@ -15,6 +15,7 @@ import ColorMenu from './components/molecules/ColorMenu';
 // Pages
 import HomePage from './components/pages/HomePage';
 import ActivityPage from './components/pages/ActivityPage';
+import ShortcutsPage from './components/pages/ShortcutsPage';
 import ConfigPage from './components/pages/ConfigPage';
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
     x: 0,
     y: 0,
   });
+  const [shortcuts, setShortcuts] = useState({ switchPage: 'Tab' });
 
   // Selection Mode State
   const [isSelectionMode, setIsSelectionMode] = useState(false);
@@ -79,6 +81,7 @@ function App() {
           setBgSidebar(cfg.bgSidebar || false);
           setBgOpacity(cfg.bgOpacity !== undefined ? cfg.bgOpacity : 60);
           setBgBlur(cfg.bgBlur !== undefined ? cfg.bgBlur : 4);
+          if (cfg.shortcuts) setShortcuts(cfg.shortcuts);
           if (cfg.configPath) setConfigPath(cfg.configPath);
           
           // Check onboarding
@@ -128,6 +131,7 @@ function App() {
           bgSidebar,
           bgOpacity,
           bgBlur,
+          shortcuts,
           onboardingShown: true
         });
       } catch (err) {
@@ -155,6 +159,7 @@ function App() {
           bgSidebar,
           bgOpacity,
           bgBlur,
+          shortcuts,
           onboardingShown: !showOnboarding // If currently showing, it's false. If not showing, it's true (presumably finished)
           // Wait, this logic is tricky. If we just finished onboarding, showOnboarding is false.
           // But if we are in the middle of it, it is true.
@@ -183,7 +188,54 @@ function App() {
     return () => {
       cancelled = true;
     };
-  }, [baseDir, buttons, editor, fontSize, backgroundImage, bgSidebar, bgOpacity, bgBlur, configInitialized, showOnboarding]);
+  }, [baseDir, buttons, editor, fontSize, backgroundImage, bgSidebar, bgOpacity, bgBlur, shortcuts, configInitialized, showOnboarding]);
+
+  // SHORTCUTS LISTENER
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      // Ignore if typing in input/textarea
+      if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+
+      const modifiers = [];
+      if (e.ctrlKey) modifiers.push('Ctrl');
+      if (e.altKey) modifiers.push('Alt');
+      if (e.shiftKey) modifiers.push('Shift');
+      if (e.metaKey) modifiers.push('Meta');
+
+      let key = e.key;
+      if (key === ' ') key = 'Space';
+      if (key.length === 1) key = key.toUpperCase();
+
+      const pressed = [...modifiers, key].join('+');
+
+      if (pressed === shortcuts.switchPage) {
+        e.preventDefault();
+        setActivePage((prev) => {
+          const order = ['home', 'activity', 'shortcuts', 'config'];
+          const idx = order.indexOf(prev);
+          const nextIdx = (idx + 1) % order.length;
+          return order[nextIdx];
+        });
+      } else if (pressed === shortcuts.goHome) {
+        e.preventDefault();
+        setActivePage('home');
+      } else if (pressed === shortcuts.openSettings) {
+        e.preventDefault();
+        setActivePage('config');
+      } else if (pressed === shortcuts.toggleGrid) {
+        e.preventDefault();
+        handleToggleGrid();
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [shortcuts]);
+
+  const handleUpdateShortcut = (key, value) => {
+    setShortcuts((prev) => ({ ...prev, [key]: value }));
+    appendLog(`[CONFIG] Shortcut '${key}' updated to '${value}'`);
+  };
 
   const handleWindowControl = async (action) => {
     try {
@@ -388,6 +440,28 @@ function App() {
       // So we need to construct the new baseDir.
       // Let's try to use a safe guess or just append with '/'. Electron/Node usually handles mixed separators fine.
       targetBaseDir = baseDir ? `${baseDir}/${groupName}` : groupName; 
+      
+      // DUPLICATE CHECK FOR GROUP FOLDER
+      if (window.electronAPI?.checkPathExists) {
+        const exists = await window.electronAPI.checkPathExists(targetBaseDir);
+        if (exists) {
+          setLoading(false);
+          setActiveButtonId(null);
+          setIsSelectionMode(false);
+          setSelectedIds([]);
+          
+          if (window.electronAPI?.showMessageBox) {
+            await window.electronAPI.showMessageBox({
+              type: 'warning',
+              title: 'Folder Exists',
+              message: `Folder "${groupName}" already exists in the base directory.\n\nProcess cancelled to prevent duplicates.`,
+              buttons: ['OK']
+            });
+          }
+          appendLog(`[CANCEL] Batch clone cancelled. Group folder "${groupName}" already exists.`);
+          return;
+        }
+      }
     }
 
     let successCount = 0;
@@ -667,6 +741,8 @@ function App() {
                 />
               ) : activePage === 'activity' ? (
                 <ActivityPage lastResult={lastResult} logs={logs} onClearLogs={handleClearLogs} />
+              ) : activePage === 'shortcuts' ? (
+                <ShortcutsPage shortcuts={shortcuts} onUpdateShortcut={handleUpdateShortcut} />
               ) : (
                 <ConfigPage
                   buttons={buttons}
