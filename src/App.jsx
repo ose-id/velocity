@@ -416,8 +416,14 @@ function App() {
     }
   };
 
+  const handleBatchConfirm = (data) => {
+    setBatchDialog({ open: false, count: 0 });
+    const { mode, groupName, deleteGit } = data;
+    processQueue(mode, groupName, deleteGit);
+  };
+
   // === ACTION: Clone via Git ===
-  const performCloneViaGit = async (btn) => {
+  const performCloneViaGit = async (btn, options = {}) => {
     if (!window.electronAPI || !window.electronAPI.cloneRepo) return;
 
     setCloneDialog({ open: false, button: null });
@@ -430,8 +436,8 @@ function App() {
       });
       return;
     }
-
     const effectiveUrl = btn.useSsh ? toSshUrl(btn.repoUrl) : btn.repoUrl;
+    const { deleteGit } = options; // Extract deleteGit
 
     setLoading(true);
     setActiveButtonId(btn.id);
@@ -445,6 +451,7 @@ function App() {
         folderName: btn.folderName,
         baseDir: baseDir || null,
         editor,
+        options: { deleteGit } // Pass to backend
       });
 
       if (result.status === 'duplicate') {
@@ -470,7 +477,7 @@ function App() {
   };
 
   // === ACTION: Download ZIP ===
-  const handleOpenRepoForZip = async () => {
+  const handleOpenRepoForZip = async (options = {}) => {
     if (!cloneDialog.button) return;
     const btn = cloneDialog.button;
     setCloneDialog({ open: false, button: null });
@@ -493,6 +500,8 @@ function App() {
       return;
     }
 
+    const { deleteGit } = options; // Extract deleteGit
+
     setLoading(true);
     setActiveButtonId(btn.id);
     setLastResult(null);
@@ -505,6 +514,7 @@ function App() {
         folderName: btn.folderName,
         baseDir: baseDir || null,
         editor,
+        options: { deleteGit } // Pass to backend
       });
 
       if (result.status === 'duplicate') {

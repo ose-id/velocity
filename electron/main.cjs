@@ -465,7 +465,7 @@ ipcMain.handle('pick-image', async () => {
 ipcMain.handle('clone-repo', async (_event, args) => {
   const cfg = loadConfig();
   const editorId = cfg.editor || 'vscode';
-  const { repoUrl, folderName, baseDir } = args;
+  const { repoUrl, folderName, baseDir, options } = args;
 
   if (!repoUrl) {
     return {
@@ -514,17 +514,31 @@ ipcMain.handle('clone-repo', async (_event, args) => {
         message: `Failed to start git: ${err.message}`,
       });
     });
-
     child.on('close', (code) => {
       if (code === 0) {
         // Check options.skipOpenFolder
         if (!options?.skipOpenFolder) {
-          openFolder(targetPath);
+          openFolderInExplorer(targetPath);
         }
+
+        // Check options.deleteGit
+        if (options?.deleteGit) {
+          const gitFolderPath = path.join(targetPath, '.git');
+          if (fs.existsSync(gitFolderPath)) {
+            try {
+              fs.rmSync(gitFolderPath, { recursive: true, force: true });
+              console.log(`[INFO] Deleted .git folder at ${gitFolderPath}`);
+            } catch (err) {
+              console.error(`[WARN] Failed to delete .git folder: ${err.message}`);
+            }
+          }
+        }
+
         // Check options.skipOpenEditor
         if (!options?.skipOpenEditor) {
           openInEditor(targetPath, editorId);
         }
+
         resolve({
           status: 'success',
           message: 'Repo cloned successfully.',

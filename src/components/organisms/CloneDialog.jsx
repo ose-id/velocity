@@ -2,6 +2,8 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 
 export default function CloneDialog({ open, button, onClose, onCloneGit, onDownloadZip }) {
+  const [deleteGit, setDeleteGit] = React.useState(false);
+
   if (!open || !button) return null;
 
   return (
@@ -19,7 +21,7 @@ export default function CloneDialog({ open, button, onClose, onCloneGit, onDownl
         <div className="flex flex-col gap-2 mb-3">
           <button
             type="button"
-            onClick={() => onCloneGit(button)}
+            onClick={() => onCloneGit(button, { deleteGit })}
             className="inline-flex items-center justify-between rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-xs text-neutral-100 hover:bg-neutral-800 cursor-pointer"
           >
             <span className="inline-flex items-center gap-2">
@@ -31,7 +33,7 @@ export default function CloneDialog({ open, button, onClose, onCloneGit, onDownl
 
           <button
             type="button"
-            onClick={onDownloadZip}
+            onClick={() => onDownloadZip({ deleteGit })}
             className="inline-flex items-center justify-between rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-xs text-neutral-100 hover:bg-neutral-800 cursor-pointer"
           >
             <span className="inline-flex items-center gap-2">
@@ -40,6 +42,24 @@ export default function CloneDialog({ open, button, onClose, onCloneGit, onDownl
             </span>
             <span className="text-[10px] text-neutral-500">Selalu pakai HTTPS</span>
           </button>
+        </div>
+
+        {/* Delete .git Checkbox */}
+        <div className="mb-4 px-1">
+          <label className="flex items-center gap-2 cursor-pointer group">
+            <div className="relative flex items-center">
+              <input
+                type="checkbox"
+                className="peer h-4 w-4 appearance-none rounded border border-neutral-700 bg-neutral-900 checked:border-emerald-500 checked:bg-emerald-500 transition-all"
+                checked={deleteGit}
+                onChange={(e) => setDeleteGit(e.target.checked)}
+              />
+              <Icon icon="mdi:check" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
+            </div>
+            <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors">
+              Delete <span className="font-mono text-emerald-500/80">.git</span> folder after clone
+            </span>
+          </label>
         </div>
 
         <div className="flex justify-end">

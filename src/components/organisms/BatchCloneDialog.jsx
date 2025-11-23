@@ -5,14 +5,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
   const [mode, setMode] = useState('separate'); // 'separate' | 'group'
   const [groupName, setGroupName] = useState('');
+  const [deleteGit, setDeleteGit] = useState(false);
 
   if (!open) return null;
 
-  const handleConfirm = () => {
+  const handleConfirm = (extraOptions = {}) => {
     if (mode === 'group' && !groupName.trim()) {
       return; // Validation
     }
-    onConfirm({ mode, groupName: mode === 'group' ? groupName : null });
+    // Merge extraOptions (like deleteGit) with standard options
+    onConfirm({ 
+      mode, 
+      groupName: mode === 'group' ? groupName : null,
+      ...extraOptions
+    });
   };
 
   return (
@@ -107,6 +113,24 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
                 </div>
               </label>
             </div>
+
+            {/* Delete .git Checkbox */}
+            <div className="mt-4 px-1">
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <div className="relative flex items-center">
+                  <input
+                    type="checkbox"
+                    className="peer h-4 w-4 appearance-none rounded border border-neutral-700 bg-neutral-900 checked:border-emerald-500 checked:bg-emerald-500 transition-all"
+                    checked={deleteGit}
+                    onChange={(e) => setDeleteGit(e.target.checked)}
+                  />
+                  <Icon icon="mdi:check" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
+                </div>
+                <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors">
+                  Delete <span className="font-mono text-emerald-500/80">.git</span> folder after clone
+                </span>
+              </label>
+            </div>
           </div>
 
           {/* Footer */}
@@ -118,7 +142,7 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
               Cancel
             </button>
             <button
-              onClick={handleConfirm}
+              onClick={() => handleConfirm({ deleteGit })}
               disabled={mode === 'group' && !groupName.trim()}
               className="px-4 py-2 rounded-lg text-sm font-medium bg-neutral-100 text-neutral-900 hover:bg-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg shadow-neutral-900/20 cursor-pointer"
             >
