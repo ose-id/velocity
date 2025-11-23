@@ -2,7 +2,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { app, BrowserWindow, ipcMain, dialog, Menu, shell } = require('electron');
-const { spawn } = require('child_process');
+const { spawn, exec } = require('child_process');
 const extract = require('extract-zip');
 
 const isDev = !app.isPackaged;
@@ -21,6 +21,7 @@ const DEFAULT_CONFIG = {
   baseDir: path.join(os.homedir(), 'Downloads'),
   editor: 'vscode',
   fontSize: 'default',
+  onboardingShown: false, // New flag
   buttons: [
     {
       id: 'A',
@@ -169,6 +170,9 @@ function ensureConfigShape(raw) {
   }
   if (!cfg.editor) {
     cfg.editor = DEFAULT_CONFIG.editor;
+  }
+  if (typeof cfg.onboardingShown === 'undefined') {
+    cfg.onboardingShown = DEFAULT_CONFIG.onboardingShown;
   }
 
   return cfg;
@@ -570,8 +574,43 @@ ipcMain.handle('open-in-editor', async (_event, { path: folderPath, editor }) =>
   return false;
 });
 
+// Check requirements (git, node, code)
+ipcMain.handle('check-requirements', async () => {
+  const checkCommand = (cmd) => {
+    return new Promise((resolve) => {
+      exec(`${cmd} --version`, (error, stdout, stderr) => {
+        if (error) {
+          console.warn(`[check-requirements] ${cmd} failed:`, error.message);
+          resolve(false);
+        } else {
+          console.log(`[check-requirements] ${cmd} detected:`, stdout.trim());
+          resolve(true);
+        }
+      });
+    });
+  };
+
+  console.log('[check-requirements] Checking tools...');
+  // Optional: Log PATH to debug if needed (be careful with sensitive info, but for dev it's ok)
+  // console.log('PATH:', process.env.PATH);
+
+  const [git, node, code] = await Promise.all([
+    checkCommand('git'),
+    checkCommand('node'),
+    checkCommand('code'),
+  ]);
+
+  return { git, node, code };
+});
+
 // === APP LIFECYCLE ===
 app.whenReady().then(() => {
+  // Force disable auto-start (cleanup legacy setting)
+  app.setLoginItemSettings({
+    openAtLogin: false,
+    path: app.getPath('exe'),
+  });
+
   const cfg = loadConfig();
   createWindow();
 });
