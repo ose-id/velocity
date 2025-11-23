@@ -7,6 +7,7 @@ import TopBar from './components/organisms/TopBar';
 import Sidebar from './components/organisms/Sidebar';
 import CloneDialog from './components/organisms/CloneDialog';
 import BatchCloneDialog from './components/organisms/BatchCloneDialog';
+import OnboardingModal from './components/organisms/OnboardingModal';
 
 // Molecules
 import ColorMenu from './components/molecules/ColorMenu';
@@ -37,6 +38,7 @@ function App() {
   const [lastSavedLabel, setLastSavedLabel] = useState('');
   const [configPath, setConfigPath] = useState('');
   const [configInitialized, setConfigInitialized] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [cloneDialog, setCloneDialog] = useState({
     open: false,
     button: null,
@@ -78,6 +80,12 @@ function App() {
           setBgOpacity(cfg.bgOpacity !== undefined ? cfg.bgOpacity : 60);
           setBgBlur(cfg.bgBlur !== undefined ? cfg.bgBlur : 4);
           if (cfg.configPath) setConfigPath(cfg.configPath);
+          
+          // Check onboarding
+          // Always show in DEV mode, otherwise check config
+          if (import.meta.env.DEV || cfg.onboardingShown === false || typeof cfg.onboardingShown === 'undefined') {
+            setShowOnboarding(true);
+          }
         }
       } catch (err) {
         console.error(err);
@@ -103,6 +111,31 @@ function App() {
     setPreferredGrid((prev) => (prev === 3 ? 2 : 3));
   };
 
+  const handleOnboardingFinish = async () => {
+    setShowOnboarding(false);
+    if (window.electronAPI && window.electronAPI.saveConfig) {
+      try {
+        // We need to save the current state + onboardingShown: true
+        // But we can just rely on the auto-save effect if we update a state?
+        // No, onboardingShown is not in the auto-save dependency list.
+        // So we manually save it here.
+        await window.electronAPI.saveConfig({
+          baseDir,
+          buttons,
+          editor,
+          fontSize,
+          backgroundImage,
+          bgSidebar,
+          bgOpacity,
+          bgBlur,
+          onboardingShown: true
+        });
+      } catch (err) {
+        console.error('Failed to save onboarding status', err);
+      }
+    }
+  };
+
   // AUTO SAVE CONFIG
   useEffect(() => {
     if (!configInitialized) return;
@@ -122,6 +155,11 @@ function App() {
           bgSidebar,
           bgOpacity,
           bgBlur,
+          onboardingShown: !showOnboarding // If currently showing, it's false. If not showing, it's true (presumably finished)
+          // Wait, this logic is tricky. If we just finished onboarding, showOnboarding is false.
+          // But if we are in the middle of it, it is true.
+          // Actually, we should probably just read the current config or assume true if we are past init?
+          // Let's just set it to true if showOnboarding is false.
         });
         if (!cancelled) {
           if (saved && saved.configPath) {
@@ -145,7 +183,7 @@ function App() {
     return () => {
       cancelled = true;
     };
-  }, [baseDir, buttons, editor, fontSize, backgroundImage, bgSidebar, bgOpacity, bgBlur, configInitialized]);
+  }, [baseDir, buttons, editor, fontSize, backgroundImage, bgSidebar, bgOpacity, bgBlur, configInitialized, showOnboarding]);
 
   const handleWindowControl = async (action) => {
     try {
@@ -674,6 +712,11 @@ function App() {
         count={batchDialog.count}
         onClose={() => setBatchDialog({ open: false, count: 0 })}
         onConfirm={processQueue}
+      />
+
+      <OnboardingModal
+        open={showOnboarding}
+        onFinish={handleOnboardingFinish}
       />
 
       <ColorMenu

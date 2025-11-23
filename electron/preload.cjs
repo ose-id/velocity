@@ -13,4 +13,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   pickImage: () => ipcRenderer.invoke('pick-image'),
   openFolder: (config) => ipcRenderer.invoke('open-folder', config),
   openInEditor: (config) => ipcRenderer.invoke('open-in-editor', config),
+  checkRequirements: () => ipcRenderer.invoke('check-requirements'),
 });
