@@ -43,7 +43,9 @@
       "installerHeader": "installerHeader.bmp",
       "installerSidebar": "installerSidebar.bmp",
       "uninstallerSidebar": "uninstallerSidebar.bmp",
-      "uninstallDisplayName": "Clone Tools"
+      "uninstallDisplayName": "Clone Tools",
+      "deleteAppDataOnUninstall": true,
+      "include": "build/installer.nsh"
     }
   },
   "dependencies": {
