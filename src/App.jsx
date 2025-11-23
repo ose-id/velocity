@@ -354,6 +354,7 @@ function App() {
 
     let successCount = 0;
     let failCount = 0;
+    let lastSuccessPath = null;
 
     for (const btn of selectedButtons) {
       if (!btn.repoUrl) {
@@ -379,8 +380,12 @@ function App() {
 
         if (result.status === 'success') {
           successCount++;
+          lastSuccessPath = result.path;
           appendLog(`[OK] ${btn.label || btn.id} cloned.`);
         } else if (result.status === 'duplicate') {
+          // If duplicate, we still consider it "successful" enough to maybe open the folder if it's the only one?
+          // Or at least we can use its path to know where we are.
+          lastSuccessPath = result.path;
           appendLog(`[SKIP] ${btn.label || btn.id} already exists.`);
         } else {
           failCount++;
@@ -401,16 +406,21 @@ function App() {
     appendLog(`[BATCH] Completed. Success: ${successCount}, Failed: ${failCount}.`);
     
     // Post-batch actions: Open folder/editor
-    if (successCount > 0) {
+    if ((successCount > 0 || lastSuccessPath) && lastSuccessPath) {
+      // Robustly determine parent path from the actual cloned path
+      // This handles cases where baseDir state might be empty or out of sync
+      const separator = lastSuccessPath.includes('\\') ? '\\' : '/';
+      const parentPath = lastSuccessPath.substring(0, lastSuccessPath.lastIndexOf(separator));
+
       if (mode === 'group') {
-        // Open the Group Folder
-        appendLog(`[INFO] Opening Group Folder: ${targetBaseDir}`);
-        await window.electronAPI.openFolder({ path: targetBaseDir });
-        await window.electronAPI.openInEditor({ path: targetBaseDir, editor });
+        // Open the Group Folder (which is the parent of the repo)
+        appendLog(`[INFO] Opening Group Folder: ${parentPath}`);
+        await window.electronAPI.openFolder({ path: parentPath });
+        await window.electronAPI.openInEditor({ path: parentPath, editor });
       } else {
-        // Separate mode: Open the Base Directory so user can see all cloned folders
-        appendLog(`[INFO] Opening Base Directory: ${baseDir}`);
-        await window.electronAPI.openFolder({ path: baseDir });
+        // Separate mode: Open the Base Directory (parent of the repo)
+        appendLog(`[INFO] Opening Base Directory: ${parentPath}`);
+        await window.electronAPI.openFolder({ path: parentPath });
         // We do NOT open editor for separate mode to avoid spam
       }
     }
