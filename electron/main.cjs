@@ -297,6 +297,9 @@ function createWindow() {
   mainWindow.once('ready-to-show', () => {
     mainWindow.maximize();
     mainWindow.show();
+    if (isDev) {
+      mainWindow.webContents.openDevTools(); // Open DevTools only in dev mode
+    }
   });
 
   mainWindow.on('closed', () => {
