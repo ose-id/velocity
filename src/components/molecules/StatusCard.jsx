@@ -4,7 +4,7 @@ import Button from '../atoms/Button';
 
 export default function StatusCard({ lastResult, onClearLogs }) {
   return (
-    <section className="rounded-xl border border-neutral-800 bg-neutral-950/60 flex flex-col">
+    <section className="rounded-xl border border-neutral-800 bg-neutral-900/60 flex flex-col">
       <div className="flex items-center justify-between px-3 py-2 border-b border-neutral-900">
         <div className="inline-flex items-center gap-2">
           <Icon icon="mdi:console" className="text-neutral-300 text-sm" />

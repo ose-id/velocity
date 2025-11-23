@@ -37,7 +37,7 @@ export default function ConfigSettings({
   ];
 
   return (
-    <section className="rounded-xl border border-neutral-800 bg-neutral-950/60 p-4 space-y-4">
+    <section className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 space-y-4">
       {/* Base Directory */}
       <div className="flex items-start gap-3">
         <div className="mt-1.5">

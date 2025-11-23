@@ -13,7 +13,7 @@ export default function ActivityLog({ logs }) {
   });
 
   return (
-    <section className="rounded-xl border border-neutral-800 bg-neutral-950/60 flex flex-col">
+    <section className="rounded-xl border border-neutral-800 bg-neutral-900/60 flex flex-col">
       <div className="flex items-center justify-between px-3 py-2 border-b border-neutral-900">
         <div className="inline-flex items-center gap-2">
           <Icon icon="mdi:text-long" className="text-neutral-300 text-sm" />
@@ -48,7 +48,7 @@ export default function ActivityLog({ logs }) {
         </div>
       </div>
       <div className="flex-1 px-3 py-2">
-        <div className="h-48 lg:h-full rounded-lg bg-neutral-950 border border-neutral-900 overflow-auto custom-scroll">
+        <div className="min-h-[250px] lg:h-full rounded-lg bg-neutral-950 border border-neutral-900 overflow-auto custom-scroll">
           {sortedLogs.length === 0 ? (
             <pre className="text-[11px] text-neutral-500 p-2 whitespace-pre-wrap font-mono">$ ready…</pre>
           ) : (

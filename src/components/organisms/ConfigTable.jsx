@@ -27,7 +27,7 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
   };
 
   return (
-    <section className="rounded-xl border border-neutral-800 bg-neutral-950/60 p-4">
+    <section className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Icon icon="mdi:gesture-tap-button" className="text-neutral-300 text-base" />
