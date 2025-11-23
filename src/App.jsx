@@ -775,20 +775,24 @@ function App() {
         </div>
       </div>
 
-      <CloneDialog
-        open={cloneDialog.open}
-        button={cloneDialog.button}
-        onClose={() => setCloneDialog({ open: false, button: null })}
-        onCloneGit={performCloneViaGit}
-        onDownloadZip={handleOpenRepoForZip}
-      />
+      {cloneDialog.open && (
+        <CloneDialog
+          open={cloneDialog.open}
+          button={cloneDialog.button}
+          onClose={() => setCloneDialog({ open: false, button: null })}
+          onCloneGit={performCloneViaGit}
+          onDownloadZip={handleOpenRepoForZip}
+        />
+      )}
 
-      <BatchCloneDialog
-        open={batchDialog.open}
-        count={batchDialog.count}
-        onClose={() => setBatchDialog({ open: false, count: 0 })}
-        onConfirm={processQueue}
-      />
+      {batchDialog.open && (
+        <BatchCloneDialog
+          open={batchDialog.open}
+          count={batchDialog.count}
+          onClose={() => setBatchDialog({ open: false, count: 0 })}
+          onConfirm={processQueue}
+        />
+      )}
 
       <OnboardingModal
         open={showOnboarding}
