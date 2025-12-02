@@ -50,7 +50,8 @@ function App() {
     x: 0,
     y: 0,
   });
-  const [shortcuts, setShortcuts] = useState({ switchPage: 'Tab' });
+  const [shortcuts, setShortcuts] = useState({ switchPage: 'Tab', search: '/' });
+  const [focusSearchTrigger, setFocusSearchTrigger] = useState(0);
 
   // Selection Mode State
   const [isSelectionMode, setIsSelectionMode] = useState(false);
@@ -231,6 +232,10 @@ function App() {
       } else if (pressed === shortcuts.toggleGrid) {
         e.preventDefault();
         handleToggleGrid();
+      } else if (pressed === shortcuts.search) {
+        e.preventDefault();
+        setActivePage('home');
+        setFocusSearchTrigger(Date.now());
       }
     };
 
@@ -751,6 +756,7 @@ function App() {
                   onToggleSelectionMode={handleToggleSelectionMode}
                   onToggleSelection={handleToggleSelection}
                   onBatchClone={handleBatchCloneClick}
+                  focusSearchTrigger={focusSearchTrigger}
                 />
               ) : activePage === 'activity' ? (
                 <ActivityPage lastResult={lastResult} logs={logs} onClearLogs={handleClearLogs} />

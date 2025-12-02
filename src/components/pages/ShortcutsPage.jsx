@@ -54,6 +54,7 @@ export default function ShortcutsPage({ shortcuts, onUpdateShortcut }) {
     { id: 'openShortcuts', label: 'Buka Shortcuts', description: 'Langsung ke halaman Shortcuts' },
     { id: 'openSettings', label: 'Buka Pengaturan', description: 'Langsung ke halaman Configuration' },
     { id: 'toggleGrid', label: 'Ubah Grid', description: 'Ganti tampilan antara 2 atau 3 kolom' },
+    { id: 'search', label: 'Cari Repo', description: 'Ke Home & fokus ke pencarian' },
   ];
 
   return (

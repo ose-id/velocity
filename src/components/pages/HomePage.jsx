@@ -18,10 +18,18 @@ export default function HomePage({
   selectedIds,
   onToggleSelectionMode,
   onToggleSelection,
-  onBatchClone
+  onBatchClone,
+  focusSearchTrigger
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeGroup, setActiveGroup] = useState('All');
+  const searchInputRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (focusSearchTrigger && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [focusSearchTrigger]);
 
   // Extract unique groups
   const groups = ['All', ...new Set(buttons.map((b) => b.group).filter(Boolean))];
@@ -70,6 +78,7 @@ export default function HomePage({
                     className="absolute left-2 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-neutral-300 transition-colors"
                   />
                   <input
+                    ref={searchInputRef}
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
