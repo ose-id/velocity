@@ -30,15 +30,15 @@ export default function BatchActionBar({ selectedCount, onCancel, onClone }) {
             </button>
             <button
               onClick={onClone}
-              disabled={selectedCount < 2}
+              disabled={selectedCount < 1}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-emerald-900/20 cursor-pointer ${
-                selectedCount < 2
+                selectedCount < 1
                   ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed opacity-50'
                   : 'bg-emerald-600 text-white hover:bg-emerald-500'
               }`}
             >
               <Icon icon="mdi:download-multiple" className="text-lg" />
-              Clone Selected
+              {selectedCount > 1 ? 'Multiple Clone Selected' : 'Clone Selected'}
             </button>
           </div>
         </motion.div>
