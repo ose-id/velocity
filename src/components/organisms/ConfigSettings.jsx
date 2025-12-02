@@ -28,6 +28,8 @@ export default function ConfigSettings({
     { id: 'cursor', label: 'Cursor', icon: 'mdi:alpha-c-circle-outline' },
     { id: 'windsurf', label: 'Windsurf', icon: 'mdi:alpha-w-circle-outline' },
     { id: 'antigravity', label: 'Antigravity', icon: 'mdi:alpha-a-circle-outline' },
+    { id: 'vim', label: 'Vim', icon: 'mdi:alpha-v-box-outline' },
+    { id: 'visualstudio', label: 'Visual Studio', icon: 'mdi:microsoft-visual-studio' },
   ];
 
   const fontSizeOptions = [
