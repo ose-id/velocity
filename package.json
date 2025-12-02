@@ -1,7 +1,7 @@
 {
   "name": "clone-tools",
   "version": "1.0.0",
-  "description": "Personal Git repo clone & launcher for VS Code / Cursor / Windsurf",
+  "description": "Personal Git repo clone & launcher",
   "author": "adydetra",
   "license": "MIT",
   "private": true,
