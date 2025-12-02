@@ -242,17 +242,17 @@ export default function OnboardingModal({ open, onFinish }) {
             variants={containerVariants}
           >
             <motion.div className="relative" variants={itemVariants}>
-              <div className="absolute -left-[37px] top-0 w-4 h-4 rounded-full bg-neutral-800 border-4 border-black" />
+              <div className="absolute -left-[43px] top-0 w-4 h-4 rounded-full bg-neutral-800 border-4 border-black" />
               <h4 className="text-white font-medium mb-1">Setup</h4>
               <p className="text-sm text-neutral-500">Configure your repository buttons.</p>
             </motion.div>
             <motion.div className="relative" variants={itemVariants}>
-              <div className="absolute -left-[37px] top-0 w-4 h-4 rounded-full bg-neutral-800 border-4 border-black" />
+              <div className="absolute -left-[43px] top-0 w-4 h-4 rounded-full bg-neutral-800 border-4 border-black" />
               <h4 className="text-white font-medium mb-1">Target</h4>
               <p className="text-sm text-neutral-500">Choose your destination folder.</p>
             </motion.div>
             <motion.div className="relative" variants={itemVariants}>
-              <div className="absolute -left-[37px] top-0 w-4 h-4 rounded-full bg-neutral-800 border-4 border-black" />
+              <div className="absolute -left-[43px] top-0 w-4 h-4 rounded-full bg-neutral-800 border-4 border-black" />
               <h4 className="text-white font-medium mb-1">Clone</h4>
               <p className="text-sm text-neutral-500">One click to clone and open.</p>
             </motion.div>
