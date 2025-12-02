@@ -667,12 +667,19 @@ function App() {
     }
   };
 
-  const fontSizeClass =
-    fontSize === 'medium' ? 'font-size-medium' : fontSize === 'large' ? 'font-size-large' : 'font-size-default';
+  // === FONT SIZE EFFECT ===
+  useEffect(() => {
+    const root = document.documentElement;
+    // Remove all font-size classes
+    root.classList.remove('font-size-default', 'font-size-medium', 'font-size-large');
+    // Add current class
+    const fontSizeClass = fontSize === 'medium' ? 'font-size-medium' : fontSize === 'large' ? 'font-size-large' : 'font-size-default';
+    root.classList.add(fontSizeClass);
+  }, [fontSize]);
 
   return (
     <div
-      className={`h-screen w-screen bg-neutral-950 text-neutral-50 flex flex-col ${fontSizeClass} relative`}
+      className={`h-screen w-screen bg-neutral-950 text-neutral-50 flex flex-col relative`}
       style={
         backgroundImage && bgSidebar
           ? {
