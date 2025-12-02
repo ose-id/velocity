@@ -73,6 +73,7 @@ const DEFAULT_CONFIG = {
     openShortcuts: '3',
     openSettings: '4',
     toggleGrid: '',
+    search: '',
   },
 };
 
