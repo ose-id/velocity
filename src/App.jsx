@@ -570,18 +570,19 @@ function App() {
       return;
     }
     const effectiveUrl = btn.useSsh ? toSshUrl(btn.repoUrl) : btn.repoUrl;
-    const { deleteGit } = options; // Extract deleteGit
+    const { deleteGit, customName } = options; // Extract deleteGit and customName
 
     setLoading(true);
     setActiveButtonId(btn.id);
     setLastResult(null);
 
     try {
-      appendLog(`[INFO] Cloning ${effectiveUrl}${btn.useSsh ? ' (SSH)' : ''} -> ${btn.folderName || '[auto-folder]'}…`);
+      const targetFolderName = customName || btn.folderName;
+      appendLog(`[INFO] Cloning ${effectiveUrl}${btn.useSsh ? ' (SSH)' : ''} -> ${targetFolderName || '[auto-folder]'}…`);
 
       const result = await window.electronAPI.cloneRepo({
         repoUrl: effectiveUrl,
-        folderName: btn.folderName,
+        folderName: targetFolderName,
         baseDir: baseDir || null,
         editor,
         options: { deleteGit } // Pass to backend
@@ -633,18 +634,19 @@ function App() {
       return;
     }
 
-    const { deleteGit } = options; // Extract deleteGit
+    const { deleteGit, customName } = options; // Extract deleteGit and customName
 
     setLoading(true);
     setActiveButtonId(btn.id);
     setLastResult(null);
 
     try {
+      const targetFolderName = customName || btn.folderName;
       appendLog(`[INFO] Downloading ZIP untuk ${btn.repoUrl} (method: ZIP)…`);
 
       const result = await window.electronAPI.downloadZipRepo({
         repoUrl: btn.repoUrl,
-        folderName: btn.folderName,
+        folderName: targetFolderName,
         baseDir: baseDir || null,
         editor,
         options: { deleteGit } // Pass to backend
