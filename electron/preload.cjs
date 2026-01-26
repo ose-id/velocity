@@ -16,4 +16,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   checkRequirements: () => ipcRenderer.invoke('check-requirements'),
   checkPathExists: (path) => ipcRenderer.invoke('check-path-exists', path),
   showMessageBox: (options) => ipcRenderer.invoke('show-message-box', options),
+  checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
+  downloadUpdate: () => ipcRenderer.invoke('download-update'),
+  quitAndInstall: () => ipcRenderer.invoke('quit-and-install'),
+  onUpdateStatus: (callback) => ipcRenderer.on('update-status', (_event, value) => callback(value)),
+  removeUpdateStatusListener: () => ipcRenderer.removeAllListeners('update-status'),
 });

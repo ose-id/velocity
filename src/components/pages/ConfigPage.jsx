@@ -27,6 +27,9 @@ export default function ConfigPage({
   setBgOpacity,
   bgBlur,
   setBgBlur,
+  updateStatus,
+  onCheckUpdate,
+  onQuitAndInstall,
 }) {
   return (
     <div className="flex-1 flex flex-col gap-4 p-4 overflow-auto custom-scroll">
@@ -79,6 +82,9 @@ export default function ConfigPage({
           setBgOpacity={setBgOpacity}
           bgBlur={bgBlur}
           setBgBlur={setBgBlur}
+          updateStatus={updateStatus}
+          onCheckUpdate={onCheckUpdate}
+          onQuitAndInstall={onQuitAndInstall}
         />
       </motion.div>
     </div>

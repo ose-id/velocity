@@ -1,7 +1,7 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
 
-export default function Button({ children, onClick, icon, className, disabled, type = 'button' }) {
+export default function Button({ children, onClick, icon, className, iconClassName, disabled, type = 'button' }) {
   return (
     <button
       type={type}
@@ -11,7 +11,7 @@ export default function Button({ children, onClick, icon, className, disabled, t
         disabled ? 'opacity-50 cursor-not-allowed' : ''
       } ${className}`}
     >
-      {icon && <Icon icon={icon} className="text-sm" />}
+      {icon && <Icon icon={icon} className={`text-sm ${iconClassName || ''}`} />}
       <span>{children}</span>
     </button>
   );

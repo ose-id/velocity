@@ -22,6 +22,9 @@ export default function ConfigSettings({
   setBgOpacity,
   bgBlur,
   setBgBlur,
+  updateStatus,
+  onCheckUpdate,
+  onQuitAndInstall,
 }) {
   const editorOptions = [
     { id: 'vscode', label: 'VS Code', icon: 'mdi:alpha-v-circle-outline' },
@@ -173,13 +176,11 @@ export default function ConfigSettings({
           <div className="mt-1.5">
             <Icon icon="mdi:palette-outline" className="text-neutral-300 text-lg" />
           </div>
-          <div className="flex-1 space-y-3">
-            <div>
-              <h2 className="text-sm font-semibold text-neutral-100">Appearance</h2>
-              <p className="text-[11px] text-neutral-500">
-                Customize the look and feel of your workspace.
-              </p>
-            </div>
+          <div className="flex-1 space-y-2">
+            <h2 className="text-sm font-semibold text-neutral-100">Appearance</h2>
+            <p className="text-[11px] text-neutral-500">
+              Customize the look and feel of your workspace.
+            </p>
 
             {/* Background Image Redesign */}
             <div className="w-full">
@@ -279,6 +280,69 @@ export default function ConfigSettings({
                     </span>
                   </div>
                 </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Application Update */}
+      <div className="border-t border-neutral-900 pt-4 mt-2">
+        <div className="flex items-start gap-3">
+          <div className="mt-1.5">
+            <Icon icon="mdi:update" className="text-neutral-300 text-lg" />
+          </div>
+          <div className="flex-1 space-y-2">
+            <h2 className="text-sm font-semibold text-neutral-100">Application Update</h2>
+            <p className="text-[11px] text-neutral-500">
+              Periksa pembaruan aplikasi.
+            </p>
+
+            <div className="flex items-center gap-3 mt-2">
+              {updateStatus?.status === 'downloaded' ? (
+                <Button
+                  onClick={onQuitAndInstall}
+                  icon="mdi:restart"
+                  className="bg-emerald-600 text-white hover:bg-emerald-500 border-none shadow-lg animate-pulse"
+                >
+                  Restart & Install Update
+                </Button>
+              ) : (
+                <Button
+                  onClick={onCheckUpdate}
+                  disabled={updateStatus?.status === 'checking' || updateStatus?.status === 'downloading' || updateStatus?.status === 'progress'}
+                  icon={updateStatus?.status === 'checking' ? 'mdi:loading' : 'mdi:refresh'}
+                  iconClassName={updateStatus?.status === 'checking' ? 'animate-spin' : ''}
+                  className={`min-w-[180px] justify-center transition-all duration-300 border-none shadow-md
+                    ${updateStatus?.status === 'idle' ? 'bg-neutral-200 text-neutral-900 hover:bg-neutral-100' : ''}
+                    ${updateStatus?.status === 'checking' ? 'bg-neutral-700 text-neutral-300 opacity-80 cursor-wait' : ''}
+                    ${updateStatus?.status === 'available' ? 'bg-emerald-600 text-white hover:bg-emerald-500' : ''}
+                    ${updateStatus?.status === 'progress' ? 'bg-blue-600 text-white' : ''}
+                    ${updateStatus?.status === 'not-available' ? 'bg-blue-500 text-white hover:bg-blue-400' : ''}
+                    ${updateStatus?.status === 'error' ? 'bg-red-500 text-white hover:bg-red-400' : ''}
+                    ${updateStatus?.status === 'dev-mode' ? 'bg-amber-500 text-white hover:bg-amber-400' : ''}
+                  `}
+                >
+                  {updateStatus?.status === 'idle' && 'Check for Update'}
+                  {updateStatus?.status === 'checking' && (
+                    <span className="flex items-center">
+                      Checking
+                      <span className="animate-pulse">.</span>
+                      <span className="animate-pulse delay-75">.</span>
+                      <span className="animate-pulse delay-150">.</span>
+                    </span>
+                  )}
+                  {updateStatus?.status === 'available' && 'Update Available'}
+                  {updateStatus?.status === 'progress' && `Downloading ${Math.round(updateStatus.progress?.percent || 0)}%`}
+                  {updateStatus?.status === 'not-available' && 'Up to date'}
+                  {updateStatus?.status === 'error' && 'Retry Check'}
+                  {updateStatus?.status === 'dev-mode' && 'Dev Mode'}
+                </Button>
+              )}
+
+              {/* Error Message (Only show if error) */}
+              {updateStatus?.status === 'error' && (
+                <span className="text-xs text-red-500">{updateStatus.error}</span>
               )}
             </div>
           </div>

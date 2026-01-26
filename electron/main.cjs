@@ -629,6 +629,63 @@ ipcMain.handle('show-message-box', async (_event, options) => {
   return dialog.showMessageBox(mainWindow, options);
 });
 
+// === AUTO UPDATE ===
+const { autoUpdater } = require('electron-updater');
+
+// Configure autoUpdater
+autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = true;
+
+// IPC Handlers for Auto Update
+ipcMain.handle('check-for-updates', async () => {
+  // In dev mode, this requires dev-app-update.yml to work
+  try {
+    const result = await autoUpdater.checkForUpdates();
+    return { status: 'checked', updateInfo: result?.updateInfo };
+  } catch (err) {
+    console.error('[AutoUpdate] Check failed:', err);
+    return { status: 'error', error: err.message };
+  }
+});
+
+ipcMain.handle('download-update', async () => {
+  try {
+    await autoUpdater.downloadUpdate();
+    return { status: 'downloading' };
+  } catch (err) {
+    return { status: 'error', error: err.message };
+  }
+});
+
+ipcMain.handle('quit-and-install', () => {
+  autoUpdater.quitAndInstall();
+});
+
+// Auto Update Events
+autoUpdater.on('checking-for-update', () => {
+  if (mainWindow) mainWindow.webContents.send('update-status', { status: 'checking' });
+});
+
+autoUpdater.on('update-available', (info) => {
+  if (mainWindow) mainWindow.webContents.send('update-status', { status: 'available', info });
+});
+
+autoUpdater.on('update-not-available', (info) => {
+  if (mainWindow) mainWindow.webContents.send('update-status', { status: 'not-available', info });
+});
+
+autoUpdater.on('error', (err) => {
+  if (mainWindow) mainWindow.webContents.send('update-status', { status: 'error', error: err.message });
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+  if (mainWindow) mainWindow.webContents.send('update-status', { status: 'progress', progress: progressObj });
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+  if (mainWindow) mainWindow.webContents.send('update-status', { status: 'downloaded', info });
+});
+
 // === APP LIFECYCLE ===
 app.whenReady().then(() => {
   // Force disable auto-start (cleanup legacy setting)
@@ -639,6 +696,11 @@ app.whenReady().then(() => {
 
   const cfg = loadConfig();
   createWindow();
+  
+  // Optional: Check for updates on startup
+  if (!isDev) {
+    autoUpdater.checkForUpdates().catch(err => console.error('Failed to check for updates on startup:', err));
+  }
 });
 
 app.on('window-all-closed', () => {

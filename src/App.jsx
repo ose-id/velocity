@@ -60,6 +60,7 @@ function App() {
     open: false,
     count: 0
   });
+  const [updateStatus, setUpdateStatus] = useState({ status: 'idle' });
 
   // INIT
   useEffect(() => {
@@ -674,6 +675,62 @@ function App() {
     }
   };
 
+  // === AUTO UPDATE HANDLERS ===
+  useEffect(() => {
+    if (!window.electronAPI || !window.electronAPI.onUpdateStatus) return;
+
+    const removeListener = window.electronAPI.onUpdateStatus((statusObj) => {
+      console.log('[App] Update status:', statusObj);
+      setUpdateStatus(statusObj);
+      if (statusObj.status === 'available') {
+        // Auto download when available
+        window.electronAPI.downloadUpdate();
+      }
+    });
+
+    return () => {
+      if (window.electronAPI.removeUpdateStatusListener) {
+        window.electronAPI.removeUpdateStatusListener();
+      }
+    };
+  }, []);
+
+  const handleCheckUpdate = async () => {
+    if (!window.electronAPI || !window.electronAPI.checkForUpdates) return;
+    setUpdateStatus({ status: 'checking' });
+
+    // Race between check and timeout
+    const timeoutPromise = new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ status: 'timeout' });
+      }, 30000); // 30 seconds
+    });
+
+    const checkPromise = window.electronAPI.checkForUpdates();
+
+    const result = await Promise.race([checkPromise, timeoutPromise]);
+
+    if (result.status === 'timeout') {
+      setUpdateStatus({ status: 'error', error: 'Connection timed out (30s)' });
+    } else if (result.status === 'dev-mode') {
+      setUpdateStatus({ status: 'dev-mode' });
+    } else if (result.status === 'error') {
+      setUpdateStatus({ status: 'error', error: result.error });
+    } else if (result.status === 'checked' && !result.updateInfo) {
+      // No update available
+      setUpdateStatus({ status: 'not-available' });
+      // Revert to idle after 3 seconds
+      setTimeout(() => {
+        setUpdateStatus((prev) => (prev.status === 'not-available' ? { status: 'idle' } : prev));
+      }, 3000);
+    }
+  };
+
+  const handleQuitAndInstall = () => {
+    if (!window.electronAPI || !window.electronAPI.quitAndInstall) return;
+    window.electronAPI.quitAndInstall();
+  };
+
   // === FONT SIZE EFFECT ===
   useEffect(() => {
     const root = document.documentElement;
@@ -789,6 +846,9 @@ function App() {
                   setBgOpacity={setBgOpacity}
                   bgBlur={bgBlur}
                   setBgBlur={setBgBlur}
+                  updateStatus={updateStatus}
+                  onCheckUpdate={handleCheckUpdate}
+                  onQuitAndInstall={handleQuitAndInstall}
                 />
               )}
             </div>
