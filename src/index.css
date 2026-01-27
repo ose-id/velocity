@@ -85,3 +85,48 @@
 .animate-move-x {
   animation: move-x 2s ease-in-out infinite;
 }
+
+/* User-requested Minimalist Scrollbar */
+@layer base {
+  :root {
+    scrollbar-width: thin;
+    scrollbar-color: #d4d4d4 transparent;
+  }
+  
+  .dark {
+    scrollbar-color: #333333 #0a0a0a;
+  }
+
+  /* Webkit Scrollbar (Chrome, Edge, Safari) */
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #d4d4d4;
+    border-radius: 4px;
+    border: 2px solid transparent; /* Creates padding effect */
+    background-clip: content-box;
+  }
+
+  *::-webkit-scrollbar-thumb:active {
+    background-color: #a3a3a3;
+  }
+
+  .dark *::-webkit-scrollbar-thumb {
+    background-color: #333333;
+  }
+
+  .dark *::-webkit-scrollbar-thumb:active {
+    background-color: #555555;
+  }
+
+  .dark *::-webkit-scrollbar-track {
+     background-color: transparent;
+  }
+}
