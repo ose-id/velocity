@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react';
 
 export default function CloneDialog({ open, button, onClose, onCloneGit, onDownloadZip }) {
   const [deleteGit, setDeleteGit] = React.useState(false);
+  const [useSsh, setUseSsh] = React.useState(false); // New State
   const [useCustomName, setUseCustomName] = React.useState(false);
   const [customName, setCustomName] = React.useState('');
 
@@ -23,7 +24,7 @@ export default function CloneDialog({ open, button, onClose, onCloneGit, onDownl
         <div className="flex flex-col gap-2 mb-3">
           <button
             type="button"
-            onClick={() => onCloneGit(button, { deleteGit, customName: useCustomName ? customName : undefined })}
+            onClick={() => onCloneGit(button, { deleteGit, useSsh, customName: useCustomName ? customName : undefined })}
             className="inline-flex items-center justify-between rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-xs text-neutral-100 hover:bg-neutral-800 cursor-pointer"
           >
             <span className="inline-flex items-center gap-2">
@@ -35,19 +36,43 @@ export default function CloneDialog({ open, button, onClose, onCloneGit, onDownl
 
           <button
             type="button"
+            disabled={useSsh}
             onClick={() => onDownloadZip({ deleteGit, customName: useCustomName ? customName : undefined })}
-            className="inline-flex items-center justify-between rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-xs text-neutral-100 hover:bg-neutral-800 cursor-pointer"
+            className={`inline-flex items-center justify-between rounded-lg border px-3 py-2 text-xs transition-colors ${
+              useSsh 
+              ? 'border-neutral-800 bg-neutral-900/50 text-neutral-500 cursor-not-allowed hidden' 
+              : 'border-neutral-700 bg-neutral-900 text-neutral-100 hover:bg-neutral-800 cursor-pointer'
+            }`}
           >
             <span className="inline-flex items-center gap-2">
-              <Icon icon="mdi:zip-box-outline" className="text-neutral-200 text-sm" />
+              <Icon icon="mdi:zip-box-outline" className={useSsh ? "text-neutral-600" : "text-neutral-200 text-sm"} />
               <span>Unduh ZIP</span>
             </span>
-            <span className="text-[10px] text-neutral-500">Selalu pakai HTTPS</span>
+            <span className={useSsh ? "text-[10px] text-neutral-700" : "text-[10px] text-neutral-500"}>
+               {useSsh ? 'Not available with SSH' : 'Selalu pakai HTTPS'}
+            </span>
           </button>
         </div>
 
-        {/* Delete .git Checkbox */}
+        {/* Options Checkboxes */}
         <div className="mb-4 px-1 flex flex-col gap-2">
+           {/* SSH Checkbox */}
+           <label className="flex items-center gap-2 cursor-pointer group">
+            <div className="relative flex items-center">
+              <input
+                type="checkbox"
+                className="peer h-4 w-4 appearance-none rounded border border-neutral-700 bg-neutral-900 checked:border-emerald-500 checked:bg-emerald-500 transition-all"
+                checked={useSsh}
+                onChange={(e) => setUseSsh(e.target.checked)}
+              />
+              <Icon icon="mdi:check" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
+            </div>
+            <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors">
+              Use <span className="font-mono text-emerald-500/80">SSH</span> connection
+            </span>
+          </label>
+
+          {/* Delete Git Checkbox */}
           <label className="flex items-center gap-2 cursor-pointer group">
             <div className="relative flex items-center">
               <input

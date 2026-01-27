@@ -5,6 +5,7 @@ import NavItem from '../molecules/NavItem';
 export default function Sidebar({ activePage, setActivePage, transparent }) {
   const items = [
     { id: 'home', label: 'Home', icon: 'mdi:home-outline' },
+    { id: 'github', label: 'GitHub', icon: 'mdi:github' },
     { id: 'activity', label: 'Activity', icon: 'mdi:clock-outline' },
     { id: 'shortcuts', label: 'Shortcuts', icon: 'mdi:keyboard-outline' },
     { id: 'config', label: 'Configuration', icon: 'mdi:cog-outline' },

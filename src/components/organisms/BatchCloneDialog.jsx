@@ -6,6 +6,7 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
   const [mode, setMode] = useState('separate'); // 'separate' | 'group'
   const [groupName, setGroupName] = useState('');
   const [deleteGit, setDeleteGit] = useState(false);
+  const [useSsh, setUseSsh] = useState(false); // New state
 
   if (!open) return null;
 
@@ -114,8 +115,23 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
               </label>
             </div>
 
-            {/* Delete .git Checkbox */}
-            <div className="mt-4 px-1">
+            {/* Options Checkboxes */}
+            <div className="mt-4 px-1 flex flex-col gap-2">
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <div className="relative flex items-center">
+                  <input
+                    type="checkbox"
+                    className="peer h-4 w-4 appearance-none rounded border border-neutral-700 bg-neutral-900 checked:border-emerald-500 checked:bg-emerald-500 transition-all"
+                    checked={useSsh}
+                    onChange={(e) => setUseSsh(e.target.checked)}
+                  />
+                  <Icon icon="mdi:check" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
+                </div>
+                <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors">
+                  Use <span className="font-mono text-emerald-500/80">SSH</span> connection (for all)
+                </span>
+              </label>
+
               <label className="flex items-center gap-2 cursor-pointer group">
                 <div className="relative flex items-center">
                   <input
@@ -142,7 +158,7 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
               Cancel
             </button>
             <button
-              onClick={() => handleConfirm({ deleteGit })}
+              onClick={() => handleConfirm({ deleteGit, useSsh })}
               disabled={mode === 'group' && !groupName.trim()}
               className="px-4 py-2 rounded-lg text-sm font-medium bg-neutral-100 text-neutral-900 hover:bg-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg shadow-neutral-900/20 cursor-pointer"
             >

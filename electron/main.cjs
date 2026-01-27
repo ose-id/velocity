@@ -449,7 +449,9 @@ ipcMain.handle('get-config', () => {
   };
 });
 
-ipcMain.handle('save-config', (_event, newConfig) => {
+ipcMain.handle('save-config', (_event, partialConfig) => {
+  const currentConfig = loadConfig();
+  const newConfig = { ...currentConfig, ...partialConfig };
   const saved = saveConfig(newConfig);
   return {
     ...saved,

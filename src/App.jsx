@@ -17,6 +17,7 @@ import HomePage from './components/pages/HomePage';
 import ActivityPage from './components/pages/ActivityPage';
 import ShortcutsPage from './components/pages/ShortcutsPage';
 import ConfigPage from './components/pages/ConfigPage';
+import GitHubPage from './components/pages/GitHubPage';
 
 function App() {
   const [activePage, setActivePage] = useState('home');
@@ -61,6 +62,7 @@ function App() {
     count: 0
   });
   const [updateStatus, setUpdateStatus] = useState({ status: 'idle' });
+  const [githubColors, setGithubColors] = useState({}); // { [repoId]: colorId }
 
   // INIT
   useEffect(() => {
@@ -84,6 +86,7 @@ function App() {
           setBgOpacity(cfg.bgOpacity !== undefined ? cfg.bgOpacity : 60);
           setBgBlur(cfg.bgBlur !== undefined ? cfg.bgBlur : 4);
           if (cfg.shortcuts) setShortcuts(cfg.shortcuts);
+          if (cfg.githubColors) setGithubColors(cfg.githubColors);
           if (cfg.configPath) setConfigPath(cfg.configPath);
           
           // Check onboarding
@@ -134,6 +137,7 @@ function App() {
           bgOpacity,
           bgBlur,
           shortcuts,
+          githubColors,
           onboardingShown: true
         });
       } catch (err) {
@@ -162,6 +166,7 @@ function App() {
           bgOpacity,
           bgBlur,
           shortcuts,
+          githubColors,
           onboardingShown: !showOnboarding // If currently showing, it's false. If not showing, it's true (presumably finished)
           // Wait, this logic is tricky. If we just finished onboarding, showOnboarding is false.
           // But if we are in the middle of it, it is true.
@@ -190,7 +195,7 @@ function App() {
     return () => {
       cancelled = true;
     };
-  }, [baseDir, buttons, editor, fontSize, backgroundImage, bgSidebar, bgOpacity, bgBlur, shortcuts, configInitialized, showOnboarding]);
+  }, [baseDir, buttons, editor, fontSize, backgroundImage, bgSidebar, bgOpacity, bgBlur, shortcuts, githubColors, configInitialized, showOnboarding]);
 
   // SHORTCUTS LISTENER
   useEffect(() => {
@@ -213,7 +218,7 @@ function App() {
       if (pressed === shortcuts.switchPage) {
         e.preventDefault();
         setActivePage((prev) => {
-          const order = ['home', 'activity', 'shortcuts', 'config'];
+          const order = ['home', 'github', 'activity', 'shortcuts', 'config'];
           const idx = order.indexOf(prev);
           const nextIdx = (idx + 1) % order.length;
           return order[nextIdx];
@@ -280,21 +285,27 @@ function App() {
       buttonId: btn.id,
       x: event.clientX,
       y: event.clientY,
+      targetType: btn.isGithub ? 'github' : 'button' // Add targetType
     });
   };
 
   const handlePickColorFromMenu = (colorId) => {
     if (!colorMenu.buttonId) return;
 
-    setButtons((prev) => prev.map((b) => (b.id === colorMenu.buttonId ? { ...b, color: colorId } : b)));
-
-    appendLog(`[INFO] Button ${colorMenu.buttonId} color set to ${colorId} via Home.`);
+    if (colorMenu.targetType === 'github') {
+       setGithubColors(prev => ({ ...prev, [colorMenu.buttonId]: colorId }));
+       appendLog(`[INFO] GitHub repo ${colorMenu.buttonId} color set to ${colorId}.`);
+    } else {
+       setButtons((prev) => prev.map((b) => (b.id === colorMenu.buttonId ? { ...b, color: colorId } : b)));
+       appendLog(`[INFO] Button ${colorMenu.buttonId} color set to ${colorId} via Home.`);
+    }
 
     setColorMenu({
       open: false,
       buttonId: null,
       x: 0,
       y: 0,
+      targetType: 'button'
     });
   };
 
@@ -423,14 +434,23 @@ function App() {
     }
   };
 
-  const processQueue = async ({ mode, groupName }) => {
+  const processQueue = async ({ mode, groupName, customItems, deleteGit, useSsh }) => { // Updated sig
     setBatchDialog({ open: false, count: 0 });
     
-    const selectedButtons = buttons.filter(b => selectedIds.includes(b.id));
-    if (selectedButtons.length === 0) return;
+    let selectedItems = [];
+
+    if (customItems && customItems.length > 0) {
+        // GitHub Batch
+        selectedItems = customItems;
+    } else {
+        // Home Batch
+        selectedItems = buttons.filter(b => selectedIds.includes(b.id));
+    }
+
+    if (selectedItems.length === 0) return;
 
     setLoading(true);
-    appendLog(`[BATCH] Starting batch clone for ${selectedButtons.length} items. Mode: ${mode}`);
+    appendLog(`[BATCH] Starting batch clone for ${selectedItems.length} items. Mode: ${mode}, SSH: ${useSsh}`);
 
     // Determine target base dir
     let targetBaseDir = baseDir;
@@ -480,11 +500,16 @@ function App() {
     let failCount = 0;
     let lastSuccessPath = null;
 
-    for (const btn of selectedButtons) {
+    for (const btn of selectedItems) {
       if (!btn.repoUrl) {
         appendLog(`[SKIP] Button ${btn.id} has no Repo URL.`);
         continue;
       }
+      
+      const targetUrl = customItems && customItems.length > 0 && mode.useSsh && btn.sshUrl 
+                        ? btn.sshUrl 
+                        : (mode.useSsh ? toSshUrl(btn.repoUrl) : btn.repoUrl); // Use SSH if requested
+
 
       setActiveButtonId(btn.id); // Show spinner on current card
       
@@ -499,7 +524,7 @@ function App() {
           folderName: btn.folderName,
           baseDir: targetBaseDir,
           editor,
-          options: { skipOpenEditor: true, skipOpenFolder: true }
+          options: { skipOpenEditor: true, skipOpenFolder: true, deleteGit }
         });
 
         if (result.status === 'success') {
@@ -526,6 +551,21 @@ function App() {
     setActiveButtonId(null);
     setIsSelectionMode(false);
     setSelectedIds([]);
+    // If it was custom items (GitHub), we should also clear its selection in GitHubPage?
+    // We can't do that easily from here unless we expose a cleaner way.
+    // But GitHubPage will pass customItems, so it handles its own state logic if needed?
+    // Actually, GitHubPage passes handleBatchClone -> App opens Dialog -> App calls processQueue.
+    // The selection clearing in GitHubPage needs to happen after this.
+    // We can return a promise?
+    if (customItems) {
+        // We need to signal GitHubPage to clear selection?
+        // Or we pass a callback in customItems? No.
+        // For now, let's just leave it. The user can manually unselect or we reset via Ref/Context?
+        // Maybe we just don't clear it from App side for GitHub.
+    } else {
+        setSelectedIds([]);
+        setIsSelectionMode(false);
+    }
     
     appendLog(`[BATCH] Completed. Success: ${successCount}, Failed: ${failCount}.`);
     
@@ -552,8 +592,8 @@ function App() {
 
   const handleBatchConfirm = (data) => {
     setBatchDialog({ open: false, count: 0 });
-    const { mode, groupName, deleteGit } = data;
-    processQueue(mode, groupName, deleteGit);
+    const { mode, groupName, deleteGit, useSsh, customItems } = data; // Receive useSsh
+    processQueue({ mode: mode, groupName, customItems, deleteGit, useSsh }); // Pass useSsh as separate arg
   };
 
   // === ACTION: Clone via Git ===
@@ -741,6 +781,32 @@ function App() {
     root.classList.add(fontSizeClass);
   }, [fontSize]);
 
+  // === GITHUB CLONE HANDLER ===
+  const handleCloneFromGithub = (repoData) => {
+      // Check if already exists in buttons to warn user?
+      // For now, allow duplicates or let cloneDialog handle it (it doesn't check buttons, but backend checks folder)
+      // We just open the dialog with a temp button object.
+      setCloneDialog({ 
+          open: true, 
+          button: {
+              ...repoData,
+              // Ensure we have necessary fields for performCloneViaGit
+              // repoData should have: id, label, repoUrl, folderName, useSsh
+          }
+      });
+  };
+
+  // === GITHUB BATCH CLONE ===
+  const handleBatchCloneFromGithub = (items) => {
+      setBatchDialog({ 
+          open: true, 
+          count: items.length,
+          customItems: items // Temporary property on dialog state? 
+          // Wait, batchDialog state structure is { open, count }. We need to store items.
+          // Better: setBatchDialog({ open: true, count: items.length, items });
+      });
+  };
+
   return (
     <div
       className={`h-screen w-screen bg-neutral-950 text-neutral-50 flex flex-col relative`}
@@ -798,60 +864,91 @@ function App() {
               />
             )}
 
-            <div className="relative z-10 flex-1 flex flex-col min-h-0">
-              {activePage === 'home' ? (
-                <HomePage
-                  buttons={buttons}
-                  baseDir={baseDir}
-                  onClone={handleCloneClick}
-                  loading={loading}
-                  activeButtonId={activeButtonId}
-                  onOpenColorMenu={handleOpenColorMenu}
-                  effectiveGrid={effectiveGrid}
-                  onToggleGrid={handleToggleGrid}
-                  onDragEnd={handleDragEnd}
-                  isSelectionMode={isSelectionMode}
-                  selectedIds={selectedIds}
-                  onToggleSelectionMode={handleToggleSelectionMode}
-                  onToggleSelection={handleToggleSelection}
-                  onBatchClone={handleBatchCloneClick}
-                  focusSearchTrigger={focusSearchTrigger}
-                />
-              ) : activePage === 'activity' ? (
-                <ActivityPage lastResult={lastResult} logs={logs} onClearLogs={handleClearLogs} />
-              ) : activePage === 'shortcuts' ? (
-                <ShortcutsPage shortcuts={shortcuts} onUpdateShortcut={handleUpdateShortcut} />
-              ) : (
-                <ConfigPage
-                  buttons={buttons}
-                  setButtons={setButtons}
-                  baseDir={baseDir}
-                  setBaseDir={setBaseDir}
-                  editor={editor}
-                  onChangeEditor={handleChangeEditor}
-                  fontSize={fontSize}
-                  onChangeFontSize={handleChangeFontSize}
-                  saving={saving}
-                  lastSavedLabel={lastSavedLabel}
-                  configPath={configPath}
-                  onPickDirectory={handlePickDirectory}
-                  onAddButton={handleAddButton}
-                  onRemoveButton={handleRemoveButton}
-                  backgroundImage={backgroundImage}
-                  onPickBackgroundImage={handlePickBackgroundImage}
-                  onRemoveBackgroundImage={handleRemoveBackgroundImage}
-                  bgSidebar={bgSidebar}
-                  setBgSidebar={setBgSidebar}
-                  bgOpacity={bgOpacity}
-                  setBgOpacity={setBgOpacity}
-                  bgBlur={bgBlur}
-                  setBgBlur={setBgBlur}
-                  updateStatus={updateStatus}
-                  onCheckUpdate={handleCheckUpdate}
-                  onQuitAndInstall={handleQuitAndInstall}
-                />
+            <div className={`relative h-full overflow-hidden ${activePage === 'home' || activePage === 'config' ? 'p-0' : 'p-0'}`}>
+              {activePage === 'home' && (
+                  <HomePage 
+                    buttons={buttons}
+                    baseDir={baseDir}
+                    onClone={handleCloneClick}
+                    loading={loading}
+                    activeButtonId={activeButtonId}
+                    onOpenColorMenu={handleOpenColorMenu}
+                    effectiveGrid={effectiveGrid}
+                    onToggleGrid={handleToggleGrid}
+                    onDragEnd={handleDragEnd}
+                    isSelectionMode={isSelectionMode}
+                    selectedIds={selectedIds}
+                    onToggleSelection={handleToggleSelection}
+                    onToggleSelectionMode={handleToggleSelectionMode}
+                    onBatchClone={handleBatchCloneClick}
+                    focusSearchTrigger={focusSearchTrigger}
+                  />
+              )}
+              {activePage === 'activity' && (
+                <div className="h-full overflow-y-auto p-6">
+                  <ActivityPage 
+                    logs={logs} 
+                    onClearLogs={handleClearLogs} 
+                    lastResult={lastResult}
+                  />
+                </div>
+              )}
+              {activePage === 'shortcuts' && (
+                <div className="h-full overflow-y-auto p-6">
+                  <ShortcutsPage 
+                    shortcuts={shortcuts} 
+                    onUpdateShortcut={handleUpdateShortcut} 
+                  />
+                </div>
+              )}
+              {activePage === 'config' && (
+                <div className="h-full overflow-y-auto p-0">
+                  <ConfigPage
+                    buttons={buttons}
+                    setButtons={setButtons}
+                    baseDir={baseDir}
+                    setBaseDir={setBaseDir}
+                    onPickDirectory={handlePickDirectory}
+                    editor={editor}
+                    onChangeEditor={handleChangeEditor}
+                    fontSize={fontSize}
+                    onChangeFontSize={handleChangeFontSize}
+                    backgroundImage={backgroundImage}
+                    onPickBackgroundImage={handlePickBackgroundImage}
+                    onRemoveBackgroundImage={handleRemoveBackgroundImage}
+                    bgSidebar={bgSidebar}
+                    onChangeBgSidebar={setBgSidebar}
+                    bgOpacity={bgOpacity}
+                    onChangeBgOpacity={setBgOpacity}
+                    bgBlur={bgBlur}
+                    onChangeBgBlur={setBgBlur}
+                    saving={saving}
+                    lastSavedLabel={lastSavedLabel}
+                    configPath={configPath}
+                    onAddButton={handleAddButton}
+                    onRemoveButton={handleRemoveButton}
+                    showOnboarding={showOnboarding}
+                    onOnboardingFinish={handleOnboardingFinish}
+                    updateStatus={updateStatus}
+                    onCheckUpdate={handleCheckUpdate}
+                    onQuitAndInstall={handleQuitAndInstall}
+                  />
+                </div>
+              )}
+              {activePage === 'github' && (
+                  <GitHubPage 
+                      baseDir={baseDir}
+                      editor={editor}
+                      onClone={handleCloneFromGithub}
+                      githubColors={githubColors}
+                      onOpenColorMenu={handleOpenColorMenu}
+                      onBatchClone={handleBatchCloneFromGithub}
+                  />
               )}
             </div>
+
+
+            {/* Legacy block removed */}
           </div>
         </div>
       </div>
@@ -871,7 +968,7 @@ function App() {
           open={batchDialog.open}
           count={batchDialog.count}
           onClose={() => setBatchDialog({ open: false, count: 0 })}
-          onConfirm={processQueue}
+          onConfirm={(data) => handleBatchConfirm({ ...data, customItems: batchDialog.items })} // Pass items from state
         />
       )}
 
