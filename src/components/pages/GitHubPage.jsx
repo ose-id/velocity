@@ -276,13 +276,13 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                 </select>
                 <button 
                     onClick={fetchRepos} 
-                    className="p-2 hover:bg-neutral-800 rounded-lg text-neutral-400 hover:text-white transition-colors"
+                    className="p-2 hover:bg-neutral-800 rounded-lg text-neutral-400 hover:text-white transition-colors cursor-pointer"
                 >
                     <Icon icon="mdi:refresh" className={loading ? "animate-spin" : ""} />
                 </button>
                 <button 
                     onClick={handleLogout}
-                    className="text-xs text-red-400 hover:text-red-300 hover:underline px-2"
+                    className="text-xs text-red-400 hover:text-red-300 hover:underline px-2 cursor-pointer"
                 >
                     Sign Out
                 </button>
