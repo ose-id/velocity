@@ -3,9 +3,12 @@ import { Icon } from '@iconify/react';
 import NavItem from '../molecules/NavItem';
 
 export default function Sidebar({ activePage, setActivePage, transparent }) {
-  const items = [
+  const mainItems = [
     { id: 'home', label: 'Home', icon: 'mdi:home-outline' },
     { id: 'github', label: 'GitHub', icon: 'mdi:github' },
+  ];
+
+  const otherItems = [
     { id: 'activity', label: 'Activity', icon: 'mdi:clock-outline' },
     { id: 'shortcuts', label: 'Shortcuts', icon: 'mdi:keyboard-outline' },
     { id: 'config', label: 'Configuration', icon: 'mdi:cog-outline' },
@@ -32,7 +35,22 @@ export default function Sidebar({ activePage, setActivePage, transparent }) {
       </div>
 
       <nav className="flex-1 px-2 py-3 space-y-1">
-        {items.map((item) => (
+        {mainItems.map((item) => (
+          <NavItem
+            key={item.id}
+            id={item.id}
+            label={item.label}
+            icon={item.icon}
+            isActive={activePage === item.id}
+            onClick={setActivePage}
+          />
+        ))}
+
+        <div className="py-2">
+            <div className="h-px bg-neutral-800/50 mx-2" />
+        </div>
+
+        {otherItems.map((item) => (
           <NavItem
             key={item.id}
             id={item.id}
