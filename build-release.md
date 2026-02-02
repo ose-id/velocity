@@ -1,14 +1,14 @@
 # Build & Release Guide
 
-Panduan langkah demi langkah untuk melakukan build aplikasi dan merilis update baru menggunakan GitHub Releases.
+Step-by-step guide to build the application and release a new update using GitHub Releases.
 
-## 1. Persiapan Versi
+## 1. Version Preparation
 
-Sebelum melakukan build, pastikan Anda menaikkan versi aplikasi.
+Before building, make sure to bump the application version.
 
-1.  Buka file `package.json`.
-2.  Cari bagian `"version"`.
-3.  Naikkan angkanya (contoh: dari `"1.0.0"` menjadi `"1.0.1"`).
+1.  Open `package.json`.
+2.  Find the `"version"` field.
+3.  Increment the numbers (e.g., from `"1.0.0"` to `"1.0.1"`).
 
 ```json
 {
@@ -18,51 +18,51 @@ Sebelum melakukan build, pastikan Anda menaikkan versi aplikasi.
 }
 ```
 
-## 2. Build Aplikasi
+## 2. Build Application
 
-Jalankan perintah build untuk membuat file installer (`.exe`) dan manifest update (`latest.yml`).
+Run the build command to create the installer (`.exe`) and update manifest (`latest.yml`).
 
-1.  Buka terminal di root project.
-2.  Jalankan perintah:
+1.  Open a terminal in the project root.
+2.  Run the command:
 
     ```bash
     bun run build:win
     ```
 
-3.  Tunggu hingga proses selesai.
+3.  Wait for the process to finish.
 
-## 3. Lokasi File Release
+## 3. Release File Location
 
-Setelah build selesai, file hasil build akan berada di folder `release`.
+After the build is complete, the build artifacts will be located in the `release` folder.
 
-File yang **WAJIB** Anda ambil:
+Files you **MUST** retrieve:
 
-1.  `Clone Tools Setup X.X.X.exe` (Installer aplikasi)
-2.  `latest.yml` (Manifest untuk auto-update)
+1.  `Clone Tools Setup X.X.X.exe` (Application Installer)
+2.  `latest.yml` (Auto-update Manifest)
 
-> **PENTING:** Jangan rename file-file ini. Upload apa adanya.
+> **IMPORTANT:** Do not rename these files. Upload them as they are.
 
-## 4. Buat Release di GitHub
+## 4. Create Release on GitHub
 
-Sekarang upload file tersebut ke GitHub agar user bisa download update.
+Now upload these files to GitHub so users can download the update.
 
-1.  Buka repository GitHub Anda: `https://github.com/adydetra/clone-tools`
-2.  Klik menu **Releases** di sidebar kanan.
-3.  Klik tombol **Draft a new release**.
-4.  Isi form release:
-    - **Choose a tag**: Ketik versi baru, diawali dengan `v`. Contoh: `v1.0.1`. Klik "Create new tag".
-    - **Release title**: Isi sama dengan tag, misal `v1.0.1`.
-    - **Description**: Tulis catatan perubahan (changelog) jika perlu.
+1.  Open your GitHub repository: `https://github.com/adydetra/clone-tools`
+2.  Click the **Releases** menu in the right sidebar.
+3.  Click the **Draft a new release** button.
+4.  Fill in the release form:
+    - **Choose a tag**: Type the new version, starting with `v`. Example: `v1.0.1`. Click "Create new tag".
+    - **Release title**: Fill same as the tag, e.g., `v1.0.1`.
+    - **Description**: Write the changelog if necessary.
 5.  **Upload Assets**:
-    - Drag & drop file `.exe` dan `latest.yml` dari folder `release` ke area upload.
-    - Tunggu sampai upload selesai (bar hijau hilang).
-6.  Klik **Publish release**.
+    - Drag & drop the `.exe` and `latest.yml` files from the `release` folder into the upload area.
+    - Wait until the upload completes (green bar disappears).
+6.  Click **Publish release**.
 
-## 5. Verifikasi Update
+## 5. Verify Update
 
-Untuk memastikan auto-update berjalan:
+To ensure auto-update works:
 
-1.  Jalankan aplikasi versi lama (misal v1.0.1) yang sudah terinstall.
-2.  Buka menu **Configuration**.
-3.  Klik tombol **Check for Update**.
-4.  Aplikasi harusnya mendeteksi versi `v1.0.1`, mendownloadnya, dan tombol berubah menjadi **Restart & Install Update**.
+1.  Run the old version of the application (e.g., v1.0.1) that is already installed.
+2.  Open the **Configuration** menu.
+3.  Click the **Check for Update** button.
+4.  The application should detect version `v1.0.1`, download it, and the button should change to **Restart & Install Update**.
