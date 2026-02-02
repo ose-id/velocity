@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   pickDirectory: () => ipcRenderer.invoke('pick-directory'),
   windowControls: (action) => ipcRenderer.invoke('window-control', action),
   getWindowState: () => ipcRenderer.invoke('get-window-state'),
+  openDevTools: () => ipcRenderer.invoke('open-devtools'),
   openAdydetra: () => ipcRenderer.invoke('open-adydetra'),
   openRepoUrl: (url) => ipcRenderer.invoke('open-repo-url', url),
   downloadZipRepo: (config) => ipcRenderer.invoke('download-zip-repo', config),
@@ -21,4 +22,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   quitAndInstall: () => ipcRenderer.invoke('quit-and-install'),
   onUpdateStatus: (callback) => ipcRenderer.on('update-status', (_event, value) => callback(value)),
   removeUpdateStatusListener: () => ipcRenderer.removeAllListeners('update-status'),
+  
+  // GitHub Auth
+  startGithubAuth: (clientId, scopes) => ipcRenderer.invoke('github-auth-device', { clientId, scopes }),
+  onGithubDeviceCode: (callback) => ipcRenderer.on('github-device-code', (_event, value) => callback(value)),
+  removeGithubDeviceCodeListener: () => ipcRenderer.removeAllListeners('github-device-code'),
 });

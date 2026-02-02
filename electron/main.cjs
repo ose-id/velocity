@@ -300,9 +300,9 @@ function createWindow() {
   mainWindow.once('ready-to-show', () => {
     mainWindow.maximize();
     mainWindow.show();
-    if (isDev) {
-      mainWindow.webContents.openDevTools(); // Open DevTools only in dev mode
-    }
+    // if (isDev) {
+    //   mainWindow.webContents.openDevTools(); // Open DevTools handled by Interceptor
+    // }
   });
 
   mainWindow.on('closed', () => {
@@ -311,6 +311,12 @@ function createWindow() {
 }
 
 // === IPC HANDLERS ===
+ipcMain.handle('open-devtools', () => {
+  if (mainWindow) {
+    mainWindow.webContents.openDevTools();
+  }
+});
+
 ipcMain.handle('window-control', (_event, action) => {
   if (!mainWindow) return;
   switch (action) {
@@ -629,6 +635,36 @@ ipcMain.handle('check-path-exists', async (_event, targetPath) => {
 ipcMain.handle('show-message-box', async (_event, options) => {
   if (!mainWindow) return { response: -1 };
   return dialog.showMessageBox(mainWindow, options);
+});
+
+// === GITHUB AUTH (DEVICE FLOW) ===
+ipcMain.handle('github-auth-device', async (_event, { clientId, scopes }) => {
+  try {
+    const { createOAuthDeviceAuth } = await import('@octokit/auth-oauth-device');
+    
+    // We can't pass functions over IPC, so we need to bridge the onVerification callback
+    const auth = createOAuthDeviceAuth({
+      clientType: 'oauth-app',
+      clientId: clientId,
+      scopes: scopes || ['repo', 'read:user'],
+      onVerification(verification) {
+        // Send code to frontend
+        if (mainWindow) {
+           mainWindow.webContents.send('github-device-code', verification);
+        }
+      },
+    });
+
+    const tokenAuthentication = await auth({
+      type: 'oauth',
+    });
+    
+    return { status: 'success', token: tokenAuthentication.token };
+
+  } catch (error) {
+    console.error('GitHub Auth Error:', error);
+    return { status: 'error', message: error.message };
+  }
 });
 
 // === AUTO UPDATE ===

@@ -7,7 +7,8 @@ import BatchActionBar from '../molecules/BatchActionBar';
 
 // Placeholder Client ID - User needs to replace this or we implement a way to fetch it
 // For now, we also support manual PAT entry.
-const GITHUB_CLIENT_ID = 'YOUR_GITHUB_CLIENT_ID'; 
+// Placeholder Client ID - User needs to replace this in .env
+const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID; 
 
 export default function GitHubPage({ baseDir, onClone, editor, githubColors, onOpenColorMenu, onBatchClone }) {
   // CONFIG STATE
@@ -91,11 +92,55 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
       }
   };
 
+  // DEVICE FLOW LISTENER
+  useEffect(() => {
+    if (view !== 'auth_device') return;
+    
+    const handleCode = (data) => {
+        setDeviceCodeData(data);
+    };
+    
+    if (window.electronAPI?.onGithubDeviceCode) {
+       window.electronAPI.onGithubDeviceCode(handleCode);
+    }
+    
+    return () => {
+        if (window.electronAPI?.removeGithubDeviceCodeListener) {
+            window.electronAPI.removeGithubDeviceCodeListener();
+        }
+    };
+  }, [view]);
+
   const handleManualAuth = () => setView('auth_pat');
-  const handleDeviceAuth = () => {
-      setView('auth_pat'); 
-      setError("OAuth (Device Flow) requires backend implementation. Please use Personal Access Token for now.");
+  
+  const startDeviceAuth = async () => {
+      if (GITHUB_CLIENT_ID.includes('YOUR_GITHUB_CLIENT_ID')) {
+          setError("Please configure GITHUB_CLIENT_ID in the code first.");
+          return;
+      }
+      
+      setView('auth_device');
+      setLoading(true);
+      setDeviceCodeData(null);
+      setError(null);
+      
+      try {
+          const result = await window.electronAPI.startGithubAuth(GITHUB_CLIENT_ID);
+          if (result.status === 'success') {
+              await saveToken(result.token);
+              setView('list');
+          } else {
+              setError(result.message);
+              setView('init');
+          }
+      } catch (err) {
+          setError(err.message);
+          setView('init');
+      } finally {
+          setLoading(false);
+      }
   };
+
 
   const handlePatSubmit = async (e) => {
       e.preventDefault();
@@ -182,9 +227,8 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
               </div>
               <div className="flex gap-4">
                   <button 
-                    onClick={handleDeviceAuth}
-                    className="px-6 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg flex items-center gap-2 transition-all opacity-50 cursor-not-allowed"
-                    title="Not implemented yet"
+                    onClick={startDeviceAuth}
+                    className="px-6 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg flex items-center gap-2 transition-all"
                   >
                       <Icon icon="mdi:github" />
                       Sign in with GitHub
@@ -201,7 +245,76 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                       I have a Token
                   </button>
               </div>
-              {error && <p className="text-red-500">{error}</p>}
+
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 max-w-md text-center">
+                    <p className="text-red-400 mb-2">{error}</p>
+                    {error.includes('device_flow_disabled') && (
+                        <p className="text-sm text-neutral-400 animate-pulse">
+                            <strong>Action Required:</strong> Please go to your GitHub App settings and enable <strong>"Device Flow"</strong>.
+                        </p>
+                    )}
+                </div>
+              )}
+          </div>
+      );
+  }
+
+  if (view === 'auth_device') {
+      return (
+          <div className="flex flex-col items-center justify-center h-full text-neutral-400 gap-6">
+              <h2 className="text-xl font-bold text-neutral-200">GitHub Login</h2>
+              
+              {loading && !deviceCodeData && (
+                 <div className="flex flex-col items-center gap-2 text-neutral-500">
+                    <Icon icon="mdi:loading" className="animate-spin text-4xl" />
+                    <p>Initializing Device Flow...</p>
+                 </div>
+              )}
+
+              {deviceCodeData && (
+                  <div className="bg-neutral-900 border border-neutral-800 p-8 rounded-xl flex flex-col items-center gap-6 max-w-md text-center shadow-2xl animate-in fade-in zoom-in duration-300">
+                      <div>
+                          <p className="text-sm text-neutral-400 mb-2">1. Copy your code:</p>
+                          <div className="text-4xl font-mono font-bold text-blue-400 tracking-wider bg-black/30 px-6 py-3 rounded-lg border border-neutral-800 select-all cursor-pointer hover:border-blue-500/50 transition-colors"
+                               onClick={() => {
+                                   navigator.clipboard.writeText(deviceCodeData.user_code);
+                                   // Optional feedback could go here
+                               }}
+                               title="Click to copy"
+                          >
+                              {deviceCodeData.user_code}
+                          </div>
+                      </div>
+
+                      <div className="w-full h-px bg-neutral-800" />
+
+                      <div className="w-full">
+                          <p className="text-sm text-neutral-400 mb-4">2. Paste it at the activation page:</p>
+                          <button 
+                              onClick={() => window.electronAPI.openRepoUrl(deviceCodeData.verification_uri)}
+                              className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg flex items-center justify-center gap-2 w-full font-medium transition-all hover:scale-[1.02]"
+                          >
+                              Open Activation Page
+                              <Icon icon="mdi:open-in-new" />
+                          </button>
+                      </div>
+                      
+                      <div className="text-xs text-neutral-500 pt-2 animate-pulse">
+                          Waiting for you to authorize...
+                      </div>
+                  </div>
+              )}
+              
+              <button 
+                onClick={() => {
+                    setView('init');
+                    setLoading(false);
+                }} 
+                className="text-neutral-500 hover:text-neutral-300 transition-colors text-sm"
+              >
+                  Cancel
+              </button>
           </div>
       );
   }
