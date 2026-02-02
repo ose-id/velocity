@@ -29,8 +29,6 @@ Jalankan perintah build untuk membuat file installer (`.exe`) dan manifest updat
     bun run build:win
     ```
 
-    _(Atau `npm run build:win` jika tidak menggunakan Bun)_
-
 3.  Tunggu hingga proses selesai.
 
 ## 3. Lokasi File Release
