@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 import { BUTTON_COLOR_OPTIONS } from '../../utils/constants';
 
-export default function ColorMenu({ open, x, y, buttonId, buttons, onClose, onPickColor }) {
+export default function ColorMenu({ open, x, y, activeColor, onClose, onPickColor }) {
   if (!open) return null;
 
   return (
@@ -28,7 +28,7 @@ export default function ColorMenu({ open, x, y, buttonId, buttons, onClose, onPi
                 <span className={['inline-flex h-3 w-3 rounded-full', opt.dotClass].join(' ')} />
                 <span>{opt.label}</span>
               </span>
-              {opt.id === buttons.find((b) => b.id === buttonId)?.color && (
+              {opt.id === activeColor && (
                 <Icon icon="mdi:check" className="text-[13px] text-emerald-400" />
               )}
             </button>

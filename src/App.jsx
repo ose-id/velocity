@@ -983,8 +983,11 @@ function App() {
         open={colorMenu.open}
         x={colorMenu.x}
         y={colorMenu.y}
-        buttonId={colorMenu.buttonId}
-        buttons={buttons}
+        activeColor={(()=>{
+             if (!colorMenu.open || !colorMenu.buttonId) return null;
+             if (colorMenu.targetType === 'github') return githubColors[colorMenu.buttonId];
+             return buttons.find(b => b.id === colorMenu.buttonId)?.color;
+        })()}
         onClose={handleCloseColorMenu}
         onPickColor={handlePickColorFromMenu}
       />
