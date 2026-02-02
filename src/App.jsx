@@ -757,7 +757,13 @@ function App() {
     } else if (result.status === 'dev-mode') {
       setUpdateStatus({ status: 'dev-mode' });
     } else if (result.status === 'error') {
-      setUpdateStatus({ status: 'error', error: result.error });
+      // In PROD, show generic error but log specific one
+      if (import.meta.env.DEV) {
+          setUpdateStatus({ status: 'error', error: result.error });
+      } else {
+          console.error("Update Check Error:", result.error);
+          setUpdateStatus({ status: 'error', error: "Update check failed." });
+      }
     } else if (result.status === 'checked' && !result.updateInfo) {
       // No update available
       setUpdateStatus({ status: 'not-available' });
