@@ -90,8 +90,10 @@ function App() {
           if (cfg.configPath) setConfigPath(cfg.configPath);
           
           // Check onboarding
-          // Always show in DEV mode, otherwise check config
-          if (import.meta.env.DEV || cfg.onboardingShown === false || typeof cfg.onboardingShown === 'undefined') {
+          // Check if dev interceptor choice was to skip
+          const devSkip = import.meta.env.DEV && sessionStorage.getItem('onboarding_complete') === 'true';
+
+          if ((import.meta.env.DEV && !devSkip) || cfg.onboardingShown === false || typeof cfg.onboardingShown === 'undefined') {
             setShowOnboarding(true);
           }
         }
