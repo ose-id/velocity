@@ -49,13 +49,13 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "adydetra",
+      "owner": "ose-id",
       "repo": "clone-tools"
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adydetra/clone-tools.git"
+    "url": "git+https://github.com/ose-id/clone-tools.git"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

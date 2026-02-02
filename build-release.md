@@ -46,7 +46,7 @@ Files you **MUST** retrieve:
 
 Now upload these files to GitHub so users can download the update.
 
-1.  Open your GitHub repository: `https://github.com/adydetra/clone-tools`
+1.  Open your GitHub repository: `https://github.com/ose-id/clone-tools`
 2.  Click the **Releases** menu in the right sidebar.
 3.  Click the **Draft a new release** button.
 4.  Fill in the release form:
