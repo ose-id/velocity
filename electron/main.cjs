@@ -43,11 +43,12 @@ const DEFAULT_CONFIG = {
     },
     {
       id: 'C',
-      label: 'Button C',
-      repoUrl: '',
-      folderName: '',
+      label: 'Electron Starter',
+      repoUrl: 'https://github.com/adydetra/electron-starter.git',
+      folderName: 'electron-starter',
       useSsh: false,
-      color: 'neutral',
+      color: 'blue',
+      group: 'Starter',
     },
     {
       id: 'D',
