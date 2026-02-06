@@ -11,9 +11,9 @@ let mainWindow;
 // === CONFIG PATH (PAKAI userData, BUKAN __dirname) ===
 function getConfigPath() {
   // contoh di Windows:
-  // C:\Users\Kamu\AppData\Roaming\<NamaApp>\clone-tools-config.json
+  // C:\Users\Kamu\AppData\Roaming\<NamaApp>\velocity-config.json
   const userDataDir = app.getPath('userData');
-  return path.join(userDataDir, 'clone-tools-config.json');
+  return path.join(userDataDir, 'velocity-config.json');
 }
 
 // === DEFAULT CONFIG ===
@@ -125,7 +125,7 @@ async function downloadAndExtractZip(zipUrl, baseDir, folderName) {
     };
   }
 
-  const tmpZipPath = path.join(os.tmpdir(), `clone-tools-${Date.now()}.zip`);
+  const tmpZipPath = path.join(os.tmpdir(), `velocity-${Date.now()}.zip`);
 
   const res = await fetch(zipUrl);
   if (!res.ok) {

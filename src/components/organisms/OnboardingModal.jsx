@@ -169,7 +169,7 @@ export default function OnboardingModal({ open, onFinish }) {
             variants={itemVariants} 
             className="text-neutral-400 text-lg leading-relaxed"
           >
-            Simplify your workflow. Manage and clone repositories with elegance and speed.
+            Simplify your workflow. Manage and clone repositories with Velocity.
           </motion.p>
           <motion.div 
             className="grid grid-cols-3 gap-4 pt-4"
@@ -328,7 +328,7 @@ export default function OnboardingModal({ open, onFinish }) {
           />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/80" />
           <div className="absolute bottom-12 left-12 max-w-md">
-            <h1 className="text-4xl font-bold text-white mb-4">Clone Tools</h1>
+            <h1 className="text-4xl font-bold text-white mb-4">Velocity</h1>
             <p className="text-neutral-400 text-lg">
               Streamline your development setup.
             </p>

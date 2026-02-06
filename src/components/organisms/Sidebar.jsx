@@ -28,7 +28,7 @@ export default function Sidebar({ activePage, setActivePage, transparent }) {
             <Icon icon="mdi:source-branch" className="text-neutral-100 text-lg" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold text-neutral-100">Clone Tools</span>
+            <span className="text-sm font-semibold text-neutral-100">Velocity</span>
             <span className="text-[11px] text-neutral-500">Quick Git launcher</span>
           </div>
         </div>

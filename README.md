@@ -1,8 +1,8 @@
-# **Clone Tools** 🧩
+# **Velocity** 🧩
 
 ![Static Badge](https://img.shields.io/badge/license-MIT-brightgreen?label=LICENSE)
 
-Clone Tools is a small personal desktop app to quickly clone Git repositories and open them in your favorite editor (VS Code, Cursor, or Windsurf) with a clean dashboard UI.
+Velocity is a small personal desktop app to quickly clone Git repositories and open them in your favorite editor (VS Code, Cursor, or Windsurf) with a clean dashboard UI.
 
 ---
 
@@ -64,8 +64,8 @@ Example (adjust to match your existing scripts):
     "build:win": "bun run build:renderer && bunx electron-builder@24.6.3 --win",
   },
   "build": {
-    "appId": "com.adydetra.clonetools",
-    "productName": "Clone Tools",
+    "appId": "com.adydetra.velocity",
+    "productName": "Velocity",
     "files": ["dist/", "electron/", "config.json", "package.json"],
     "directories": {
       "output": "release",
@@ -99,10 +99,10 @@ bun run build:win
 After it finishes, you’ll get something like:
 
 ```text
-release/Clone Tools Setup X.Y.Z.exe
+release/Velocity Setup X.Y.Z.exe
 ```
 
-Send this `.exe` file to other PCs to install Clone Tools like standard Windows software.
+Send this `.exe` file to other PCs to install Velocity like standard Windows software.
 
 ---
 

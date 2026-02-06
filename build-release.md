@@ -37,7 +37,7 @@ After the build is complete, the build artifacts will be located in the `release
 
 Files you **MUST** retrieve:
 
-1.  `Clone Tools Setup X.X.X.exe` (Application Installer)
+1.  `Velocity Setup X.X.X.exe` (Application Installer)
 2.  `latest.yml` (Auto-update Manifest)
 
 > **IMPORTANT:** Do not rename these files. Upload them as they are.

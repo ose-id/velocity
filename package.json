@@ -1,5 +1,5 @@
 {
-  "name": "clone-tools",
+  "name": "velocity",
   "version": "1.0.0",
   "description": "Personal Git repo clone & launcher",
   "author": "adydetra",
@@ -17,9 +17,9 @@
     "preview": "vite preview"
   },
   "build": {
-    "appId": "com.adydetra.clonetools",
+    "appId": "com.adydetra.velocity",
     "artifactName": "${productName} Setup ${version}.${ext}",
-    "productName": "Clone Tools",
+    "productName": "Velocity",
     "files": [
       "dist/",
       "electron/",
@@ -43,7 +43,7 @@
       "installerHeader": "installerHeader.bmp",
       "installerSidebar": "installerSidebar.bmp",
       "uninstallerSidebar": "uninstallerSidebar.bmp",
-      "uninstallDisplayName": "Clone Tools",
+      "uninstallDisplayName": "Velocity",
       "deleteAppDataOnUninstall": true,
       "include": "build/installer.nsh"
     },
