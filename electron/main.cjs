@@ -34,6 +34,15 @@ const DEFAULT_CONFIG = {
     },
     {
       id: 'B',
+      label: 'Vue Starter',
+      repoUrl: 'https://github.com/adydetra/vue-starter.git',
+      folderName: 'vue-starter',
+      useSsh: false,
+      color: 'emerald', // Using emerald as well since it's Vue? Or green? Emerald fits.
+      group: 'Starter',
+    },
+    {
+      id: 'C',
       label: 'React Starter',
       repoUrl: 'https://github.com/adydetra/react-starter.git',
       folderName: 'react-starter',
@@ -42,7 +51,7 @@ const DEFAULT_CONFIG = {
       group: 'Starter',
     },
     {
-      id: 'C',
+      id: 'D',
       label: 'Electron Starter',
       repoUrl: 'https://github.com/adydetra/electron-starter.git',
       folderName: 'electron-starter',
@@ -51,16 +60,16 @@ const DEFAULT_CONFIG = {
       group: 'Starter',
     },
     {
-      id: 'D',
-      label: 'Button D',
+      id: 'E',
+      label: 'Button E',
       repoUrl: '',
       folderName: '',
       useSsh: false,
       color: 'neutral',
     },
     {
-      id: 'E',
-      label: 'Button E',
+      id: 'F',
+      label: 'Button F',
       repoUrl: '',
       folderName: '',
       useSsh: false,

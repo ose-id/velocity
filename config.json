@@ -11,11 +11,11 @@
     },
     {
       "id": "B",
-      "label": "Project B – Empty",
-      "repoUrl": "",
-      "folderName": "project-b",
+      "label": "Vue Starter",
+      "repoUrl": "https://github.com/adydetra/vue-starter.git",
+      "folderName": "vue-starter",
       "useSsh": false,
-      "color": "neutral"
+      "color": "emerald"
     },
     {
       "id": "C",
