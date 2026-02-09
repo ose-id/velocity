@@ -673,6 +673,15 @@ ipcMain.handle('github-auth-device', async (_event, { clientId, scopes }) => {
 
   } catch (error) {
     console.error('GitHub Auth Error:', error);
+    // SHOW ERROR DIALOG so user can see what happened in Production
+    if (mainWindow) {
+        dialog.showMessageBox(mainWindow, {
+            type: 'error',
+            title: 'GitHub Auth Error',
+            message: `Authentication failed: ${error.message}\n\nStack:\n${error.stack}`,
+            buttons: ['OK']
+        });
+    }
     return { status: 'error', message: error.message };
   }
 });

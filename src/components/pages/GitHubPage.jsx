@@ -114,8 +114,8 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
   const handleManualAuth = () => setView('auth_pat');
   
   const startDeviceAuth = async () => {
-      if (GITHUB_CLIENT_ID.includes('YOUR_GITHUB_CLIENT_ID')) {
-          setError("Please configure GITHUB_CLIENT_ID in the code first.");
+      if (!GITHUB_CLIENT_ID || GITHUB_CLIENT_ID.includes('YOUR_GITHUB_CLIENT_ID')) {
+          setError("Configuration Error: GITHUB_CLIENT_ID is missing or invalid.");
           return;
       }
       
