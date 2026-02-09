@@ -1,11 +1,13 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function CloneDialog({ open, button, onClose, onCloneGit, onDownloadZip }) {
   const [deleteGit, setDeleteGit] = React.useState(false);
   const [useSsh, setUseSsh] = React.useState(false); // New State
   const [useCustomName, setUseCustomName] = React.useState(false);
   const [customName, setCustomName] = React.useState('');
+  const { t } = useLanguage();
 
   if (!open || !button) return null;
 
@@ -14,10 +16,10 @@ export default function CloneDialog({ open, button, onClose, onCloneGit, onDownl
       <div className="w-full max-w-sm rounded-xl border border-neutral-800 bg-neutral-950 shadow-xl p-4">
         <div className="flex items-center gap-2 mb-2">
           <Icon icon="mdi:source-branch" className="text-neutral-200 text-base" />
-          <h2 className="text-sm font-semibold text-neutral-100">Clone options</h2>
+          <h2 className="text-sm font-semibold text-neutral-100">{t('clone_options')}</h2>
         </div>
         <p className="text-xs text-neutral-400 mb-3">
-          Pilih cara clone untuk{' '}
+          {t('clone_choose_method')}{' '}
           <span className="font-medium text-neutral-100">{button.label || `Button ${button.id}`}</span>.
         </p>
 
@@ -29,9 +31,9 @@ export default function CloneDialog({ open, button, onClose, onCloneGit, onDownl
           >
             <span className="inline-flex items-center gap-2">
               <Icon icon="mdi:terminal" className="text-neutral-200 text-sm" />
-              <span>Clone via Git</span>
+              <span>{t('clone_via_git')}</span>
             </span>
-            <span className="text-[10px] text-neutral-500">Respect SSH setting</span>
+            <span className="text-[10px] text-neutral-500">{t('clone_respect_ssh')}</span>
           </button>
 
           <button
@@ -46,10 +48,10 @@ export default function CloneDialog({ open, button, onClose, onCloneGit, onDownl
           >
             <span className="inline-flex items-center gap-2">
               <Icon icon="mdi:zip-box-outline" className={useSsh ? "text-neutral-600" : "text-neutral-200 text-sm"} />
-              <span>Unduh ZIP</span>
+              <span>{t('clone_download_zip')}</span>
             </span>
             <span className={useSsh ? "text-[10px] text-neutral-700" : "text-[10px] text-neutral-500"}>
-               {useSsh ? 'Not available with SSH' : 'Selalu pakai HTTPS'}
+               {useSsh ? t('clone_not_available_ssh') : t('clone_always_https')}
             </span>
           </button>
         </div>
@@ -68,7 +70,7 @@ export default function CloneDialog({ open, button, onClose, onCloneGit, onDownl
               <Icon icon="mdi:check" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
             </div>
             <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors">
-              Use <span className="font-mono text-emerald-500/80">SSH</span> connection
+              {t('clone_use_ssh')}
             </span>
           </label>
 
@@ -84,7 +86,7 @@ export default function CloneDialog({ open, button, onClose, onCloneGit, onDownl
               <Icon icon="mdi:check" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
             </div>
             <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors">
-              Delete <span className="font-mono text-emerald-500/80">.git</span> folder after clone
+              {t('clone_delete_git')}
             </span>
           </label>
 
@@ -99,7 +101,7 @@ export default function CloneDialog({ open, button, onClose, onCloneGit, onDownl
               <Icon icon="mdi:check" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
             </div>
             <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors">
-              Use custom folder name
+              {t('clone_custom_folder')}
             </span>
           </label>
 
@@ -108,7 +110,7 @@ export default function CloneDialog({ open, button, onClose, onCloneGit, onDownl
               type="text"
               value={customName}
               onChange={(e) => setCustomName(e.target.value)}
-              placeholder="Enter folder name..."
+              placeholder={t('clone_folder_placeholder')}
               className="w-full rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-1.5 text-xs text-neutral-100 placeholder:text-neutral-600 focus:border-emerald-500 focus:outline-none transition-colors"
             />
           )}
@@ -121,10 +123,11 @@ export default function CloneDialog({ open, button, onClose, onCloneGit, onDownl
             className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs text-neutral-300 hover:bg-neutral-800 cursor-pointer"
           >
             <Icon icon="mdi:close" className="text-[13px] text-neutral-400" />
-            <span>Cancel</span>
+            <span>{t('cancel')}</span>
           </button>
         </div>
       </div>
     </div>
   );
 }
+

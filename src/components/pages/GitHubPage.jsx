@@ -4,6 +4,7 @@ import { Icon } from '@iconify/react';
 import { toSshUrl } from '../../utils/helpers';
 import { BUTTON_COLOR_STYLES, getButtonColorStyles } from '../../utils/constants';
 import BatchActionBar from '../molecules/BatchActionBar';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Placeholder Client ID - User needs to replace this or we implement a way to fetch it
 // For now, we also support manual PAT entry.
@@ -11,6 +12,7 @@ import BatchActionBar from '../molecules/BatchActionBar';
 const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID; 
 
 export default function GitHubPage({ baseDir, onClone, editor, githubColors, onOpenColorMenu, onBatchClone }) {
+  const { t } = useLanguage();
   // CONFIG STATE
   const [token, setToken] = useState('');
   const [view, setView] = useState('init'); // init, auth_device, auth_pat, list
@@ -222,8 +224,8 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
           <div className="flex flex-col items-center justify-center h-full text-neutral-400 gap-6">
               <Icon icon="mdi:github" className="text-8xl text-neutral-700" />
               <div className="text-center space-y-2">
-                  <h2 className="text-2xl font-bold text-neutral-200">GitHub Integration</h2>
-                  <p>Sign in to access your repositories directly.</p>
+                  <h2 className="text-2xl font-bold text-neutral-200">{t('github_integration')}</h2>
+                  <p>{t('github_sign_in_desc')}</p>
               </div>
               <div className="flex gap-4">
                   <button 
@@ -231,7 +233,7 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                     className="px-6 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg flex items-center gap-2 transition-all"
                   >
                       <Icon icon="mdi:github" />
-                      Sign in with GitHub
+                      {t('github_sign_in_button')}
                   </button>
                   <div className="relative">
                      <div className="absolute inset-0 flex items-center" aria-hidden="true">
@@ -242,7 +244,7 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                     onClick={handleManualAuth}
                     className="px-6 py-2 border border-neutral-700 hover:bg-neutral-800 text-neutral-300 rounded-lg transition-all"
                   >
-                      I have a Token
+                      {t('github_have_token')}
                   </button>
               </div>
 
@@ -263,19 +265,19 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
   if (view === 'auth_device') {
       return (
           <div className="flex flex-col items-center justify-center h-full text-neutral-400 gap-6">
-              <h2 className="text-xl font-bold text-neutral-200">GitHub Login</h2>
+              <h2 className="text-xl font-bold text-neutral-200">{t('github_login')}</h2>
               
               {loading && !deviceCodeData && (
                  <div className="flex flex-col items-center gap-2 text-neutral-500">
                     <Icon icon="mdi:loading" className="animate-spin text-4xl" />
-                    <p>Initializing Device Flow...</p>
+                    <p>{t('github_initializing')}</p>
                  </div>
               )}
 
               {deviceCodeData && (
                   <div className="bg-neutral-900 border border-neutral-800 p-8 rounded-xl flex flex-col items-center gap-6 max-w-md text-center shadow-2xl animate-in fade-in zoom-in duration-300">
                       <div>
-                          <p className="text-sm text-neutral-400 mb-2">1. Copy your code:</p>
+                          <p className="text-sm text-neutral-400 mb-2">{t('github_copy_code')}</p>
                           <div className="text-4xl font-mono font-bold text-blue-400 tracking-wider bg-black/30 px-6 py-3 rounded-lg border border-neutral-800 select-all cursor-pointer hover:border-blue-500/50 transition-colors"
                                onClick={() => {
                                    navigator.clipboard.writeText(deviceCodeData.user_code);
@@ -290,18 +292,18 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                       <div className="w-full h-px bg-neutral-800" />
 
                       <div className="w-full">
-                          <p className="text-sm text-neutral-400 mb-4">2. Paste it at the activation page:</p>
+                          <p className="text-sm text-neutral-400 mb-4">{t('github_paste_code')}</p>
                           <button 
                               onClick={() => window.electronAPI.openRepoUrl(deviceCodeData.verification_uri)}
                               className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg flex items-center justify-center gap-2 w-full font-medium transition-all hover:scale-[1.02]"
                           >
-                              Open Activation Page
+                              {t('github_open_activation')}
                               <Icon icon="mdi:open-in-new" />
                           </button>
                       </div>
                       
                       <div className="text-xs text-neutral-500 pt-2 animate-pulse">
-                          Waiting for you to authorize...
+                          {t('github_waiting_auth')}
                       </div>
                   </div>
               )}
@@ -313,7 +315,7 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                 }} 
                 className="text-neutral-500 hover:text-neutral-300 transition-colors text-sm"
               >
-                  Cancel
+                Cancel
               </button>
           </div>
       );
@@ -322,10 +324,9 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
   if (view === 'auth_pat') {
       return (
           <div className="flex flex-col items-center justify-center h-full text-neutral-400 gap-4">
-            <h2 className="text-xl font-bold text-neutral-200">Enter Personal Access Token</h2>
+            <h2 className="text-xl font-bold text-neutral-200">{t('github_enter_pat')}</h2>
             <p className="max-w-md text-center text-sm">
-                Generate a token on GitHub (Settings &gt; Developer settings &gt; Personal access tokens). 
-                Scopes required: `repo` (for private repos) or just public access.
+                {t('github_pat_desc')}
             </p>
             <form onSubmit={handlePatSubmit} className="flex flex-col gap-4 w-full max-w-sm">
                 <input 
@@ -336,8 +337,8 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                     autoFocus
                 />
                 <div className="flex gap-2 justify-end">
-                    <button type="button" onClick={() => setView('init')} className="px-4 py-2 hover:text-white">Back</button>
-                    <button type="submit" className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg">Save Token</button>
+                    <button type="button" onClick={() => setView('init')} className="px-4 py-2 hover:text-white">{t('github_back')}</button>
+                    <button type="submit" className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg">{t('github_save_token')}</button>
                 </div>
             </form>
           </div>
@@ -362,7 +363,7 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                 <div>
                     <h2 className="text-xl font-bold text-neutral-100">GitHub</h2>
                     <p className="text-xs text-neutral-400">
-                        Total {filteredRepos.length} / {repos.length} repos
+                        {t('github_total_repos')} {filteredRepos.length} / {repos.length} {t('github_repos')}
                         {user && <span className="ml-2 opacity-60">• {user.login}</span>}
                     </p>
                 </div>
@@ -374,7 +375,7 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                         type="text" 
                         value={search}
                         onChange={e => setSearch(e.target.value)}
-                        placeholder="Search repos..."
+                        placeholder={t('github_search_placeholder')}
                         className="bg-neutral-900 border border-neutral-800 rounded-full pl-9 pr-4 py-1.5 text-sm text-neutral-200 focus:outline-none focus:border-neutral-700 w-64"
                     />
                 </div>
@@ -383,9 +384,9 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                     onChange={e => setFilterType(e.target.value)}
                     className="bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-1.5 text-sm text-neutral-300 focus:outline-none"
                 >
-                    <option value="all">All Repos</option>
-                    <option value="public">Public only</option>
-                    <option value="private">Private only</option>
+                    <option value="all">{t('github_all_repos')}</option>
+                    <option value="public">{t('github_public_only')}</option>
+                    <option value="private">{t('github_private_only')}</option>
                 </select>
                 <button 
                     onClick={fetchRepos} 
@@ -397,7 +398,7 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                     onClick={handleLogout}
                     className="text-xs text-red-400 hover:text-red-300 hover:underline px-2 cursor-pointer"
                 >
-                    Sign Out
+                    {t('github_sign_out')}
                 </button>
             </div>
           </div>
@@ -426,7 +427,7 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                                 <div className="absolute top-2 right-2 z-30 flex items-center gap-1">
                                     {!selectedIds.includes(repo.id) && !isSelectionMode && (
                                         <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 rounded-full px-2 py-0.5 text-[10px] text-white border border-neutral-700">
-                                            Clone
+                                            {t('github_clone')}
                                         </div>
                                     )}
                                     
@@ -480,7 +481,7 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                                                 icon={repo.private ? 'mdi:lock-outline' : 'mdi:globe'}
                                                 className="text-[10px] text-neutral-200"
                                             />
-                                            <span className="text-[10px] text-neutral-200">{repo.private ? 'Private' : 'Public'}</span>
+                                            <span className="text-[10px] text-neutral-200">{repo.private ? t('github_private') : t('github_public')}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -489,7 +490,7 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                     })}
                     {filteredRepos.length === 0 && !loading && (
                         <div className="col-span-full text-center text-neutral-600 py-10">
-                            No repositories found matching your filter.
+                            {t('github_no_repos')}
                         </div>
                     )}
                 </div>
@@ -504,3 +505,4 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
       </div>
   );
 }
+

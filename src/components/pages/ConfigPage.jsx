@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import ConfigTable from '../organisms/ConfigTable';
 import ConfigSettings from '../organisms/ConfigSettings';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ConfigPage({
   buttons,
@@ -31,6 +32,8 @@ export default function ConfigPage({
   onCheckUpdate,
   onQuitAndInstall,
 }) {
+  const { t } = useLanguage();
+
   return (
     <div className="flex-1 flex flex-col gap-4 p-4 overflow-auto custom-scroll">
       <motion.div 
@@ -40,15 +43,15 @@ export default function ConfigPage({
       >
         <div className="flex items-center justify-between mb-1">
           <div>
-            <h1 className="text-lg font-semibold text-neutral-100">Configuration</h1>
+            <h1 className="text-lg font-semibold text-neutral-100">{t('config_page_title')}</h1>
             <p className="text-xs text-neutral-500 mt-1">
-              Atur tombol clone, warna, base directory, editor, dan ukuran font UI. Semua perubahan akan otomatis disimpan.
+              {t('config_page_desc')}
             </p>
           </div>
 
           {configPath && (
             <div className="text-right">
-              <div className="text-[11px] text-neutral-500">Config file</div>
+              <div className="text-[11px] text-neutral-500">{t('config_file')}</div>
               <div className="text-[11px] text-neutral-400 max-w-xs truncate font-mono">{configPath}</div>
             </div>
           )}

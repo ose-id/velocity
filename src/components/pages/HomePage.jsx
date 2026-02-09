@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
 import ProjectGrid from '../organisms/ProjectGrid';
 import BatchActionBar from '../molecules/BatchActionBar';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function HomePage({
   buttons,
@@ -24,6 +25,7 @@ export default function HomePage({
   const [searchQuery, setSearchQuery] = useState('');
   const [activeGroup, setActiveGroup] = useState('All');
   const searchInputRef = React.useRef(null);
+  const { t } = useLanguage();
 
   React.useEffect(() => {
     if (focusSearchTrigger && searchInputRef.current) {
@@ -57,16 +59,16 @@ export default function HomePage({
         <div className="flex flex-col gap-4">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-lg font-semibold text-neutral-100">Home</h1>
+              <h1 className="text-lg font-semibold text-neutral-100">{t('home_title')}</h1>
               <p className="text-xs text-neutral-500 mt-1">
-                Total <span className="text-neutral-300 font-medium">{filteredButtons.length}</span> / {buttons.length} repo.
+                {t('home_total_repo')} <span className="text-neutral-300 font-medium">{filteredButtons.length}</span> / {buttons.length} {t('home_repo')}.
               </p>
             </div>
             <div className="flex flex-col items-end gap-2">
               <div className="text-right">
-                <div className="text-[11px] text-neutral-500">Base directory</div>
+                <div className="text-[11px] text-neutral-500">{t('home_base_directory')}</div>
                 <div className="text-xs font-mono text-neutral-300 max-w-xs truncate">
-                  {baseDir || 'Not set (gunakan Configuration)'}
+                  {baseDir || t('home_not_set')}
                 </div>
               </div>
 
@@ -82,7 +84,7 @@ export default function HomePage({
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search repo..."
+                    placeholder={t('home_search_placeholder')}
                     className="w-48 rounded-lg bg-neutral-900/50 border border-neutral-800/50 pl-8 pr-3 py-1 text-xs text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:bg-neutral-900 focus:border-neutral-700 transition-all"
                   />
                   {searchQuery && (
@@ -106,7 +108,7 @@ export default function HomePage({
                         ? 'bg-neutral-700 text-neutral-100 shadow-sm'
                         : 'text-neutral-500 hover:text-neutral-300',
                     ].join(' ')}
-                    title="2 Columns"
+                    title={t('home_columns_2')}
                   >
                     <Icon icon="mdi:view-grid-outline" className="text-sm" />
                   </button>
@@ -119,7 +121,7 @@ export default function HomePage({
                         ? 'bg-neutral-700 text-neutral-100 shadow-sm'
                         : 'text-neutral-500 hover:text-neutral-300',
                     ].join(' ')}
-                    title="3 Columns"
+                    title={t('home_columns_3')}
                   >
                     <Icon icon="mdi:view-grid" className="text-sm" />
                   </button>

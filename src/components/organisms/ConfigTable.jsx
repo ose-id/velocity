@@ -4,8 +4,10 @@ import { BUTTON_COLOR_OPTIONS, GROUP_PRESETS } from '../../utils/constants';
 import Button from '../atoms/Button';
 import IconButton from '../atoms/IconButton';
 import BaseInput from '../atoms/BaseInput';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ConfigTable({ buttons, setButtons, onAddButton, onRemoveButton, saving, lastSavedLabel }) {
+  const { t } = useLanguage();
   // === PAGINATION STATE ===
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
@@ -31,14 +33,14 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Icon icon="mdi:gesture-tap-button" className="text-neutral-300 text-base" />
-          <h2 className="text-sm font-semibold text-neutral-100">Buttons</h2>
+          <h2 className="text-sm font-semibold text-neutral-100">{t('table_buttons')}</h2>
         </div>
         <div className="flex items-center gap-3">
           {lastSavedLabel && (
-            <span className="text-[11px] text-neutral-500 hidden sm:inline">{saving ? 'Saving…' : lastSavedLabel}</span>
+            <span className="text-[11px] text-neutral-500 hidden sm:inline">{saving ? t('table_saving') : lastSavedLabel}</span>
           )}
           <Button onClick={onAddButton} icon="mdi:plus" className="bg-neutral-900 text-neutral-100 border border-neutral-700 hover:bg-neutral-800">
-            Add
+            {t('table_add')}
           </Button>
         </div>
       </div>
@@ -47,14 +49,14 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
         <table className="min-w-full text-xs">
           <thead>
             <tr className="border-b border-neutral-800 text-[11px] text-neutral-500">
-              <th className="text-left py-2 pr-3 font-normal">ID</th>
-              <th className="text-left py-2 pr-3 font-normal">Label</th>
-              <th className="text-left py-2 pr-3 font-normal">Group</th>
-              <th className="text-left py-2 pr-3 font-normal">Repo URL</th>
-              <th className="text-left py-2 pr-3 font-normal">Folder Name</th>
-              <th className="text-left py-2 pr-3 font-normal">Color</th>
-              <th className="text-left py-2 pr-3 font-normal">SSH</th>
-              <th className="text-left py-2 pr-3 font-normal">Actions</th>
+              <th className="text-left py-2 pr-3 font-normal">{t('table_id')}</th>
+              <th className="text-left py-2 pr-3 font-normal">{t('table_label')}</th>
+              <th className="text-left py-2 pr-3 font-normal">{t('table_group')}</th>
+              <th className="text-left py-2 pr-3 font-normal">{t('table_repo_url')}</th>
+              <th className="text-left py-2 pr-3 font-normal">{t('table_folder_name')}</th>
+              <th className="text-left py-2 pr-3 font-normal">{t('table_color')}</th>
+              <th className="text-left py-2 pr-3 font-normal">{t('table_ssh')}</th>
+              <th className="text-left py-2 pr-3 font-normal">{t('table_actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -80,7 +82,7 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
                       onChange={(e) => handleButtonChange(rowIndex, 'group', e.target.value)}
                       className="w-24 rounded-md bg-neutral-950 border border-neutral-800 px-2 py-1 text-[11px] text-neutral-100 focus:outline-none focus:ring-1 focus:ring-neutral-500 cursor-pointer"
                     >
-                      <option value="">(None)</option>
+                      <option value="">{t('table_none')}</option>
                       {GROUP_PRESETS.map((g) => (
                         <option key={g} value={g}>
                           {g}
@@ -148,7 +150,7 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
             {buttons.length === 0 && (
               <tr>
                 <td colSpan={8} className="py-4 text-center text-[11px] text-neutral-500">
-                  Belum ada button. Klik &quot;Add&quot; untuk membuat konfigurasi baru.
+                  {t('table_no_buttons')}
                 </td>
               </tr>
             )}
@@ -160,11 +162,11 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
       {buttons.length > pageSize && (
         <div className="flex items-center justify-between mt-3 text-[11px] text-neutral-500">
           <span>
-            Showing{' '}
+            {t('table_showing')}{' '}
             <span className="text-neutral-200">
               {pageStart + 1}–{Math.min(pageStart + pageSize, buttons.length)}
             </span>{' '}
-            of <span className="text-neutral-200">{buttons.length}</span>
+            {t('table_of')} <span className="text-neutral-200">{buttons.length}</span>
           </span>
           <div className="inline-flex items-center gap-1">
             <button
@@ -179,7 +181,7 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
               ].join(' ')}
             >
               <Icon icon="mdi:chevron-left" className="text-xs" />
-              <span>Prev</span>
+              <span>{t('table_prev')}</span>
             </button>
             <span className="px-2 py-0.5 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-300">
               {currentPage} / {totalPages}
@@ -195,7 +197,7 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
                   : 'border-neutral-700 text-neutral-200 hover:bg-neutral-800',
               ].join(' ')}
             >
-              <span>Next</span>
+              <span>{t('table_next')}</span>
               <Icon icon="mdi:chevron-right" className="text-xs" />
             </button>
           </div>
@@ -204,3 +206,4 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
     </section>
   );
 }
+

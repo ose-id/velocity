@@ -2,6 +2,7 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 import Button from '../atoms/Button';
 import BaseInput from '../atoms/BaseInput';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ConfigSettings({
   baseDir,
@@ -27,6 +28,7 @@ export default function ConfigSettings({
   onQuitAndInstall,
 }) {
   const [appVersion, setAppVersion] = React.useState('');
+  const { t } = useLanguage();
 
   React.useEffect(() => {
     async function fetchVersion() {
@@ -48,9 +50,9 @@ export default function ConfigSettings({
   ];
 
   const fontSizeOptions = [
-    { id: 'default', label: 'Default' },
-    { id: 'medium', label: 'Medium (+1px)' },
-    { id: 'large', label: 'Large (+2px)' },
+    { id: 'default', label: t('config_font_default') },
+    { id: 'medium', label: t('config_font_medium') },
+    { id: 'large', label: t('config_font_large') },
   ];
 
   return (
@@ -63,8 +65,8 @@ export default function ConfigSettings({
         <div className="flex-1 space-y-2">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h2 className="text-sm font-semibold text-neutral-100">Base Directory</h2>
-              <p className="text-[11px] text-neutral-500">Folder utama tempat semua repo akan di-clone.</p>
+              <h2 className="text-sm font-semibold text-neutral-100">{t('config_base_directory')}</h2>
+              <p className="text-[11px] text-neutral-500">{t('config_base_directory_desc')}</p>
             </div>
           </div>
 
@@ -81,13 +83,13 @@ export default function ConfigSettings({
                 icon="mdi:folder-search-outline"
                 className="bg-neutral-200 text-neutral-900 hover:bg-neutral-100"
               >
-                Pilih Folder…
+                {t('config_pick_folder')}
               </Button>
             </div>
           </div>
 
           <p className="text-[11px] text-neutral-500">
-            Jika dikosongkan, akan otomatis memakai folder <span className="font-mono">Downloads</span> di user profile.
+            {t('config_if_empty')}
           </p>
         </div>
       </div>
@@ -99,9 +101,9 @@ export default function ConfigSettings({
             <Icon icon="mdi:application-brackets-outline" className="text-neutral-300 text-lg" />
           </div>
           <div className="flex-1 space-y-2">
-            <h2 className="text-sm font-semibold text-neutral-100">Default Editor</h2>
+            <h2 className="text-sm font-semibold text-neutral-100">{t('config_default_editor')}</h2>
             <p className="text-[11px] text-neutral-500">
-              Pilih editor yang akan dipakai untuk membuka project setelah clone.
+              {t('config_default_editor_desc')}
             </p>
 
             <div className="flex flex-wrap gap-2 mt-2">
@@ -127,7 +129,7 @@ export default function ConfigSettings({
             </div>
 
             <p className="text-[11px] text-neutral-500">
-              Pastikan editor aktif di PATH (<code className="font-mono">code</code>,{' '}
+              {t('config_editor_path_note')} (<code className="font-mono">code</code>,{' '}
               <code className="font-mono">cursor</code>, <code className="font-mono">windsurf</code>,{' '}
               <code className="font-mono">antigravity</code>).
             </p>
@@ -142,9 +144,9 @@ export default function ConfigSettings({
             <Icon icon="mdi:format-size" className="text-neutral-300 text-lg" />
           </div>
           <div className="flex-1 space-y-2">
-            <h2 className="text-sm font-semibold text-neutral-100">UI Font Size</h2>
+            <h2 className="text-sm font-semibold text-neutral-100">{t('config_font_size')}</h2>
             <p className="text-[11px] text-neutral-500">
-              Atur ukuran font seluruh UI. Medium/large menaikkan ukuran teks kecil sekitar +1–2px.
+              {t('config_font_size_desc')}
             </p>
 
             <div className="flex flex-wrap gap-2 mt-2">
@@ -189,9 +191,9 @@ export default function ConfigSettings({
             <Icon icon="mdi:palette-outline" className="text-neutral-300 text-lg" />
           </div>
           <div className="flex-1 space-y-2">
-            <h2 className="text-sm font-semibold text-neutral-100">Appearance</h2>
+            <h2 className="text-sm font-semibold text-neutral-100">{t('config_appearance')}</h2>
             <p className="text-[11px] text-neutral-500">
-              Customize the look and feel of your workspace.
+              {t('config_appearance_desc')}
             </p>
 
             {/* Background Image Redesign */}
@@ -210,14 +212,14 @@ export default function ConfigSettings({
                         icon="mdi:image-edit"
                         className="bg-neutral-100 text-neutral-900 hover:bg-white border-none shadow-lg"
                       >
-                        Change
+                        {t('config_change')}
                       </Button>
                       <Button
                         onClick={onRemoveBackgroundImage}
                         icon="mdi:delete-outline"
                         className="bg-red-500/90 text-white hover:bg-red-500 border-none shadow-lg"
                       >
-                        Remove
+                        {t('config_remove')}
                       </Button>
                     </div>
                   </div>
@@ -235,7 +237,7 @@ export default function ConfigSettings({
                         />
                         <div className="w-9 h-5 bg-neutral-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                       </div>
-                      <span className="text-xs font-medium text-neutral-300">Apply to Sidebar</span>
+                      <span className="text-xs font-medium text-neutral-300">{t('config_apply_sidebar')}</span>
                     </label>
 
                     <div className="h-8 w-px bg-neutral-800" />
@@ -243,7 +245,7 @@ export default function ConfigSettings({
                     {/* Opacity Slider */}
                     <div className="flex-1 flex items-center gap-3">
                       <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold w-12">
-                        Opacity
+                        {t('config_opacity')}
                       </span>
                       <input
                         type="range"
@@ -261,7 +263,7 @@ export default function ConfigSettings({
                     {/* Blur Slider */}
                     <div className="flex-1 flex items-center gap-3">
                       <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold w-8">
-                        Blur
+                        {t('config_blur')}
                       </span>
                       <input
                         type="range"
@@ -285,7 +287,7 @@ export default function ConfigSettings({
                   </div>
                   <div className="flex flex-col items-center">
                     <span className="text-xs font-medium text-neutral-300 group-hover:text-neutral-100">
-                      Upload Wallpaper
+                      {t('config_upload_wallpaper')}
                     </span>
                     <span className="text-[10px] text-neutral-500">
                       1920x1080px (JPG/PNG/WEBP)
@@ -307,13 +309,13 @@ export default function ConfigSettings({
           <div className="flex-1 space-y-2">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-sm font-semibold text-neutral-100">Application Update</h2>
+                <h2 className="text-sm font-semibold text-neutral-100">{t('config_update')}</h2>
                 <p className="text-[11px] text-neutral-500">
-                  Periksa pembaruan aplikasi.
+                  {t('config_update_desc')}
                 </p>
               </div>
               <div className="text-right">
-                <span className="text-[10px] text-neutral-500 block">Current Version</span>
+                <span className="text-[10px] text-neutral-500 block">{t('config_current_version')}</span>
                 <span className="text-xs font-mono text-neutral-300">v{appVersion || '...'}</span>
               </div>
             </div>
@@ -325,7 +327,7 @@ export default function ConfigSettings({
                   icon="mdi:restart"
                   className="bg-emerald-600 text-white hover:bg-emerald-500 border-none shadow-lg animate-pulse"
                 >
-                  Restart & Install v{updateStatus?.info?.version}
+                  {t('config_restart_install')} v{updateStatus?.info?.version}
                 </Button>
               ) : (
                 <Button
@@ -343,20 +345,20 @@ export default function ConfigSettings({
                     ${updateStatus?.status === 'dev-mode' ? 'bg-amber-500 text-white hover:bg-amber-400' : ''}
                   `}
                 >
-                  {updateStatus?.status === 'idle' && 'Check for Update'}
+                  {updateStatus?.status === 'idle' && t('config_check_update')}
                   {updateStatus?.status === 'checking' && (
                     <span className="flex items-center">
-                      Checking
+                      {t('config_checking')}
                       <span className="animate-pulse">.</span>
                       <span className="animate-pulse delay-75">.</span>
                       <span className="animate-pulse delay-150">.</span>
                     </span>
                   )}
-                  {updateStatus?.status === 'available' && `Update Available (v${updateStatus?.info?.version})`}
-                  {updateStatus?.status === 'progress' && `Downloading ${Math.round(updateStatus.progress?.percent || 0)}%`}
-                  {updateStatus?.status === 'not-available' && 'Up to date'}
-                  {updateStatus?.status === 'error' && 'Retry Check'}
-                  {updateStatus?.status === 'dev-mode' && 'Dev Mode'}
+                  {updateStatus?.status === 'available' && `${t('config_update_available')} (v${updateStatus?.info?.version})`}
+                  {updateStatus?.status === 'progress' && `${t('config_downloading')} ${Math.round(updateStatus.progress?.percent || 0)}%`}
+                  {updateStatus?.status === 'not-available' && t('config_up_to_date')}
+                  {updateStatus?.status === 'error' && t('config_retry')}
+                  {updateStatus?.status === 'dev-mode' && t('config_dev_mode')}
                 </Button>
               )}
 

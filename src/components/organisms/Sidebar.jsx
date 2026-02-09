@@ -1,17 +1,20 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
 import NavItem from '../molecules/NavItem';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Sidebar({ activePage, setActivePage, transparent }) {
+  const { t } = useLanguage();
+
   const mainItems = [
-    { id: 'home', label: 'Home', icon: 'mdi:home-outline' },
-    { id: 'github', label: 'GitHub', icon: 'mdi:github' },
+    { id: 'home', label: t('nav_home'), icon: 'mdi:home-outline' },
+    { id: 'github', label: t('nav_github'), icon: 'mdi:github' },
   ];
 
   const otherItems = [
-    { id: 'activity', label: 'Activity', icon: 'mdi:clock-outline' },
-    { id: 'shortcuts', label: 'Shortcuts', icon: 'mdi:keyboard-outline' },
-    { id: 'config', label: 'Configuration', icon: 'mdi:cog-outline' },
+    { id: 'activity', label: t('nav_activity'), icon: 'mdi:clock-outline' },
+    { id: 'shortcuts', label: t('nav_shortcuts'), icon: 'mdi:keyboard-outline' },
+    { id: 'config', label: t('nav_config'), icon: 'mdi:cog-outline' },
   ];
 
   const year = new Date().getFullYear();
@@ -28,8 +31,8 @@ export default function Sidebar({ activePage, setActivePage, transparent }) {
             <Icon icon="mdi:source-branch" className="text-neutral-100 text-lg" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold text-neutral-100">Velocity</span>
-            <span className="text-[11px] text-neutral-500">Quick Git launcher</span>
+            <span className="text-sm font-semibold text-neutral-100">{t('app_name')}</span>
+            <span className="text-[11px] text-neutral-500">{t('app_tagline')}</span>
           </div>
         </div>
       </div>
@@ -79,9 +82,10 @@ export default function Sidebar({ activePage, setActivePage, transparent }) {
               OSE
             </a>
           </span>
-          <span className="text-[10px] text-neutral-600">MIT License</span>
+          <span className="text-[10px] text-neutral-600">{t('mit_license')}</span>
         </div>
       </div>
     </div>
   );
 }
+

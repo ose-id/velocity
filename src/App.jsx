@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { toSshUrl } from './utils/helpers';
 import { arrayMove } from '@dnd-kit/sortable';
+import { LanguageProvider } from './contexts/LanguageContext';
 
 // Organisms
 import TopBar from './components/organisms/TopBar';
@@ -816,6 +817,7 @@ function App() {
   };
 
   return (
+    <LanguageProvider defaultLanguage="en" storageKey="vite-ui-language">
     <div
       className={`h-screen w-screen bg-neutral-950 text-neutral-50 flex flex-col relative`}
       style={
@@ -998,6 +1000,7 @@ function App() {
         onPickColor={handlePickColorFromMenu}
       />
     </div>
+    </LanguageProvider>
   );
 }
 

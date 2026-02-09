@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ShortcutsPage({ shortcuts, onUpdateShortcut }) {
   const [recordingKey, setRecordingKey] = useState(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -48,21 +50,21 @@ export default function ShortcutsPage({ shortcuts, onUpdateShortcut }) {
   };
 
   const shortcutList = [
-    { id: 'switchPage', label: 'Ganti Halaman', description: 'Pindah antar halaman (Home, Activity, Shortcuts, Config)' },
-    { id: 'openHome', label: 'Buka Home', description: 'Langsung ke halaman Home' },
-    { id: 'openActivity', label: 'Buka Activity', description: 'Langsung ke halaman Activity' },
-    { id: 'openShortcuts', label: 'Buka Shortcuts', description: 'Langsung ke halaman Shortcuts' },
-    { id: 'openSettings', label: 'Buka Pengaturan', description: 'Langsung ke halaman Configuration' },
-    { id: 'toggleGrid', label: 'Ubah Grid', description: 'Ganti tampilan antara 2 atau 3 kolom' },
-    { id: 'search', label: 'Cari Repo', description: 'Ke Home & fokus ke pencarian' },
+    { id: 'switchPage', label: t('shortcuts_switch_page'), description: t('shortcuts_switch_page_desc') },
+    { id: 'openHome', label: t('shortcuts_open_home'), description: t('shortcuts_open_home_desc') },
+    { id: 'openActivity', label: t('shortcuts_open_activity'), description: t('shortcuts_open_activity_desc') },
+    { id: 'openShortcuts', label: t('shortcuts_open_shortcuts'), description: t('shortcuts_open_shortcuts_desc') },
+    { id: 'openSettings', label: t('shortcuts_open_settings'), description: t('shortcuts_open_settings_desc') },
+    { id: 'toggleGrid', label: t('shortcuts_toggle_grid'), description: t('shortcuts_toggle_grid_desc') },
+    { id: 'search', label: t('shortcuts_search_repo'), description: t('shortcuts_search_repo_desc') },
   ];
 
   return (
     <div className="flex-1 flex flex-col gap-4 p-4 overflow-auto custom-scroll">
       <div className="flex items-center justify-between mb-1">
         <div>
-          <h1 className="text-lg font-semibold text-neutral-100">Shortcuts</h1>
-          <p className="text-xs text-neutral-500 mt-1">Atur shortcut keyboard untuk navigasi lebih cepat.</p>
+          <h1 className="text-lg font-semibold text-neutral-100">{t('shortcuts_page_title')}</h1>
+          <p className="text-xs text-neutral-500 mt-1">{t('shortcuts_page_desc')}</p>
         </div>
       </div>
 
@@ -93,7 +95,7 @@ export default function ShortcutsPage({ shortcuts, onUpdateShortcut }) {
                 {isRecording ? (
                   <div className="flex items-center gap-2 animate-pulse">
                     <span className="text-emerald-400 font-mono text-xs font-bold">
-                      Tekan tombol...
+                      {t('shortcuts_press_key')}
                     </span>
                     <button
                       onClick={handleCancelRecord}
@@ -110,14 +112,14 @@ export default function ShortcutsPage({ shortcuts, onUpdateShortcut }) {
                     <button
                       onClick={() => handleRemoveShortcut(item.id)}
                       className="p-1.5 hover:bg-red-500/10 rounded-md text-neutral-500 hover:text-red-500 transition-colors group cursor-pointer"
-                      title="Hapus shortcut"
+                      title={t('shortcuts_remove')}
                     >
                       <Icon icon="mdi:close" className="text-sm" />
                     </button>
                     <button
                       onClick={() => handleStartRecord(item.id)}
                       className="p-1.5 hover:bg-amber-300/10 rounded-md text-neutral-500 hover:text-amber-300 transition-colors cursor-pointer"
-                      title="Edit shortcut"
+                      title={t('shortcuts_edit')}
                     >
                       <Icon icon="mdi:pencil" className="text-sm" />
                     </button>
@@ -127,7 +129,7 @@ export default function ShortcutsPage({ shortcuts, onUpdateShortcut }) {
                     onClick={() => handleStartRecord(item.id)}
                     className="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 rounded-md border border-red-500/50 hover:border-red-400 text-xs font-medium transition-all hover:scale-105 active:scale-95 cursor-pointer"
                   >
-                    Set Key
+                    {t('shortcuts_set_key')}
                   </button>
                 )}
               </div>
@@ -138,3 +140,4 @@ export default function ShortcutsPage({ shortcuts, onUpdateShortcut }) {
     </div>
   );
 }
+

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import LogItem from '../molecules/LogItem';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ActivityLog({ logs }) {
   const [sortDir, setSortDir] = useState('desc'); // 'desc' = newest first
+  const { t } = useLanguage();
 
   const sortedLogs = [...logs].sort((a, b) => {
     const ta = new Date(a.timestamp).getTime();
@@ -17,10 +19,10 @@ export default function ActivityLog({ logs }) {
       <div className="flex items-center justify-between px-3 py-2 border-b border-neutral-900">
         <div className="inline-flex items-center gap-2">
           <Icon icon="mdi:text-long" className="text-neutral-300 text-sm" />
-          <h3 className="text-xs font-semibold text-neutral-200">Log</h3>
+          <h3 className="text-xs font-semibold text-neutral-200">{t('log_title')}</h3>
         </div>
         <div className="inline-flex items-center gap-2 text-[11px] text-neutral-400">
-          <span className="hidden sm:inline">Sort:</span>
+          <span className="hidden sm:inline">{t('log_sort')}</span>
           <button
             type="button"
             onClick={() => setSortDir('desc')}
@@ -31,7 +33,7 @@ export default function ActivityLog({ logs }) {
                 : 'border-neutral-700 bg-neutral-900 text-neutral-300 hover:bg-neutral-800',
             ].join(' ')}
           >
-            Newest
+            {t('log_newest')}
           </button>
           <button
             type="button"
@@ -43,14 +45,14 @@ export default function ActivityLog({ logs }) {
                 : 'border-neutral-700 bg-neutral-900 text-neutral-300 hover:bg-neutral-800',
             ].join(' ')}
           >
-            Oldest
+            {t('log_oldest')}
           </button>
         </div>
       </div>
       <div className="flex-1 px-3 py-2">
         <div className="min-h-[250px] lg:h-full rounded-lg bg-neutral-950 border border-neutral-900 overflow-auto custom-scroll">
           {sortedLogs.length === 0 ? (
-            <pre className="text-[11px] text-neutral-500 p-2 whitespace-pre-wrap font-mono">$ ready…</pre>
+            <pre className="text-[11px] text-neutral-500 p-2 whitespace-pre-wrap font-mono">{t('log_ready')}</pre>
           ) : (
             <div className="text-[11px] font-mono">
               {sortedLogs.map((entry) => (
@@ -63,3 +65,4 @@ export default function ActivityLog({ logs }) {
     </section>
   );
 }
+
