@@ -18,7 +18,7 @@
   },
   "build": {
     "appId": "com.ose.velocity",
-    "artifactName": "${productName} Setup ${version}.${ext}",
+    "artifactName": "${productName}.Setup.${version}.${ext}",
     "productName": "Velocity",
     "files": [
       "dist/",
