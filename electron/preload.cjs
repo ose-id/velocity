@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   pickDirectory: () => ipcRenderer.invoke('pick-directory'),
   windowControls: (action) => ipcRenderer.invoke('window-control', action),
   getWindowState: () => ipcRenderer.invoke('get-window-state'),
+  getAppVersion: () => ipcRenderer.invoke('get-app-version'),
   openDevTools: () => ipcRenderer.invoke('open-devtools'),
   openOSE: () => ipcRenderer.invoke('open-ose'),
   openRepoUrl: (url) => ipcRenderer.invoke('open-repo-url', url),

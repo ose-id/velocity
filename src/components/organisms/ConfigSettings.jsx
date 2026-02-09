@@ -26,6 +26,18 @@ export default function ConfigSettings({
   onCheckUpdate,
   onQuitAndInstall,
 }) {
+  const [appVersion, setAppVersion] = React.useState('');
+
+  React.useEffect(() => {
+    async function fetchVersion() {
+      if (window.electronAPI?.getAppVersion) {
+        const ver = await window.electronAPI.getAppVersion();
+        setAppVersion(ver);
+      }
+    }
+    fetchVersion();
+  }, []);
+
   const editorOptions = [
     { id: 'vscode', label: 'VS Code', icon: 'mdi:alpha-v-circle-outline' },
     { id: 'cursor', label: 'Cursor', icon: 'mdi:alpha-c-circle-outline' },
@@ -293,10 +305,18 @@ export default function ConfigSettings({
             <Icon icon="mdi:update" className="text-neutral-300 text-lg" />
           </div>
           <div className="flex-1 space-y-2">
-            <h2 className="text-sm font-semibold text-neutral-100">Application Update</h2>
-            <p className="text-[11px] text-neutral-500">
-              Periksa pembaruan aplikasi.
-            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-sm font-semibold text-neutral-100">Application Update</h2>
+                <p className="text-[11px] text-neutral-500">
+                  Periksa pembaruan aplikasi.
+                </p>
+              </div>
+              <div className="text-right">
+                <span className="text-[10px] text-neutral-500 block">Current Version</span>
+                <span className="text-xs font-mono text-neutral-300">v{appVersion || '...'}</span>
+              </div>
+            </div>
 
             <div className="flex items-center gap-3 mt-2">
               {updateStatus?.status === 'downloaded' ? (
@@ -305,7 +325,7 @@ export default function ConfigSettings({
                   icon="mdi:restart"
                   className="bg-emerald-600 text-white hover:bg-emerald-500 border-none shadow-lg animate-pulse"
                 >
-                  Restart & Install Update
+                  Restart & Install v{updateStatus?.info?.version}
                 </Button>
               ) : (
                 <Button
@@ -332,7 +352,7 @@ export default function ConfigSettings({
                       <span className="animate-pulse delay-150">.</span>
                     </span>
                   )}
-                  {updateStatus?.status === 'available' && 'Update Available'}
+                  {updateStatus?.status === 'available' && `Update Available (v${updateStatus?.info?.version})`}
                   {updateStatus?.status === 'progress' && `Downloading ${Math.round(updateStatus.progress?.percent || 0)}%`}
                   {updateStatus?.status === 'not-available' && 'Up to date'}
                   {updateStatus?.status === 'error' && 'Retry Check'}
@@ -340,7 +360,7 @@ export default function ConfigSettings({
                 </Button>
               )}
 
-              {/* Error Message (Only show if error) */}
+              {/* Error Message */}
               {updateStatus?.status === 'error' && (
                 <span className="text-xs text-red-500">{updateStatus.error}</span>
               )}

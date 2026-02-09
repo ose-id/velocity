@@ -456,6 +456,16 @@ ipcMain.handle('get-window-state', () => {
   return { isMaximized: mainWindow.isMaximized() };
 });
 
+ipcMain.handle('get-app-version', () => {
+    try {
+        const packageJson = require('../package.json');
+        return packageJson.version;
+    } catch (error) {
+        console.error('Failed to read package.json version:', error);
+        return app.getVersion();
+    }
+});
+
 // Config get/save
 ipcMain.handle('get-config', () => {
   const cfg = loadConfig();
