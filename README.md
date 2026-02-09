@@ -59,14 +59,17 @@ Example (adjust to match your existing scripts):
   "main": "electron/main.cjs",
   "scripts": {
     "dev": "concurrently \"vite\" \"bun run dev:electron\"",
+    "dev:vite": "vite",
     "dev:electron": "electron ./electron/main.cjs",
     "build:renderer": "vite build",
     "build:win": "bun run build:renderer && bunx electron-builder@24.6.3 --win",
+    "lint": "eslint .",
+    "preview": "vite preview",
   },
   "build": {
-    "appId": "com.adydetra.velocity",
+    "appId": "com.ose.velocity",
     "productName": "Velocity",
-    "files": ["dist/", "electron/", "config.json", "package.json"],
+    "files": ["dist/", "electron/", "build/icon.ico", "config.json", "package.json"],
     "directories": {
       "output": "release",
       "buildResources": "build",
@@ -78,6 +81,19 @@ Example (adjust to match your existing scripts):
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "installerHeader": "installerHeader.bmp",
+      "installerSidebar": "installerSidebar.bmp",
+      "uninstallerSidebar": "uninstallerSidebar.bmp",
+      "uninstallDisplayName": "Velocity",
+      "deleteAppDataOnUninstall": true,
+      "include": "build/installer.nsh",
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "ose-id",
+      "repo": "velocity",
     },
   },
 }
