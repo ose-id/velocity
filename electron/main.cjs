@@ -401,9 +401,9 @@ ipcMain.handle('open-repo-url', async (_event, rawUrl) => {
   }
 });
 
-// Open adydetra website (dengan fallback browser)
-ipcMain.handle('open-adydetra', async () => {
-  const url = 'https://www.adydetra.my.id';
+// Open OSE website (dengan fallback browser)
+ipcMain.handle('open-ose', async () => {
+  const url = 'https://www.ose.web.id/';
 
   try {
     await shell.openExternal(url);
@@ -433,7 +433,7 @@ ipcMain.handle('open-adydetra', async () => {
     dialog.showMessageBox(mainWindow, {
       type: 'error',
       title: 'Cannot open browser',
-      message: 'Gagal membuka https://www.adydetra.my.id di browser.\n' + 'Pastikan setidaknya satu browser (default / Zen / Chrome / Firefox / Edge) terpasang dan terdaftar di PATH.',
+      message: 'Gagal membuka https://www.ose.web.id/ di browser.\n' + 'Pastikan setidaknya satu browser (default / Zen / Chrome / Firefox / Edge) terpasang dan terdaftar di PATH.',
       buttons: ['OK'],
     });
   }

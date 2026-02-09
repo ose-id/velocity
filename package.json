@@ -2,7 +2,7 @@
   "name": "velocity",
   "version": "1.0.0",
   "description": "Personal Git repo clone & launcher",
-  "author": "adydetra",
+  "author": "OSE",
   "license": "MIT",
   "private": true,
   "type": "module",
@@ -17,7 +17,7 @@
     "preview": "vite preview"
   },
   "build": {
-    "appId": "com.adydetra.velocity",
+    "appId": "com.ose.velocity",
     "artifactName": "${productName} Setup ${version}.${ext}",
     "productName": "Velocity",
     "files": [
@@ -50,12 +50,12 @@
     "publish": {
       "provider": "github",
       "owner": "ose-id",
-      "repo": "clone-tools"
+      "repo": "velocity"
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ose-id/clone-tools.git"
+    "url": "git+https://github.com/ose-id/velocity.git"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

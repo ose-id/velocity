@@ -67,16 +67,16 @@ export default function Sidebar({ activePage, setActivePage, transparent }) {
           <span>
             © {year}{' '}
             <a
-              href="https://www.adydetra.my.id"
+              href="https://www.ose.web.id/"
               onClick={(e) => {
                 e.preventDefault();
-                if (window.electronAPI?.openAdydetra) {
-                  window.electronAPI.openAdydetra();
+                if (window.electronAPI?.openOSE) {
+                  window.electronAPI.openOSE();
                 }
               }}
               className="text-neutral-300 hover:text-neutral-100 hover:underline cursor-pointer"
             >
-              adydetra
+              OSE
             </a>
           </span>
           <span className="text-[10px] text-neutral-600">MIT License</span>

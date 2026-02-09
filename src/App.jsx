@@ -93,7 +93,7 @@ function App() {
           // Check if dev interceptor choice was to skip
           const devSkip = import.meta.env.DEV && sessionStorage.getItem('onboarding_complete') === 'true';
 
-          if ((import.meta.env.DEV && !devSkip) || cfg.onboardingShown === false || typeof cfg.onboardingShown === 'undefined') {
+          if (!devSkip && ((import.meta.env.DEV) || cfg.onboardingShown === false || typeof cfg.onboardingShown === 'undefined')) {
             setShowOnboarding(true);
           }
         }

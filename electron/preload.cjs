@@ -8,7 +8,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   windowControls: (action) => ipcRenderer.invoke('window-control', action),
   getWindowState: () => ipcRenderer.invoke('get-window-state'),
   openDevTools: () => ipcRenderer.invoke('open-devtools'),
-  openAdydetra: () => ipcRenderer.invoke('open-adydetra'),
+  openOSE: () => ipcRenderer.invoke('open-ose'),
   openRepoUrl: (url) => ipcRenderer.invoke('open-repo-url', url),
   downloadZipRepo: (config) => ipcRenderer.invoke('download-zip-repo', config),
   pickImage: () => ipcRenderer.invoke('pick-image'),
