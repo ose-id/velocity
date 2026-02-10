@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
+  const { t } = useLanguage();
   const [mode, setMode] = useState('separate'); // 'separate' | 'group'
   const [groupName, setGroupName] = useState('');
   const [deleteGit, setDeleteGit] = useState(false);
@@ -35,17 +37,16 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
           <div className="px-6 py-4 border-b border-neutral-800 flex items-center justify-between bg-black/50">
             <h3 className="text-lg font-semibold text-neutral-100 flex items-center gap-2">
               <Icon icon="mdi:folder-multiple-outline" className="text-neutral-100" />
-              Batch Clone ({count} Items)
+              {t('batch_clone_title').replace('{count}', count)}
             </h3>
             <button onClick={onClose} className="text-neutral-500 hover:text-neutral-300 transition-colors">
               <Icon icon="mdi:close" className="text-xl" />
             </button>
           </div>
 
-          {/* Body */}
           <div className="p-6 space-y-6">
             <p className="text-sm text-neutral-400">
-              Bagaimana Anda ingin meng-clone <strong>{count} repository</strong> yang dipilih?
+              {t('batch_clone_desc').replace('{count}', count)}
             </p>
 
             <div className="space-y-3">
@@ -66,9 +67,9 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
                   className="mt-1 accent-emerald-500"
                 />
                 <div>
-                  <div className="text-sm font-medium text-neutral-200">Terpisah (Standard)</div>
+                  <div className="text-sm font-medium text-neutral-200">{t('batch_clone_separate_title')}</div>
                   <div className="text-xs text-neutral-500 mt-1">
-                    Clone setiap repo langsung ke folder Base Directory masing-masing.
+                    {t('batch_clone_separate_desc')}
                   </div>
                 </div>
               </label>
@@ -90,9 +91,9 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
                   className="mt-1 accent-emerald-500"
                 />
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-neutral-200">Gabung dalam Folder (Group)</div>
+                  <div className="text-sm font-medium text-neutral-200">{t('batch_clone_group_title')}</div>
                   <div className="text-xs text-neutral-500 mt-1">
-                    Buat folder induk baru, lalu clone semua repo ke dalamnya.
+                    {t('batch_clone_group_desc')}
                   </div>
                   
                   {mode === 'group' && (
@@ -101,11 +102,12 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
                       animate={{ opacity: 1, height: 'auto' }}
                       className="mt-3"
                     >
+
                       <input
                         type="text"
                         value={groupName}
                         onChange={(e) => setGroupName(e.target.value)}
-                        placeholder="Nama Folder Group (e.g. My-Stack)"
+                        placeholder={t('batch_clone_group_placeholder')}
                         className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-neutral-200 focus:outline-none focus:border-neutral-500 transition-colors"
                         autoFocus
                       />
@@ -128,7 +130,7 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
                   <Icon icon="mdi:check" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
                 </div>
                 <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors">
-                  Use <span className="font-mono text-emerald-500/80">SSH</span> connection (for all)
+                   {t('batch_clone_ssh_label')}
                 </span>
               </label>
 
@@ -143,7 +145,7 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
                   <Icon icon="mdi:check" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
                 </div>
                 <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors">
-                  Delete <span className="font-mono text-emerald-500/80">.git</span> folder after clone
+                  {t('batch_clone_delete_git')}
                 </span>
               </label>
             </div>
@@ -155,14 +157,15 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
               onClick={onClose}
               className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition-colors cursor-pointer"
             >
-              Cancel
+
+              {t('batch_clone_cancel')}
             </button>
             <button
               onClick={() => handleConfirm({ deleteGit, useSsh })}
               disabled={mode === 'group' && !groupName.trim()}
               className="px-4 py-2 rounded-lg text-sm font-medium bg-neutral-100 text-neutral-900 hover:bg-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg shadow-neutral-900/20 cursor-pointer"
             >
-              Start Cloning
+              {t('batch_clone_start')}
             </button>
           </div>
         </motion.div>

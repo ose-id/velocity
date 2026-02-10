@@ -67,13 +67,7 @@
   "clone_folder_placeholder": "Masukkan nama folder...",
   "cancel": "Batal",
   
-  "batch_clone_title": "Clone Massal",
-  "batch_items_selected": "item dipilih",
-  "batch_mode_separate": "Clone Terpisah",
-  "batch_mode_group": "Clone ke Folder Grup",
-  "batch_group_name": "Nama folder grup",
-  "batch_group_placeholder": "contoh: proyek-saya",
-  "batch_start_clone": "Mulai Clone",
+
   
   "onboarding_welcome": "Selamat Datang",
   "onboarding_welcome_text": "Sederhanakan alur kerja Anda. Kelola dan clone repositori dengan Velocity.",
@@ -202,6 +196,17 @@
   "github_initializing": "Memulai Device Flow...",
   "github_copy_code": "1. Salin kode Anda:",
   "github_copied": "Tersalin!",
+  "batch_clone_title": "Batch Clone ({count} Item)",
+  "batch_clone_desc": "Bagaimana Anda ingin meng-clone {count} repository yang dipilih?",
+  "batch_clone_separate_title": "Terpisah (Standard)",
+  "batch_clone_separate_desc": "Clone setiap repo langsung ke folder Base Directory masing-masing.",
+  "batch_clone_group_title": "Gabung dalam Folder (Group)",
+  "batch_clone_group_desc": "Buat folder induk baru, lalu clone semua repo ke dalamnya.",
+  "batch_clone_group_placeholder": "Nama Folder Group (misal. My-Stack)",
+  "batch_clone_ssh_label": "Gunakan koneksi SSH (untuk semua)",
+  "batch_clone_delete_git": "Hapus folder .git setelah clone",
+  "batch_clone_start": "Mulai Cloning",
+  "batch_clone_cancel": "Batal",
   "github_paste_code": "2. Tempel di halaman aktivasi:",
   "github_open_activation": "Buka Halaman Aktivasi",
   "github_waiting_auth": "Menunggu otorisasi Anda...",
@@ -220,5 +225,9 @@
   "github_clone": "Clone",
   "github_private": "Privat",
   "github_public": "Publik",
-  "github_no_repos": "Tidak ada repositori yang cocok dengan filter Anda."
+  "github_no_repos": "Tidak ada repositori yang cocok dengan filter Anda.",
+  "batch_bar_selected": "{count} Dipilih",
+  "batch_bar_cancel": "Batal",
+  "batch_bar_clone_single": "Clone Terpilih",
+  "batch_bar_clone_multiple": "Clone Banyak Terpilih"
 }

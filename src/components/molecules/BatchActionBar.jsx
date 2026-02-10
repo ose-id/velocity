@@ -1,8 +1,10 @@
 import React from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function BatchActionBar({ selectedCount, onCancel, onClone }) {
+  const { t } = useLanguage();
   return (
     <AnimatePresence>
       {selectedCount > 0 && (
@@ -17,7 +19,7 @@ export default function BatchActionBar({ selectedCount, onCancel, onClone }) {
               <Icon icon="mdi:check" className="text-lg" />
             </div>
             <span className="text-sm font-medium text-neutral-200">
-              {selectedCount} Selected
+              {t('batch_bar_selected').replace('{count}', selectedCount)}
             </span>
           </div>
 
@@ -26,7 +28,7 @@ export default function BatchActionBar({ selectedCount, onCancel, onClone }) {
               onClick={onCancel}
               className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition-colors cursor-pointer"
             >
-              Cancel
+              {t('batch_bar_cancel')}
             </button>
             <button
               onClick={onClone}
@@ -38,7 +40,7 @@ export default function BatchActionBar({ selectedCount, onCancel, onClone }) {
               }`}
             >
               <Icon icon="mdi:download-multiple" className="text-lg" />
-              {selectedCount > 1 ? 'Multiple Clone Selected' : 'Clone Selected'}
+              {selectedCount > 1 ? t('batch_bar_clone_multiple') : t('batch_bar_clone_single')}
             </button>
           </div>
         </motion.div>

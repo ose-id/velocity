@@ -67,13 +67,7 @@
   "clone_folder_placeholder": "Enter folder name...",
   "cancel": "Cancel",
   
-  "batch_clone_title": "Batch Clone",
-  "batch_items_selected": "items selected",
-  "batch_mode_separate": "Clone Separately",
-  "batch_mode_group": "Clone to Group Folder",
-  "batch_group_name": "Group folder name",
-  "batch_group_placeholder": "e.g. my-projects",
-  "batch_start_clone": "Start Clone",
+
   
   "onboarding_welcome": "Welcome",
   "onboarding_welcome_text": "Simplify your workflow. Manage and clone repositories with Velocity.",
@@ -202,6 +196,17 @@
   "github_initializing": "Initializing Device Flow...",
   "github_copy_code": "1. Copy your code:",
   "github_copied": "Copied!",
+  "batch_clone_title": "Batch Clone ({count} Items)",
+  "batch_clone_desc": "How do you want to clone the selected {count} repositories?",
+  "batch_clone_separate_title": "Separate (Standard)",
+  "batch_clone_separate_desc": "Clone each repo directly to their respective Base Directory.",
+  "batch_clone_group_title": "Group in Folder",
+  "batch_clone_group_desc": "Create a new parent folder, then clone all repos into it.",
+  "batch_clone_group_placeholder": "Group Folder Name (e.g. My-Stack)",
+  "batch_clone_ssh_label": "Use SSH connection (for all)",
+  "batch_clone_delete_git": "Delete .git folder after clone",
+  "batch_clone_start": "Start Cloning",
+  "batch_clone_cancel": "Cancel",
   "github_paste_code": "2. Paste it at the activation page:",
   "github_open_activation": "Open Activation Page",
   "github_waiting_auth": "Waiting for you to authorize...",
@@ -220,5 +225,9 @@
   "github_clone": "Clone",
   "github_private": "Private",
   "github_public": "Public",
-  "github_no_repos": "No repositories found matching your filter."
+  "github_no_repos": "No repositories found matching your filter.",
+  "batch_bar_selected": "{count} Selected",
+  "batch_bar_cancel": "Cancel",
+  "batch_bar_clone_single": "Clone Selected",
+  "batch_bar_clone_multiple": "Multiple Clone Selected"
 }
