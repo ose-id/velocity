@@ -201,6 +201,7 @@
   "github_login": "Login GitHub",
   "github_initializing": "Memulai Device Flow...",
   "github_copy_code": "1. Salin kode Anda:",
+  "github_copied": "Tersalin!",
   "github_paste_code": "2. Tempel di halaman aktivasi:",
   "github_open_activation": "Buka Halaman Aktivasi",
   "github_waiting_auth": "Menunggu otorisasi Anda...",

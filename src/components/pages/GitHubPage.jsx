@@ -29,6 +29,7 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
   
   // DEVICE FLOW STATE
   const [deviceCodeData, setDeviceCodeData] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   // FILTERS
   const [search, setSearch] = useState('');
@@ -277,15 +278,26 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
               {deviceCodeData && (
                   <div className="bg-neutral-900 border border-neutral-800 p-8 rounded-xl flex flex-col items-center gap-6 max-w-md text-center shadow-2xl animate-in fade-in zoom-in duration-300">
                       <div>
-                          <p className="text-sm text-neutral-400 mb-2">{t('github_copy_code')}</p>
-                          <div className="text-4xl font-mono font-bold text-blue-400 tracking-wider bg-black/30 px-6 py-3 rounded-lg border border-neutral-800 select-all cursor-pointer hover:border-blue-500/50 transition-colors"
+                          <p className="text-sm text-neutral-400 mb-2">{copied ? <span className="text-green-400 font-bold animate-in fade-in slide-in-from-bottom-1 duration-200">{t('github_copied')}</span> : t('github_copy_code')}</p>
+                          <div 
+                               className={`text-4xl font-mono font-bold tracking-wider px-6 py-3 rounded-lg border select-all cursor-pointer transition-all duration-300 relative overflow-hidden group
+                                ${copied 
+                                    ? 'text-green-400 border-green-500/50 bg-green-500/10' 
+                                    : 'text-blue-400 bg-black/30 border-neutral-800 hover:border-blue-500/50'
+                                }`}
                                onClick={() => {
                                    navigator.clipboard.writeText(deviceCodeData.user_code);
-                                   // Optional feedback could go here
+                                   setCopied(true);
+                                   setTimeout(() => setCopied(false), 2000);
                                }}
                                title="Click to copy"
                           >
-                              {deviceCodeData.user_code}
+                               {deviceCodeData.user_code}
+                               {copied && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-[1px] text-green-400 text-sm font-bold uppercase tracking-widest animate-in fade-in zoom-in duration-200">
+                                        {t('github_copied')}
+                                    </div>
+                               )}
                           </div>
                       </div>
 
@@ -302,7 +314,11 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                           </button>
                       </div>
                       
-                      <div className="text-xs text-neutral-500 pt-2 animate-pulse">
+                      <div className="text-xs text-neutral-500 pt-2 flex items-center justify-center gap-2">
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                          </span>
                           {t('github_waiting_auth')}
                       </div>
                   </div>
@@ -313,9 +329,9 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                     setView('init');
                     setLoading(false);
                 }} 
-                className="text-neutral-500 hover:text-neutral-300 transition-colors text-sm"
+                className="text-neutral-500 hover:text-neutral-300 transition-colors text-sm cursor-pointer"
               >
-                Cancel
+                {t('cancel')}
               </button>
           </div>
       );

@@ -201,6 +201,7 @@
   "github_login": "GitHub Login",
   "github_initializing": "Initializing Device Flow...",
   "github_copy_code": "1. Copy your code:",
+  "github_copied": "Copied!",
   "github_paste_code": "2. Paste it at the activation page:",
   "github_open_activation": "Open Activation Page",
   "github_waiting_auth": "Waiting for you to authorize...",
