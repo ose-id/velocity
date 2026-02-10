@@ -213,6 +213,7 @@
   "github_repos": "repo",
   "github_search_placeholder": "Cari repo...",
   "github_all_repos": "Semua Repo",
+  "github_all_orgs": "Semua Organisasi",
   "github_public_only": "Hanya Publik",
   "github_private_only": "Hanya Privat",
   "github_sign_out": "Keluar",

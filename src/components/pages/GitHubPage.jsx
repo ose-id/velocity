@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Octokit } from '@octokit/rest';
 import { Icon } from '@iconify/react';
 import { toSshUrl } from '../../utils/helpers';
@@ -34,6 +34,24 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
   // FILTERS
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState('all'); // all, public, private
+  const [filterOrg, setFilterOrg] = useState('all');
+
+  // COMPUTED: Move hooks to top level to avoid "Rendered more hooks" error
+  const organizations = useMemo(() => {
+      // Filter only organizations (type === 'Organization')
+      const orgs = new Set(repos.filter(r => r.owner.type === 'Organization').map(r => r.owner.login));
+      return [...orgs].sort();
+  }, [repos]);
+
+  const filteredRepos = repos.filter(repo => {
+      if (filterType === 'public' && repo.private) return false;
+      if (filterType === 'private' && !repo.private) return false;
+      if (filterOrg !== 'all' && repo.owner.login !== filterOrg) return false;
+      if (search) {
+          return repo.name.toLowerCase().includes(search.toLowerCase());
+      }
+      return true;
+  });
 
   // INIT: Load token from config (if saved - implementation pending in App.jsx or main process)
   useEffect(() => {
@@ -80,11 +98,12 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
       setError(null);
       try {
           const octokit = new Octokit({ auth: token });
-          // Fetching all repos (pagination separate logic, for now first 100)
-          const { data } = await octokit.repos.listForAuthenticatedUser({
+          // Fetching ALL repos using pagination
+          const data = await octokit.paginate(octokit.repos.listForAuthenticatedUser, {
               per_page: 100,
               sort: 'updated',
-              direction: 'desc'
+              direction: 'desc',
+              affiliation: 'owner,collaborator,organization_member'
           });
           setRepos(data);
       } catch (err) {
@@ -361,15 +380,7 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
       );
   }
 
-  // LIST VIEW
-  const filteredRepos = repos.filter(repo => {
-      if (filterType === 'public' && repo.private) return false;
-      if (filterType === 'private' && !repo.private) return false;
-      if (search) {
-          return repo.name.toLowerCase().includes(search.toLowerCase());
-      }
-      return true;
-  });
+
 
   return (
       <div className="h-full flex flex-col relative">
@@ -395,6 +406,20 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                         className="bg-neutral-900 border border-neutral-800 rounded-full pl-9 pr-4 py-1.5 text-sm text-neutral-200 focus:outline-none focus:border-neutral-700 w-64"
                     />
                 </div>
+                
+                {organizations.length > 0 && (
+                    <select 
+                        value={filterOrg}
+                        onChange={e => setFilterOrg(e.target.value)}
+                        className="bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-1.5 text-sm text-neutral-300 focus:outline-none w-48"
+                    >
+                        <option value="all">{t('github_all_orgs')}</option>
+                        {organizations.map(org => (
+                            <option key={org} value={org}>{org}</option>
+                        ))}
+                    </select>
+                )}
+
                 <select 
                     value={filterType}
                     onChange={e => setFilterType(e.target.value)}

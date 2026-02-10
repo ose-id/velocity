@@ -213,6 +213,7 @@
   "github_repos": "repos",
   "github_search_placeholder": "Search repos...",
   "github_all_repos": "All Repos",
+  "github_all_orgs": "All Organizations",
   "github_public_only": "Public only",
   "github_private_only": "Private only",
   "github_sign_out": "Sign Out",
