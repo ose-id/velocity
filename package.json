@@ -24,7 +24,6 @@
       "dist/",
       "electron/",
       "build/icon.ico",
-      "config.json",
       "package.json"
     ],
     "directories": {
