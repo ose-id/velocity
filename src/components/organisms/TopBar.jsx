@@ -1,9 +1,10 @@
 import React from 'react';
 import WindowControls from '../molecules/WindowControls';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Icon } from '@iconify/react';
 
 export default function TopBar({ onWindowControl, windowState }) {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
 
   return (
     <div
