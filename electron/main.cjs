@@ -38,7 +38,7 @@ const DEFAULT_CONFIG = {
       repoUrl: 'https://github.com/adydetra/vue-starter.git',
       folderName: 'vue-starter',
       useSsh: false,
-      color: 'emerald', // Using emerald as well since it's Vue? Or green? Emerald fits.
+      color: 'emerald',
       group: 'Starter',
     },
     {
