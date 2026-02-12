@@ -37,8 +37,8 @@
       "verifyUpdateCodeSignature": false
     },
     "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
+      "oneClick": true,
+      "perMachine": false,
       "installerIcon": "icon.ico",
       "uninstallerIcon": "icon.ico",
       "installerHeader": "installerHeader.bmp",
