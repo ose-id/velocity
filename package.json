@@ -1,6 +1,6 @@
 {
   "name": "velocity",
-  "version": "1.3.1",
+  "version": "1.3.0",
   "description": "Personal Git repo clone & launcher",
   "author": "OSE",
   "license": "MIT",
@@ -37,8 +37,8 @@
       "verifyUpdateCodeSignature": false
     },
     "nsis": {
-      "oneClick": true,
-      "perMachine": false,
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
       "installerIcon": "icon.ico",
       "uninstallerIcon": "icon.ico",
       "installerHeader": "installerHeader.bmp",
