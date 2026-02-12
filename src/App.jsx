@@ -181,7 +181,7 @@ function App() {
             hasBackground={!!config.backgroundImage && config.bgSidebar}
           />
 
-          <main className="flex-1 overflow-hidden relative min-w-0">
+          <main className="flex-1 flex flex-col overflow-hidden relative min-w-0">
             {renderPage()}
           </main>
         </div>
