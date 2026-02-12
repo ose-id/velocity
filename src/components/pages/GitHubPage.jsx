@@ -11,11 +11,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 // Placeholder Client ID - User needs to replace this in .env
 const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID; 
 
-export default function GitHubPage({ baseDir, onClone, editor, githubColors, onOpenColorMenu, onBatchClone }) {
+export default function GitHubPage({ baseDir, onClone, editor, githubColors, onOpenColorMenu, onBatchClone, token, onTokenChange }) {
   const { t } = useLanguage();
   // CONFIG STATE
-  const [token, setToken] = useState('');
-  const [view, setView] = useState('init'); // init, auth_device, auth_pat, list
+  const [view, setView] = useState(token ? 'list' : 'init'); // init, auth_device, auth_pat, list
   
   // DATA STATE
   const [repos, setRepos] = useState([]);
@@ -53,18 +52,14 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
       return true;
   });
 
-  // INIT: Load token from config (if saved - implementation pending in App.jsx or main process)
+  // EFFECT: Ensure view is consistent with token prop
   useEffect(() => {
-    async function loadToken() {
-        if (!window.electronAPI) return;
-        const cfg = await window.electronAPI.getConfig();
-        if (cfg?.githubToken) {
-            setToken(cfg.githubToken);
-            setView('list');
-        }
-    }
-    loadToken();
-  }, []);
+     if (token && view === 'init') {
+        setView('list');
+     } else if (!token && view === 'list') {
+        setView('init');
+     }
+  }, [token, view]);
 
   // EFFECT: Fetch repos when entering list view
   useEffect(() => {
@@ -75,9 +70,8 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
   }, [view, token]);
 
   const saveToken = async (newToken) => {
-    setToken(newToken);
-    if (window.electronAPI?.saveConfig) {
-        await window.electronAPI.saveConfig({ githubToken: newToken });
+    if (onTokenChange) {
+        onTokenChange(newToken);
     }
   };
 
@@ -173,7 +167,6 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
   };
 
   const handleLogout = async () => {
-      setToken('');
       setRepos([]);
       setView('init');
       await saveToken('');

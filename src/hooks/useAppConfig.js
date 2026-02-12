@@ -13,6 +13,7 @@ export default function useAppConfig() {
   const [bgBlur, setBgBlur] = useState(4);
   const [shortcuts, setShortcuts] = useState({ switchPage: 'Tab', search: '/' });
   const [githubColors, setGithubColors] = useState({});
+  const [githubToken, setGithubToken] = useState('');
   const [windowState, setWindowState] = useState({ isMaximized: false });
   const [colorMenu, setColorMenu] = useState({ open: false, buttonId: null, x: 0, y: 0 });
   
@@ -77,6 +78,7 @@ export default function useAppConfig() {
           setBgBlur(cfg.bgBlur !== undefined ? cfg.bgBlur : 4);
           if (cfg.shortcuts) setShortcuts(cfg.shortcuts);
           if (cfg.githubColors) setGithubColors(cfg.githubColors);
+          if (cfg.githubToken) setGithubToken(cfg.githubToken);
           if (cfg.configPath) setConfigPath(cfg.configPath);
           
           const devSkip = import.meta.env.DEV && sessionStorage.getItem('onboarding_complete') === 'true';
@@ -105,6 +107,7 @@ export default function useAppConfig() {
         const saved = await window.electronAPI.saveConfig({
           baseDir, buttons, editor, fontSize, backgroundImage,
           bgSidebar, bgOpacity, bgBlur, shortcuts, githubColors,
+          githubToken, // Add this
           onboardingShown: !showOnboarding
         });
         if (!cancelled) {
@@ -120,7 +123,7 @@ export default function useAppConfig() {
     }
     save();
     return () => { cancelled = true; };
-  }, [baseDir, buttons, editor, fontSize, backgroundImage, bgSidebar, bgOpacity, bgBlur, shortcuts, githubColors, configInitialized, showOnboarding]);
+  }, [baseDir, buttons, editor, fontSize, backgroundImage, bgSidebar, bgOpacity, bgBlur, shortcuts, githubColors, githubToken, configInitialized, showOnboarding]);
 
   // Window Controls
   const handleWindowControl = async (action) => {
@@ -262,6 +265,7 @@ export default function useAppConfig() {
     bgBlur, setBgBlur,
     shortcuts, setShortcuts,
     githubColors, setGithubColors,
+    githubToken, setGithubToken,
     windowState, setWindowState,
     configInitialized,
     saving, lastSavedLabel, configPath,

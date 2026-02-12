@@ -83,6 +83,8 @@ function App() {
             onBatchClone={gitOps.handleBatchCloneFromGithub}
             githubColors={config.githubColors}
             onOpenColorMenu={config.handleOpenColorMenu}
+            token={config.githubToken}
+            onTokenChange={config.setGithubToken}
           />
         );
       case 'activity':
