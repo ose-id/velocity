@@ -206,6 +206,7 @@ function App() {
         // Update
         updateStatus={updateSys.updateStatus}
         handleDownloadUpdate={updateSys.handleDownloadUpdate}
+        handleQuitAndInstall={updateSys.handleQuitAndInstall}
         
         // Color Menu
         colorMenu={config.colorMenu}

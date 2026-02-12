@@ -24,6 +24,7 @@ export default function GlobalDialogs({
   // Update
   updateStatus,
   handleDownloadUpdate,
+  handleQuitAndInstall,
   
   // Color Menu
   colorMenu,
@@ -56,6 +57,7 @@ export default function GlobalDialogs({
       <UpdatePopup
         updateStatus={updateStatus}
         onDownload={handleDownloadUpdate}
+        onQuitAndInstall={handleQuitAndInstall}
         onClose={() => {}} // Optional if we want to handle close explicitly, but popup handles it internally via state/later
       />
       

@@ -48,10 +48,32 @@ export default function useUpdateSystem() {
   }, []);
 
   const handleDownloadUpdate = useCallback(() => {
+    // 1. Check if it's a test version
+    if (updateStatus?.info?.version?.includes('test')) {
+      setUpdateStatus({ status: 'downloading', info: updateStatus.info });
+      
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 10;
+        if (progress >= 100) {
+          clearInterval(interval);
+          setUpdateStatus({ status: 'downloaded', info: updateStatus.info });
+        } else {
+          setUpdateStatus({ 
+            status: 'progress', 
+            progress: { percent: progress }, 
+            info: updateStatus.info 
+          });
+        }
+      }, 500);
+      return;
+    }
+
+    // 2. Real update
     if (!window.electronAPI?.downloadUpdate) return;
     setUpdateStatus({ status: 'downloading' });
     window.electronAPI.downloadUpdate();
-  }, []);
+  }, [updateStatus]);
 
   const handleQuitAndInstall = useCallback(() => {
     if (!window.electronAPI?.quitAndInstall) return;
