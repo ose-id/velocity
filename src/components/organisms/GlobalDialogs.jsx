@@ -52,7 +52,7 @@ export default function GlobalDialogs({
         />
       )}
 
-      {showOnboarding && <OnboardingModal onFinish={handleOnboardingFinish} />}
+      {showOnboarding && <OnboardingModal open={true} onFinish={handleOnboardingFinish} />}
 
       <UpdatePopup
         updateStatus={updateStatus}

@@ -60,7 +60,7 @@ function App() {
             onAddButton={config.handleAddButton}
             onRemoveButton={config.handleRemoveButton}
             onDragEnd={config.handleDragEnd}
-            onCloneClick={gitOps.handleCloneClick}
+            onClone={gitOps.handleCloneClick}
             // Selection Mode
             isSelectionMode={gitOps.isSelectionMode}
             selectedIds={gitOps.selectedIds}
@@ -78,7 +78,7 @@ function App() {
           <GitHubPage
             baseDir={config.baseDir}
             editor={config.editor}
-            onCloneClick={gitOps.handleCloneClick}
+            onClone={gitOps.handleCloneClick}
             onBatchClone={gitOps.handleBatchCloneFromGithub}
             githubColors={config.githubColors}
             onOpenColorMenu={config.handleOpenColorMenu}
