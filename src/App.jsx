@@ -181,7 +181,7 @@ function App() {
             activePage={activePage}
             setActivePage={setActivePage}
             windowState={config.windowState}
-            hasBackground={!!config.backgroundImage && config.bgSidebar}
+            transparent={!!config.backgroundImage && config.bgSidebar}
           />
 
           <main className="flex-1 flex flex-col overflow-hidden relative min-w-0">
