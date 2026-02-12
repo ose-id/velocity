@@ -229,5 +229,9 @@
   "batch_bar_selected": "{count} Selected",
   "batch_bar_cancel": "Cancel",
   "batch_bar_clone_single": "Clone Selected",
-  "batch_bar_clone_multiple": "Multiple Clone Selected"
+  "batch_bar_clone_multiple": "Multiple Clone Selected",
+  "update_popup_title": "New Update Available",
+  "update_popup_desc": "A new version {version} is available.",
+  "update_now": "Update Now",
+  "update_later": "Remind Me Later"
 }

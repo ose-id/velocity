@@ -26,6 +26,8 @@ export default function ConfigSettings({
   updateStatus,
   onCheckUpdate,
   onQuitAndInstall,
+  onDownloadUpdate,
+  onTestUpdatePopup,
 }) {
   const [appVersion, setAppVersion] = React.useState('');
   const { t } = useLanguage();
@@ -329,6 +331,14 @@ export default function ConfigSettings({
                 >
                   {t('config_restart_install')} v{updateStatus?.info?.version}
                 </Button>
+              ) : updateStatus?.status === 'available' ? (
+                <Button
+                  onClick={onDownloadUpdate}
+                  icon="mdi:download-outline"
+                  className="bg-emerald-600 text-white hover:bg-emerald-500 border-none shadow-lg"
+                >
+                  {t('update_now')} (v{updateStatus?.info?.version})
+                </Button>
               ) : (
                 <Button
                   onClick={onCheckUpdate}
@@ -338,7 +348,6 @@ export default function ConfigSettings({
                   className={`min-w-[180px] justify-center transition-all duration-300 border-none shadow-md
                     ${updateStatus?.status === 'idle' ? 'bg-neutral-200 text-neutral-900 hover:bg-neutral-100' : ''}
                     ${updateStatus?.status === 'checking' ? 'bg-neutral-700 text-neutral-300 opacity-80 cursor-wait' : ''}
-                    ${updateStatus?.status === 'available' ? 'bg-emerald-600 text-white hover:bg-emerald-500' : ''}
                     ${updateStatus?.status === 'progress' ? 'bg-blue-600 text-white' : ''}
                     ${updateStatus?.status === 'not-available' ? 'bg-blue-500 text-white hover:bg-blue-400' : ''}
                     ${updateStatus?.status === 'error' ? 'bg-red-500 text-white hover:bg-red-400' : ''}
@@ -354,7 +363,6 @@ export default function ConfigSettings({
                       <span className="animate-pulse delay-150">.</span>
                     </span>
                   )}
-                  {updateStatus?.status === 'available' && `${t('config_update_available')} (v${updateStatus?.info?.version})`}
                   {updateStatus?.status === 'progress' && `${t('config_downloading')} ${Math.round(updateStatus.progress?.percent || 0)}%`}
                   {updateStatus?.status === 'not-available' && t('config_up_to_date')}
                   {updateStatus?.status === 'error' && t('config_retry')}
@@ -365,6 +373,18 @@ export default function ConfigSettings({
               {/* Error Message */}
               {updateStatus?.status === 'error' && (
                 <span className="text-xs text-red-500">{updateStatus.error}</span>
+              )}
+
+              {/* DEV ONLY BUTTON */}
+              {import.meta.env.DEV && (
+                <button
+                  onClick={onTestUpdatePopup}
+                  className="ml-2 px-3 py-1.5 rounded-lg border border-neutral-800 bg-neutral-900/50 text-neutral-500 hover:text-neutral-300 hover:border-neutral-700 transition-all text-[10px] font-mono flex items-center gap-1.5"
+                  title="Trigger Test Update Popup"
+                >
+                  <Icon icon="mdi:flask-outline" className="text-xs" />
+                  <span>DEV: TEST POPUP</span>
+                </button>
               )}
             </div>
           </div>

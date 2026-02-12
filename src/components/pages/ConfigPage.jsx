@@ -31,6 +31,8 @@ export default function ConfigPage({
   updateStatus,
   onCheckUpdate,
   onQuitAndInstall,
+  onDownloadUpdate,
+  onTestUpdatePopup,
 }) {
   const { t } = useLanguage();
 
@@ -88,6 +90,8 @@ export default function ConfigPage({
           updateStatus={updateStatus}
           onCheckUpdate={onCheckUpdate}
           onQuitAndInstall={onQuitAndInstall}
+          onDownloadUpdate={onDownloadUpdate}
+          onTestUpdatePopup={onTestUpdatePopup}
         />
       </motion.div>
     </div>

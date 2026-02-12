@@ -9,6 +9,7 @@ import Sidebar from './components/organisms/Sidebar';
 import CloneDialog from './components/organisms/CloneDialog';
 import BatchCloneDialog from './components/organisms/BatchCloneDialog';
 import OnboardingModal from './components/organisms/OnboardingModal';
+import UpdatePopup from './components/molecules/UpdatePopup';
 
 // Molecules
 import ColorMenu from './components/molecules/ColorMenu';
@@ -725,10 +726,8 @@ function App() {
     const removeListener = window.electronAPI.onUpdateStatus((statusObj) => {
       console.log('[App] Update status:', statusObj);
       setUpdateStatus(statusObj);
-      if (statusObj.status === 'available') {
-        // Auto download when available
-        window.electronAPI.downloadUpdate();
-      }
+      setUpdateStatus(statusObj);
+      // Auto download removed: manual trigger only
     });
 
     return () => {
@@ -775,10 +774,37 @@ function App() {
     }
   };
 
+  // DEV ONLY: Test Popup
+  const handleTestUpdatePopup = () => {
+    // Clear ignored version to ensure popup shows
+    localStorage.removeItem('ignoredUpdateVersion');
+    
+    // Reset first to ensure effect triggers even if already 'available'
+    setUpdateStatus({ status: 'idle' });
+    
+    setTimeout(() => {
+      setUpdateStatus({
+        status: 'available',
+        info: { 
+          version: `9.9.9-test-${Date.now()}`, 
+          releaseDate: new Date().toISOString() 
+        }
+      });
+    }, 50);
+  };
+
+  const handleDownloadUpdate = () => {
+    if (!window.electronAPI || !window.electronAPI.downloadUpdate) return;
+    setUpdateStatus({ status: 'downloading' }); // Optimistic update
+    window.electronAPI.downloadUpdate();
+  };
+
   const handleQuitAndInstall = () => {
     if (!window.electronAPI || !window.electronAPI.quitAndInstall) return;
     window.electronAPI.quitAndInstall();
   };
+
+
 
   // === FONT SIZE EFFECT ===
   useEffect(() => {
@@ -942,6 +968,8 @@ function App() {
                     updateStatus={updateStatus}
                     onCheckUpdate={handleCheckUpdate}
                     onQuitAndInstall={handleQuitAndInstall}
+                    onDownloadUpdate={handleDownloadUpdate}
+                    onTestUpdatePopup={handleTestUpdatePopup}
                   />
                 </div>
               )}
@@ -962,6 +990,12 @@ function App() {
           </div>
         </div>
       </div>
+
+      <UpdatePopup
+        updateStatus={updateStatus}
+        onDownload={handleDownloadUpdate}
+        onClose={() => {}}
+      />
 
       {cloneDialog.open && (
         <CloneDialog

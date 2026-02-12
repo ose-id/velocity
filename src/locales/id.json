@@ -229,5 +229,9 @@
   "batch_bar_selected": "{count} Dipilih",
   "batch_bar_cancel": "Batal",
   "batch_bar_clone_single": "Clone Terpilih",
-  "batch_bar_clone_multiple": "Clone Banyak Terpilih"
+  "batch_bar_clone_multiple": "Clone Banyak Terpilih",
+  "update_popup_title": "Update Baru Tersedia",
+  "update_popup_desc": "Versi baru {version} tersedia.",
+  "update_now": "Update Sekarang",
+  "update_later": "Nanti Saja"
 }
