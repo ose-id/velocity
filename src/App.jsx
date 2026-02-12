@@ -61,12 +61,13 @@ function App() {
             onRemoveButton={config.handleRemoveButton}
             onDragEnd={config.handleDragEnd}
             onClone={gitOps.handleCloneClick}
+            onToggleGrid={config.handleToggleGrid}
             // Selection Mode
             isSelectionMode={gitOps.isSelectionMode}
             selectedIds={gitOps.selectedIds}
             onToggleSelectionMode={gitOps.handleToggleSelectionMode}
             onToggleSelection={gitOps.handleToggleSelection}
-            onBatchCloneClick={gitOps.handleBatchCloneClick}
+            onBatchClone={gitOps.handleBatchCloneClick}
             // Color Menu
             onOpenColorMenu={config.handleOpenColorMenu}
             activeButtonId={gitOps.activeButtonId}
