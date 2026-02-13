@@ -66,7 +66,7 @@ export default function GlobalDialogs({
         x={colorMenu.x}
         y={colorMenu.y}
         onClose={handleCloseColorMenu}
-        onSelectColor={handlePickColorFromMenu}
+        onPickColor={handlePickColorFromMenu}
       />
     </>
   );
