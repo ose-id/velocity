@@ -43,13 +43,19 @@ export default function useGitOperations({ baseDir, editor, buttons, appendLog }
     }
   }, [selectedIds, buttons, handleCloneClick]);
 
+  // Pending Batch Integration
+  const [pendingBatchItems, setPendingBatchItems] = useState(null);
+
   // Queue Processing - Wrapped in useCallback
   const processQueue = useCallback(async ({ mode, groupName, customItems, deleteGit, useSsh }) => {
     setBatchDialog({ open: false, count: 0 });
     
+    // Priority: Custom Items (passed directly) > Pending Items (from GitHub/state) > Selected Buttons (Home)
     const selectedItems = (customItems && customItems.length > 0)
         ? customItems
-        : buttons.filter(b => selectedIds.includes(b.id));
+        : (pendingBatchItems && pendingBatchItems.length > 0)
+            ? pendingBatchItems
+            : buttons.filter(b => selectedIds.includes(b.id));
 
     if (selectedItems.length === 0) return;
 
@@ -69,6 +75,7 @@ export default function useGitOperations({ baseDir, editor, buttons, appendLog }
           setActiveButtonId(null);
           setIsSelectionMode(false);
           setSelectedIds([]);
+          setPendingBatchItems(null); // Clear pending
           
           if (window.electronAPI?.showMessageBox) {
             await window.electronAPI.showMessageBox({
@@ -104,7 +111,7 @@ export default function useGitOperations({ baseDir, editor, buttons, appendLog }
         const result = await window.electronAPI.cloneRepo({
           repoUrl: finalUrl,
           folderName: btn.folderName,
-          baseDir: targetBaseDir,
+          baseDir: targetBaseDir, // Use calculated targetBaseDir
           editor,
           options: { skipOpenEditor: true, skipOpenFolder: true, deleteGit }
         });
@@ -129,7 +136,10 @@ export default function useGitOperations({ baseDir, editor, buttons, appendLog }
 
     setLoading(false);
     setActiveButtonId(null);
-    if (!customItems) {
+    setPendingBatchItems(null); // Clear pending
+    
+    // Only clear selection if we used the main selection
+    if (!customItems && !pendingBatchItems) {
         setIsSelectionMode(false);
         setSelectedIds([]);
     }
@@ -149,12 +159,19 @@ export default function useGitOperations({ baseDir, editor, buttons, appendLog }
         await window.electronAPI.openFolder({ path: parentPath });
       }
     }
-  }, [baseDir, buttons, editor, selectedIds, appendLog]);
+  }, [baseDir, buttons, editor, selectedIds, appendLog, pendingBatchItems]); // Added pendingBatchItems dependency
 
   const handleBatchConfirm = useCallback((data) => {
-    const { mode, groupName, deleteGit, useSsh, customItems } = data;
-    processQueue({ mode, groupName, customItems, deleteGit, useSsh });
+    // This is called by BatchCloneDialog
+    const { mode, groupName, deleteGit, useSsh } = data; // Dialog doesn't pass customItems
+    processQueue({ mode, groupName, deleteGit, useSsh });
   }, [processQueue]);
+
+  const startBatchCloneFromGithub = useCallback((repos) => {
+      if (!repos || repos.length === 0) return;
+      setPendingBatchItems(repos);
+      setBatchDialog({ open: true, count: repos.length });
+  }, []);
 
   // Single Clone
   const performCloneViaGit = useCallback(async (btn, options = {}) => {
@@ -271,6 +288,6 @@ export default function useGitOperations({ baseDir, editor, buttons, appendLog }
     handleBatchConfirm,
     performCloneViaGit,
     handleOpenRepoForZip,
-    handleBatchCloneFromGithub: handleBatchConfirm
+    handleBatchCloneFromGithub: startBatchCloneFromGithub // Updated mapping
   };
 }
