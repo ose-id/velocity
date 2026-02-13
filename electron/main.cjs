@@ -410,6 +410,83 @@ ipcMain.handle('open-repo-url', async (_event, rawUrl) => {
   }
 });
 
+// Open external URL with specific browser
+ipcMain.handle('open-external', async (_event, { url, browser }) => {
+  if (!url) return { ok: false, message: 'No URL provided' };
+
+  try {
+    if (!browser || browser === 'default') {
+      await shell.openExternal(url);
+      return { ok: true };
+    }
+
+    // Windows specific handling using 'start'
+    if (process.platform === 'win32') {
+      let appName = '';
+      switch (browser) {
+        case 'chrome': appName = 'chrome'; break;
+        case 'firefox': appName = 'firefox'; break;
+        case 'msedge': appName = 'msedge'; break;
+        case 'zen': appName = 'zen'; break;
+        case 'brave': appName = 'brave'; break; 
+      }
+
+      if (appName) {
+          // "start" command in Windows allows opening via registered app aliases
+          // Format: start <browser> <url>
+          const child = spawn('cmd', ['/c', 'start', appName, url], {
+              shell: false, // cmd /c is the shell
+              detached: true,
+              stdio: 'ignore',
+          });
+          child.unref();
+          return { ok: true };
+      }
+    }
+
+    // Fallback or Non-Windows (Linux/Mac)
+    let cmd = '';
+    switch (browser) {
+      case 'chrome':
+        cmd = process.platform === 'darwin' ? 'Google Chrome' : 'google-chrome';
+        break;
+      case 'firefox':
+        cmd = 'firefox';
+        break;
+      case 'msedge':
+        cmd = 'microsoft-edge';
+        break;
+      case 'zen':
+        cmd = 'zen';
+        break;
+    }
+
+    if (process.platform === 'darwin' && cmd) {
+        // macOS: open -a "Google Chrome" url
+        spawn('open', ['-a', cmd, url]);
+        return { ok: true };
+    }
+
+    if (cmd) {
+        const child = spawn(cmd, [url], {
+        shell: true,
+        detached: true,
+        stdio: 'ignore',
+        });
+        child.unref();
+        return { ok: true };
+    }
+    
+    // If no match found, fallback to default
+    await shell.openExternal(url);
+    return { ok: true };
+
+  } catch (err) {
+    console.error('Failed to open external:', err);
+    return { ok: false, message: err.message };
+  }
+});
+
 // Open OSE website (dengan fallback browser)
 ipcMain.handle('open-ose', async () => {
   const url = 'https://www.ose.web.id/';

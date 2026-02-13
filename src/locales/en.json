@@ -233,5 +233,7 @@
   "update_popup_title": "New Update Available",
   "update_popup_desc": "A new version {version} is available.",
   "update_now": "Update Now",
-  "update_later": "Remind Me Later"
+  "update_later": "Remind Me Later",
+  "page": "Page",
+  "all": "All"
 }

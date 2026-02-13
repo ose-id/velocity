@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openDevTools: () => ipcRenderer.invoke('open-devtools'),
   openOSE: () => ipcRenderer.invoke('open-ose'),
   openRepoUrl: (url) => ipcRenderer.invoke('open-repo-url', url),
+  openExternal: (url, browser) => ipcRenderer.invoke('open-external', { url, browser }),
   downloadZipRepo: (config) => ipcRenderer.invoke('download-zip-repo', config),
   pickImage: () => ipcRenderer.invoke('pick-image'),
   openFolder: (config) => ipcRenderer.invoke('open-folder', config),

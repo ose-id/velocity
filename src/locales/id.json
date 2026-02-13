@@ -233,5 +233,7 @@
   "update_popup_title": "Update Baru Tersedia",
   "update_popup_desc": "Versi baru {version} tersedia.",
   "update_now": "Update Sekarang",
-  "update_later": "Nanti Saja"
+  "update_later": "Nanti Saja",
+  "page": "Halaman",
+  "all": "Semua"
 }

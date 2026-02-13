@@ -3,7 +3,7 @@ import CloneDialog from './CloneDialog';
 import BatchCloneDialog from './BatchCloneDialog';
 import OnboardingModal from './OnboardingModal';
 import UpdatePopup from '../molecules/UpdatePopup';
-import ColorMenu from '../molecules/ColorMenu';
+import ProjectContextMenu from '../molecules/ProjectContextMenu';
 
 export default function GlobalDialogs({
   // Clone
@@ -30,7 +30,13 @@ export default function GlobalDialogs({
   colorMenu,
   handlePickColorFromMenu,
   handleCloseColorMenu,
+  
+  // Data for Context Menu
+  buttons,
+  githubColors
 }) {
+  const activeBtn = buttons?.find(b => b.id === colorMenu.buttonId);
+
   return (
     <>
       {cloneDialog.open && (
@@ -61,10 +67,12 @@ export default function GlobalDialogs({
         onClose={() => {}} // Optional if we want to handle close explicitly, but popup handles it internally via state/later
       />
       
-      <ColorMenu
+      <ProjectContextMenu
         open={colorMenu.open}
         x={colorMenu.x}
         y={colorMenu.y}
+        activeColor={activeBtn?.color || (colorMenu.targetType === 'github' ? (githubColors?.[colorMenu.buttonId] || 'neutral') : 'neutral')}
+        repoUrl={colorMenu.repoUrl} // Use passed repoUrl
         onClose={handleCloseColorMenu}
         onPickColor={handlePickColorFromMenu}
       />

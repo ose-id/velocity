@@ -85,6 +85,8 @@ function App() {
             onOpenColorMenu={config.handleOpenColorMenu}
             token={config.githubToken}
             onTokenChange={config.setGithubToken}
+            itemsPerPage={config.githubPerPage}
+            onItemsPerPageChange={config.setGithubPerPage}
           />
         );
       case 'activity':
@@ -215,6 +217,10 @@ function App() {
         colorMenu={config.colorMenu}
         handlePickColorFromMenu={config.handlePickColorFromMenu}
         handleCloseColorMenu={config.handleCloseColorMenu}
+        
+        // Context Menu Data
+        buttons={config.buttons}
+        githubColors={config.githubColors}
       />
     </LanguageProvider>
   );

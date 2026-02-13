@@ -14,8 +14,9 @@ export default function useAppConfig() {
   const [shortcuts, setShortcuts] = useState({ switchPage: 'Tab', search: '/' });
   const [githubColors, setGithubColors] = useState({});
   const [githubToken, setGithubToken] = useState('');
+  const [githubPerPage, setGithubPerPage] = useState(30);
   const [windowState, setWindowState] = useState({ isMaximized: false });
-  const [colorMenu, setColorMenu] = useState({ open: false, buttonId: null, x: 0, y: 0 });
+  const [colorMenu, setColorMenu] = useState({ open: false, buttonId: null, repoUrl: null, x: 0, y: 0 });
   
   // Layout State
   const [preferredGrid, setPreferredGrid] = useState(3);
@@ -79,6 +80,7 @@ export default function useAppConfig() {
           if (cfg.shortcuts) setShortcuts(cfg.shortcuts);
           if (cfg.githubColors) setGithubColors(cfg.githubColors);
           if (cfg.githubToken) setGithubToken(cfg.githubToken);
+          if (cfg.githubPerPage) setGithubPerPage(cfg.githubPerPage);
           if (cfg.configPath) setConfigPath(cfg.configPath);
           
           const devSkip = import.meta.env.DEV && sessionStorage.getItem('onboarding_complete') === 'true';
@@ -107,7 +109,7 @@ export default function useAppConfig() {
         const saved = await window.electronAPI.saveConfig({
           baseDir, buttons, editor, fontSize, backgroundImage,
           bgSidebar, bgOpacity, bgBlur, shortcuts, githubColors,
-          githubToken, // Add this
+          githubToken, githubPerPage, // Add this
           onboardingShown: !showOnboarding
         });
         if (!cancelled) {
@@ -123,7 +125,7 @@ export default function useAppConfig() {
     }
     save();
     return () => { cancelled = true; };
-  }, [baseDir, buttons, editor, fontSize, backgroundImage, bgSidebar, bgOpacity, bgBlur, shortcuts, githubColors, githubToken, configInitialized, showOnboarding]);
+  }, [baseDir, buttons, editor, fontSize, backgroundImage, bgSidebar, bgOpacity, bgBlur, shortcuts, githubColors, githubToken, githubPerPage, configInitialized, showOnboarding]);
 
   // Window Controls
   const handleWindowControl = async (action) => {
@@ -169,6 +171,7 @@ export default function useAppConfig() {
     setColorMenu({
       open: true,
       buttonId: btn.id,
+      repoUrl: btn.repoUrl || btn.html_url, // Store repo URL directly
       x: event.clientX,
       y: event.clientY,
       targetType: btn.isGithub ? 'github' : 'button'
@@ -266,6 +269,7 @@ export default function useAppConfig() {
     shortcuts, setShortcuts,
     githubColors, setGithubColors,
     githubToken, setGithubToken,
+    githubPerPage, setGithubPerPage,
     windowState, setWindowState,
     configInitialized,
     saving, lastSavedLabel, configPath,

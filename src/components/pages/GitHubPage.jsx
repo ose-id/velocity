@@ -11,7 +11,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 // Placeholder Client ID - User needs to replace this in .env
 const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID; 
 
-export default function GitHubPage({ baseDir, onClone, editor, githubColors, onOpenColorMenu, onBatchClone, token, onTokenChange }) {
+export default function GitHubPage({ baseDir, onClone, editor, githubColors, onOpenColorMenu, onBatchClone, token, onTokenChange, itemsPerPage = 30, onItemsPerPageChange }) {
   const { t } = useLanguage();
   // CONFIG STATE
   const [view, setView] = useState(token ? 'list' : 'init'); // init, auth_device, auth_pat, list
@@ -34,6 +34,9 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState('all'); // all, public, private
   const [filterOrg, setFilterOrg] = useState('all');
+  
+  // PAGINATION
+  const [currentPage, setCurrentPage] = useState(1);
 
   // COMPUTED: Move hooks to top level to avoid "Rendered more hooks" error
   const organizations = useMemo(() => {
@@ -51,6 +54,32 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
       }
       return true;
   });
+
+  // PAGINATION LOGIC
+  useEffect(() => setCurrentPage(1), [search, filterType, filterOrg, itemsPerPage]);
+
+  const totalPages = Math.ceil(filteredRepos.length / itemsPerPage);
+  const paginatedRepos = filteredRepos.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  
+  // ... (rest of code) ...
+
+                {/* Pagination Limit */}
+                <select 
+                    value={itemsPerPage}
+                    onChange={e => onItemsPerPageChange && onItemsPerPageChange(Number(e.target.value))}
+                    className="bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-1.5 text-sm text-neutral-300 focus:outline-none text-center cursor-pointer appearance-none"
+                    style={{ textAlignLast: 'center' }} // Force center for some browsers
+                >
+                    <option value={10}>10 / {t('page') || 'page'}</option>
+                    <option value={20}>20 / {t('page') || 'page'}</option>
+                    <option value={30}>30 / {t('page') || 'page'}</option>
+                    <option value={50}>50 / {t('page') || 'page'}</option>
+                    <option value={100}>100 / {t('page') || 'page'}</option>
+                    <option value={9999}>{t('all') || 'All'}</option>
+                </select>
 
   // EFFECT: Ensure view is consistent with token prop
   useEffect(() => {
@@ -223,6 +252,7 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
           id: repo.name, // ID matched against githubColors keys
           label: repo.name,
           color: githubColors[repo.name] || 'neutral',
+          repoUrl: repo.html_url, // Add repoUrl for context menu
           isGithub: true // Flag to tell App to use githubColors state
       };
       
@@ -419,9 +449,24 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                     className="bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-1.5 text-sm text-neutral-300 focus:outline-none"
                 >
                     <option value="all">{t('github_all_repos')}</option>
-                    <option value="public">{t('github_public_only')}</option>
                     <option value="private">{t('github_private_only')}</option>
                 </select>
+                
+                {/* Pagination Limit */}
+                <select 
+                    value={itemsPerPage}
+                    onChange={e => onItemsPerPageChange && onItemsPerPageChange(Number(e.target.value))}
+                    className="bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-1.5 text-sm text-neutral-300 focus:outline-none text-center cursor-pointer appearance-none"
+                    style={{ textAlignLast: 'center' }} // Force center for some browsers
+                >
+                    <option value={10}>10 / {t('page') || 'page'}</option>
+                    <option value={20}>20 / {t('page') || 'page'}</option>
+                    <option value={30}>30 / {t('page') || 'page'}</option>
+                    <option value={50}>50 / {t('page') || 'page'}</option>
+                    <option value={100}>100 / {t('page') || 'page'}</option>
+                    <option value={9999}>{t('all') || 'All'}</option>
+                </select>
+
                 <button 
                     onClick={fetchRepos} 
                     className="p-2 hover:bg-neutral-800 rounded-lg text-neutral-400 hover:text-white transition-colors cursor-pointer"
@@ -444,8 +489,9 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                     <Icon icon="mdi:loading" className="animate-spin text-2xl text-neutral-600" />
                 </div>
             ) : (
+                <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filteredRepos.map(repo => {
+                    {paginatedRepos.map(repo => {
                         const colorId = githubColors?.[repo.name] || 'neutral';
                         const colorStyles = getButtonColorStyles(colorId);
                         const isSelected = selectedIds.includes(repo.id);
@@ -528,6 +574,32 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                         </div>
                     )}
                 </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-4 mt-8">
+                        <button
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                            className="p-2 rounded-lg hover:bg-neutral-800 text-neutral-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                        >
+                            <Icon icon="mdi:chevron-left" className="text-xl" />
+                        </button>
+                        
+                        <span className="text-sm text-neutral-400">
+                            {t('page')} <span className="text-white font-medium">{currentPage}</span> {t('table_of')} <span className="text-white font-medium">{totalPages}</span>
+                        </span>
+
+                        <button
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                            className="p-2 rounded-lg hover:bg-neutral-800 text-neutral-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                        >
+                            <Icon icon="mdi:chevron-right" className="text-xl" />
+                        </button>
+                    </div>
+                )}
+                </>
             )}
           </div>
 
