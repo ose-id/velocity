@@ -18,6 +18,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openInEditor: (config) => ipcRenderer.invoke('open-in-editor', config),
   checkRequirements: () => ipcRenderer.invoke('check-requirements'),
   checkPathExists: (path) => ipcRenderer.invoke('check-path-exists', path),
+  detectProjectType: (path) => ipcRenderer.invoke('detect-project-type', path),
   showMessageBox: (options) => ipcRenderer.invoke('show-message-box', options),
   checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
   downloadUpdate: () => ipcRenderer.invoke('download-update'),

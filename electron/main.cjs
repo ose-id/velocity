@@ -734,6 +734,72 @@ ipcMain.handle('show-message-box', async (_event, options) => {
   return dialog.showMessageBox(mainWindow, options);
 });
 
+// Detect Project Type
+ipcMain.handle('detect-project-type', async (_event, targetPath) => {
+  if (!targetPath || !fs.existsSync(targetPath)) return 'generic';
+
+  try {
+    const files = fs.readdirSync(targetPath);
+
+    // TouchDesigner (.toe)
+    if (files.some(f => f.toLowerCase().endsWith('.toe'))) return 'touchdesigner';
+
+    // Node.js / Web (Check package.json content)
+    if (files.includes('package.json')) {
+        try {
+            const pkgPath = path.join(targetPath, 'package.json');
+            const pkgData = fs.readFileSync(pkgPath, 'utf-8');
+            const pkg = JSON.parse(pkgData);
+            const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+            
+            if (deps.nuxt) return 'nuxt';
+            if (deps.next) return 'next';
+            if (deps['@sveltejs/kit'] || deps.svelte) return 'svelte';
+            if (deps['@angular/core']) return 'angular';
+            if (deps.electron) return 'electron';
+            if (deps.vue) return 'vue';
+            if (deps.react) return 'react';
+            if (deps.typescript) return 'typescript';
+            return 'javascript';
+        } catch (e) {
+            return 'javascript'; // Fallback if checks fail
+        }
+    }
+
+    // Jupyter Notebook
+    if (files.some(f => f.toLowerCase().endsWith('.ipynb'))) return 'jupyter';
+
+    // Blade (Laravel) - Check first before generic PHP
+    if (files.some(f => f.toLowerCase().endsWith('.blade.php'))) return 'blade';
+
+    // PHP
+    if (files.some(f => f.toLowerCase().endsWith('.php')) || files.includes('composer.json')) return 'php';
+
+    // Dart
+    if (files.some(f => f.toLowerCase().endsWith('.dart')) || files.includes('pubspec.yaml')) return 'dart';
+
+    // Go
+    if (files.some(f => f.toLowerCase().endsWith('.go')) || files.includes('go.mod')) return 'go';
+
+    // Python
+    if (files.some(f => f.toLowerCase().endsWith('.py'))) return 'python';
+
+    // C#
+    if (files.some(f => f.toLowerCase().endsWith('.cs')) || files.some(f => f.toLowerCase().endsWith('.sln')) || files.some(f => f.toLowerCase().endsWith('.csproj'))) return 'csharp';
+
+    // C++
+    if (files.some(f => f.toLowerCase().endsWith('.cpp')) || files.includes('CMakeLists.txt')) return 'cpp';
+
+    // Java
+    if (files.some(f => f.toLowerCase().endsWith('.java')) || files.includes('pom.xml')) return 'java';
+
+    return 'generic';
+  } catch (err) {
+    console.error('Error detecting project type:', err);
+    return 'generic';
+  }
+});
+
 // === GITHUB AUTH (DEVICE FLOW) ===
 ipcMain.handle('github-auth-device', async (_event, { clientId, scopes }) => {
   try {

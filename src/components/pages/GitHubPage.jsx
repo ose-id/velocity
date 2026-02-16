@@ -3,6 +3,7 @@ import { Octokit } from '@octokit/rest';
 import { Icon } from '@iconify/react';
 import { toSshUrl } from '../../utils/helpers';
 import { BUTTON_COLOR_STYLES, getButtonColorStyles } from '../../utils/constants';
+import { getProjectIcon } from '../../utils/projectIcons';
 import BatchActionBar from '../molecules/BatchActionBar';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -533,7 +534,18 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                                 <div className="relative z-10 flex items-center justify-between w-full gap-2 pr-6">
                                     <div className="flex items-center gap-2 overflow-hidden">
                                         <div className={`h-7 w-7 rounded-lg flex-shrink-0 flex items-center justify-center ${colorStyles.iconBg}`}>
-                                            <Icon icon="mdi:github" className="text-neutral-100 text-lg" />
+                                            {(() => {
+                                                const topics = repo.topics || [];
+                                                if (topics.includes('touchdesigner')) {
+                                                    return <Icon icon="file-icons:touchdesigner" className="text-neutral-100 text-sm" />;
+                                                }
+                                                
+                                                const lang = repo.language ? repo.language.toLowerCase() : '';
+                                                const icon = getProjectIcon(lang);
+                                                const isPhp = lang === 'php' || icon.includes('php');
+                                                
+                                                return <Icon icon={icon} className={`text-neutral-100 ${isPhp ? 'text-[0.7rem]' : 'text-sm'}`} />;
+                                            })()}
                                         </div>
                                         <div className="flex flex-col overflow-hidden">
                                             <span className="text-sm font-medium text-neutral-50 truncate">{repo.name}</span>
