@@ -12,6 +12,7 @@ dist
 dist-ssr
 release
 *.local
+*.agents
 
 # Editor directories and files
 .vscode/*
