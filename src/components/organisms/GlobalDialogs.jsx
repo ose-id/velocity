@@ -33,7 +33,8 @@ export default function GlobalDialogs({
   
   // Data for Context Menu
   buttons,
-  githubColors
+  githubColors,
+  baseDir
 }) {
   const activeBtn = buttons?.find(b => b.id === colorMenu.buttonId);
 
@@ -43,6 +44,7 @@ export default function GlobalDialogs({
         <CloneDialog
           open={cloneDialog.open}
           button={cloneDialog.button}
+          baseDir={baseDir}
           onClose={() => setCloneDialog({ open: false, button: null })}
           onCloneGit={performCloneViaGit}
           onDownloadZip={handleOpenRepoForZip}
@@ -53,6 +55,7 @@ export default function GlobalDialogs({
         <BatchCloneDialog
           open={batchDialog.open}
           count={batchDialog.count}
+          baseDir={baseDir}
           onClose={() => setBatchDialog({ open: false, count: 0 })}
           onConfirm={handleBatchConfirm} // Ensure this matches what BatchCloneDialog expects
         />

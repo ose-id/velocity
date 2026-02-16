@@ -221,6 +221,7 @@ function App() {
         // Context Menu Data
         buttons={config.buttons}
         githubColors={config.githubColors}
+        baseDir={config.baseDir}
       />
     </LanguageProvider>
   );

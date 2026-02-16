@@ -3,12 +3,24 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
+export default function BatchCloneDialog({ open, count, baseDir, onClose, onConfirm }) {
   const { t } = useLanguage();
   const [mode, setMode] = useState('separate'); // 'separate' | 'group'
   const [groupName, setGroupName] = useState('');
   const [deleteGit, setDeleteGit] = useState(false);
   const [useSsh, setUseSsh] = useState(false); // New state
+  const [destinationDir, setDestinationDir] = useState(baseDir);
+
+  React.useEffect(() => {
+    if (open) setDestinationDir(baseDir);
+  }, [open, baseDir]);
+
+  const handlePickDirectory = async () => {
+      if (window.electronAPI?.pickDirectory) {
+          const result = await window.electronAPI.pickDirectory();
+          if (result) setDestinationDir(result);
+      }
+  };
 
   if (!open) return null;
 
@@ -20,6 +32,7 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
     onConfirm({ 
       mode, 
       groupName: mode === 'group' ? groupName : null,
+      baseDir: destinationDir,
       ...extraOptions
     });
   };
@@ -40,8 +53,8 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
               <Icon icon="mdi:folder-multiple-outline" className="text-neutral-100" />
               {t('batch_clone_title').replace('{count}', count)}
             </h3>
-            <button onClick={onClose} className="text-neutral-500 hover:text-neutral-300 transition-colors">
-              <Icon icon="mdi:close" className="text-xl" />
+            <button onClick={onClose} className="text-neutral-500 hover:text-neutral-300 transition-colors cursor-pointer group">
+              <Icon icon="mdi:close" className="text-xl group-hover:rotate-90 transition-transform duration-200" />
             </button>
           </div>
 
@@ -49,6 +62,19 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
             <p className="text-sm text-neutral-400">
               {t('batch_clone_desc').replace('{count}', count)}
             </p>
+
+            {/* Destination Picker */}
+            <div className="p-3 bg-neutral-900 rounded-xl border border-neutral-800">
+                <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] text-neutral-500 uppercase font-bold tracking-wider">Destination</span>
+                    <button onClick={handlePickDirectory} className="text-[10px] text-blue-400 hover:text-blue-300 font-medium cursor-pointer flex items-center gap-1">
+                        Change <Icon icon="mdi:pencil-outline" className="text-[10px]" />
+                    </button>
+                </div>
+                <div className="text-xs text-neutral-300 truncate font-mono" title={destinationDir}>
+                     {destinationDir || 'Default (Downloads)'}
+                </div>
+            </div>
 
             <div className="space-y-3">
               {/* Option A: Separate */}
@@ -154,13 +180,7 @@ export default function BatchCloneDialog({ open, count, onClose, onConfirm }) {
 
           {/* Footer */}
           <div className="px-6 py-4 bg-neutral-950/50 border-t border-neutral-800 flex justify-end gap-3">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition-colors cursor-pointer"
-            >
 
-              {t('batch_clone_cancel')}
-            </button>
             <button
               onClick={() => handleConfirm({ deleteGit, useSsh })}
               disabled={mode === 'group' && !groupName.trim()}

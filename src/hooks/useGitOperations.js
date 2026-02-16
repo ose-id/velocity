@@ -47,7 +47,7 @@ export default function useGitOperations({ baseDir, editor, buttons, appendLog }
   const [pendingBatchItems, setPendingBatchItems] = useState(null);
 
   // Queue Processing - Wrapped in useCallback
-  const processQueue = useCallback(async ({ mode, groupName, customItems, deleteGit, useSsh }) => {
+  const processQueue = useCallback(async ({ mode, groupName, customItems, deleteGit, useSsh, baseDir: overrideBaseDir }) => {
     setBatchDialog({ open: false, count: 0 });
     
     // Priority: Custom Items (passed directly) > Pending Items (from GitHub/state) > Selected Buttons (Home)
@@ -62,11 +62,11 @@ export default function useGitOperations({ baseDir, editor, buttons, appendLog }
     setLoading(true);
     appendLog(`[BATCH] Starting batch clone for ${selectedItems.length} items. Mode: ${mode}, SSH: ${useSsh}`);
 
-    let targetBaseDir = baseDir;
+    let targetBaseDir = overrideBaseDir || baseDir;
     
     // Group Folder Logic
     if (mode === 'group' && groupName) {
-      targetBaseDir = baseDir ? `${baseDir}/${groupName}` : groupName; // Simple separator assumption
+      targetBaseDir = targetBaseDir ? `${targetBaseDir}/${groupName}` : groupName; // Simple separator assumption
       
       if (window.electronAPI?.checkPathExists) {
         const exists = await window.electronAPI.checkPathExists(targetBaseDir);
@@ -163,8 +163,8 @@ export default function useGitOperations({ baseDir, editor, buttons, appendLog }
 
   const handleBatchConfirm = useCallback((data) => {
     // This is called by BatchCloneDialog
-    const { mode, groupName, deleteGit, useSsh } = data; // Dialog doesn't pass customItems
-    processQueue({ mode, groupName, deleteGit, useSsh });
+    const { mode, groupName, deleteGit, useSsh, baseDir } = data; // Dialog doesn't pass customItems
+    processQueue({ mode, groupName, deleteGit, useSsh, baseDir });
   }, [processQueue]);
 
   const startBatchCloneFromGithub = useCallback((repos) => {
@@ -185,7 +185,7 @@ export default function useGitOperations({ baseDir, editor, buttons, appendLog }
       return;
     }
     const effectiveUrl = btn.useSsh ? toSshUrl(btn.repoUrl) : btn.repoUrl;
-    const { deleteGit, customName } = options;
+    const { deleteGit, customName, baseDir: overrideBaseDir } = options;
 
     setLoading(true);
     setActiveButtonId(btn.id);
@@ -198,7 +198,7 @@ export default function useGitOperations({ baseDir, editor, buttons, appendLog }
       const result = await window.electronAPI.cloneRepo({
         repoUrl: effectiveUrl,
         folderName: targetFolderName,
-        baseDir: baseDir || null,
+        baseDir: overrideBaseDir || baseDir || null,
         editor,
         options: { deleteGit }
       });
@@ -237,7 +237,7 @@ export default function useGitOperations({ baseDir, editor, buttons, appendLog }
       return;
     }
 
-    const { deleteGit, customName } = options;
+    const { deleteGit, customName, baseDir: overrideBaseDir } = options;
     setLoading(true);
     setActiveButtonId(btn.id);
     setLastResult(null);
@@ -249,7 +249,7 @@ export default function useGitOperations({ baseDir, editor, buttons, appendLog }
       const result = await window.electronAPI.downloadZipRepo({
         repoUrl: btn.repoUrl,
         folderName: targetFolderName,
-        baseDir: baseDir || null,
+        baseDir: overrideBaseDir || baseDir || null,
         editor,
         options: { deleteGit }
       });
