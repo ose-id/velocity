@@ -12,8 +12,11 @@ export default function CloneDialog({ open, button, onClose, onCloneGit, onDownl
   if (!open || !button) return null;
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-sm rounded-xl border border-neutral-800 bg-neutral-950 shadow-xl p-4">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50" onClick={onClose}>
+      <div 
+        className="w-full max-w-sm rounded-xl border border-neutral-800 bg-neutral-950 shadow-xl p-4"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center gap-2 mb-2">
           <Icon icon="mdi:source-branch" className="text-neutral-200 text-base" />
           <h2 className="text-sm font-semibold text-neutral-100">{t('clone_options')}</h2>
