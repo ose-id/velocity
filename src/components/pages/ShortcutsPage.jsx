@@ -1,48 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-export default function ShortcutsPage({ shortcuts, onUpdateShortcut }) {
-  const [recordingKey, setRecordingKey] = useState(null);
+export default function ShortcutsPage({ 
+  shortcuts, 
+  onUpdateShortcut, 
+  recordingKey, 
+  onStartRecord, 
+  onStopRecord 
+}) {
   const { t } = useLanguage();
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (!recordingKey) return;
-      e.preventDefault();
-      e.stopPropagation();
-
-      // Ignore modifier keys alone
-      if (['Control', 'Shift', 'Alt', 'Meta'].includes(e.key)) return;
-
-      let key = e.key;
-      if (key === ' ') key = 'Space';
-      if (key.length === 1) key = key.toUpperCase();
-
-      const modifiers = [];
-      if (e.ctrlKey) modifiers.push('Ctrl');
-      if (e.altKey) modifiers.push('Alt');
-      if (e.shiftKey) modifiers.push('Shift');
-      if (e.metaKey) modifiers.push('Meta');
-
-      const shortcut = [...modifiers, key].join('+');
-      
-      // Auto-save and exit recording mode
-      onUpdateShortcut(recordingKey, shortcut);
-      setRecordingKey(null);
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [recordingKey, onUpdateShortcut]);
-
   const handleStartRecord = (id) => {
-    setRecordingKey(id);
+    onStartRecord(id);
   };
 
   const handleCancelRecord = () => {
-    setRecordingKey(null);
+    onStopRecord();
   };
 
   const handleRemoveShortcut = (id) => {
@@ -52,6 +27,7 @@ export default function ShortcutsPage({ shortcuts, onUpdateShortcut }) {
   const shortcutList = [
     { id: 'switchPage', label: t('shortcuts_switch_page'), description: t('shortcuts_switch_page_desc') },
     { id: 'openHome', label: t('shortcuts_open_home'), description: t('shortcuts_open_home_desc') },
+    { id: 'openGithub', label: t('shortcuts_open_github'), description: t('shortcuts_open_github_desc') },
     { id: 'openActivity', label: t('shortcuts_open_activity'), description: t('shortcuts_open_activity_desc') },
     { id: 'openShortcuts', label: t('shortcuts_open_shortcuts'), description: t('shortcuts_open_shortcuts_desc') },
     { id: 'openSettings', label: t('shortcuts_open_settings'), description: t('shortcuts_open_settings_desc') },
@@ -62,7 +38,7 @@ export default function ShortcutsPage({ shortcuts, onUpdateShortcut }) {
   return (
     <div className="flex-1 flex flex-col gap-4 p-4 overflow-auto custom-scroll">
       <div className="flex items-center justify-between mb-1">
-        <div>
+        <div className="relative">
           <h1 className="text-lg font-semibold text-neutral-100">{t('shortcuts_page_title')}</h1>
           <p className="text-xs text-neutral-500 mt-1">{t('shortcuts_page_desc')}</p>
         </div>

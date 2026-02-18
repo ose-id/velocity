@@ -1,4 +1,6 @@
-import { useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { useToast } from '@/contexts/ToastContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function useShortcuts({
   shortcuts,
@@ -8,6 +10,12 @@ export default function useShortcuts({
   setFocusSearchTrigger,
   appendLog
 }) {
+  const [recordingKey, setRecordingKey] = useState(null);
+  const { addToast } = useToast();
+  const { t } = useLanguage();
+
+
+
   useEffect(() => {
     const handleGlobalKeyDown = (e) => {
       // Ignore if typing in input/textarea
@@ -25,6 +33,29 @@ export default function useShortcuts({
 
       const pressed = [...modifiers, key].join('+');
 
+      // RECORDING MODE
+      if (recordingKey) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Ignore modifier keys alone
+        if (['Control', 'Shift', 'Alt', 'Meta'].includes(e.key)) return;
+
+        // Validation
+        const isDuplicate = Object.entries(shortcuts).some(([id, val]) => val === pressed && id !== recordingKey);
+        
+        if (isDuplicate) {
+          addToast(t('shortcut_already_used', { key: pressed }), 'error');
+          return;
+        }
+
+        setShortcuts((prev) => ({ ...prev, [recordingKey]: pressed }));
+        appendLog(`[CONFIG] Shortcut '${recordingKey}' updated to '${pressed}'`);
+        setRecordingKey(null);
+        return;
+      }
+
+      // NORMAL MODE
       if (pressed === shortcuts.switchPage) {
         e.preventDefault();
         setActivePage((prev) => {
@@ -36,6 +67,9 @@ export default function useShortcuts({
       } else if (pressed === shortcuts.openHome) {
         e.preventDefault();
         setActivePage('home');
+      } else if (pressed === shortcuts.openGithub) {
+        e.preventDefault();
+        setActivePage('github');
       } else if (pressed === shortcuts.openActivity) {
         e.preventDefault();
         setActivePage('activity');
@@ -57,12 +91,11 @@ export default function useShortcuts({
 
     window.addEventListener('keydown', handleGlobalKeyDown);
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
-  }, [shortcuts, setActivePage, handleToggleGrid, setFocusSearchTrigger]);
+  }, [shortcuts, setActivePage, handleToggleGrid, setFocusSearchTrigger, recordingKey, setShortcuts, appendLog, addToast, t]);
 
-  const handleUpdateShortcut = useCallback((key, value) => {
-    setShortcuts((prev) => ({ ...prev, [key]: value }));
-    appendLog(`[CONFIG] Shortcut '${key}' updated to '${value}'`);
-  }, [setShortcuts, appendLog]);
-
-  return { handleUpdateShortcut };
+  return { 
+    recordingKey, 
+    startRecording: setRecordingKey, 
+    stopRecording: () => setRecordingKey(null)
+  };
 }

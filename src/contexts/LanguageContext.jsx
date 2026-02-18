@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import id from "@/locales/id.json";
 import en from "@/locales/en.json";
 
@@ -15,10 +15,15 @@ export function LanguageProvider({ children, defaultLanguage = "en", storageKey 
     localStorage.setItem(storageKey, language);
   }, [language]);
 
-  const t = (key) => {
-    // Basic key lookup, can be expanded for nested objects if needed
-    return languages[language][key] || key;
-  };
+  const t = useCallback((key, params) => {
+    let str = languages[language][key] || key;
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        str = str.replace(`{${key}}`, value);
+      });
+    }
+    return str;
+  }, [language]);
 
   const value = {
     language,

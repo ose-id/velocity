@@ -152,6 +152,8 @@
   "shortcuts_switch_page_desc": "Switch between pages (Home, Activity, Shortcuts, Config)",
   "shortcuts_open_home": "Open Home",
   "shortcuts_open_home_desc": "Go directly to Home page",
+  "shortcuts_open_github": "Open GitHub",
+  "shortcuts_open_github_desc": "Go directly to GitHub page",
   "shortcuts_open_activity": "Open Activity",
   "shortcuts_open_activity_desc": "Go directly to Activity page",
   "shortcuts_open_shortcuts": "Open Shortcuts",
@@ -166,6 +168,7 @@
   "shortcuts_remove": "Remove shortcut",
   "shortcuts_edit": "Edit shortcut",
   "shortcuts_set_key": "Set Key",
+  "shortcut_already_used": "Button '{key}' is already used",
   
   "table_buttons": "Buttons",
   "table_id": "ID",

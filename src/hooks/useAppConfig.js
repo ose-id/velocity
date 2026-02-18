@@ -11,7 +11,14 @@ export default function useAppConfig() {
   const [bgSidebar, setBgSidebar] = useState(false);
   const [bgOpacity, setBgOpacity] = useState(60);
   const [bgBlur, setBgBlur] = useState(4);
-  const [shortcuts, setShortcuts] = useState({ switchPage: 'Tab', search: '/' });
+  const [shortcuts, setShortcuts] = useState({
+    switchPage: 'Tab',
+    openHome: '1',
+    openGithub: '2',
+    openActivity: '3',
+    openShortcuts: '4',
+    openSettings: '5'
+  });
   const [githubColors, setGithubColors] = useState({});
   const [githubToken, setGithubToken] = useState('');
   const [githubPerPage, setGithubPerPage] = useState(30);

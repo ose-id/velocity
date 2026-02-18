@@ -152,6 +152,8 @@
   "shortcuts_switch_page_desc": "Pindah antar halaman (Home, Activity, Shortcuts, Config)",
   "shortcuts_open_home": "Buka Home",
   "shortcuts_open_home_desc": "Langsung ke halaman Home",
+  "shortcuts_open_github": "Buka GitHub",
+  "shortcuts_open_github_desc": "Langsung ke halaman GitHub",
   "shortcuts_open_activity": "Buka Activity",
   "shortcuts_open_activity_desc": "Langsung ke halaman Activity",
   "shortcuts_open_shortcuts": "Buka Shortcuts",
@@ -166,6 +168,7 @@
   "shortcuts_remove": "Hapus shortcut",
   "shortcuts_edit": "Edit shortcut",
   "shortcuts_set_key": "Atur Tombol",
+  "shortcut_already_used": "Tombol '{key}' sudah digunakan",
   
   "table_buttons": "Tombol",
   "table_id": "ID",

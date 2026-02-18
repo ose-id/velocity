@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { LanguageProvider } from './contexts/LanguageContext';
 
 // Hooks
 import useAppConfig from './hooks/useAppConfig';
@@ -22,6 +21,7 @@ import GitHubPage from './components/pages/GitHubPage';
 function App() {
   const [activePage, setActivePage] = useState('home');
   const [focusSearchTrigger, setFocusSearchTrigger] = useState(0);
+  const [isShortcutRecording, setIsShortcutRecording] = useState(false);
 
   // 1. App Config & State
   const config = useAppConfig();
@@ -38,7 +38,7 @@ function App() {
   const updateSys = useUpdateSystem();
 
   // 4. Shortcuts
-  useShortcuts({
+  const shortcutCtrl = useShortcuts({
     shortcuts: config.shortcuts,
     setShortcuts: config.setShortcuts,
     setActivePage,
@@ -104,6 +104,9 @@ function App() {
           <ShortcutsPage
             shortcuts={config.shortcuts}
             onUpdateShortcut={(k, v) => config.setShortcuts(p => ({ ...p, [k]: v }))}
+            recordingKey={shortcutCtrl.recordingKey}
+            onStartRecord={shortcutCtrl.startRecording}
+            onStopRecord={shortcutCtrl.stopRecording}
           />
         );
       case 'config':
@@ -148,7 +151,8 @@ function App() {
   };
 
   return (
-    <LanguageProvider>
+
+    <>
       <div className="flex flex-col h-screen w-full bg-neutral-950 text-neutral-100 overflow-hidden font-sans selection:bg-blue-500/30">
         
         {/* Background Overlay */}
@@ -223,7 +227,7 @@ function App() {
         githubColors={config.githubColors}
         baseDir={config.baseDir}
       />
-    </LanguageProvider>
+    </>
   );
 }
 
