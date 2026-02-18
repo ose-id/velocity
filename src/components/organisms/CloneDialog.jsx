@@ -50,13 +50,13 @@ export default function CloneDialog({ open, button, baseDir, onClose, onCloneGit
         {/* Destination Picker */}
         <div className="mb-3 p-2 bg-neutral-900 rounded-lg border border-neutral-800 group hover:border-neutral-700 transition-colors">
             <div className="flex items-center justify-between mb-1">
-                <span className="text-[10px] text-neutral-500 uppercase font-bold tracking-wider">Destination</span>
+                <span className="text-[10px] text-neutral-500 uppercase font-bold tracking-wider">{t('clone_destination')}</span>
                 <button onClick={handlePickDirectory} className="text-[10px] text-blue-400 hover:text-blue-300 font-medium cursor-pointer flex items-center gap-1">
-                    Change <Icon icon="mdi:pencil-outline" className="text-[10px]" />
+                    {t('clone_change')} <Icon icon="mdi:pencil-outline" className="text-[10px]" />
                 </button>
             </div>
             <div className="text-xs text-neutral-300 truncate font-mono" title={destinationDir}>
-                {destinationDir || 'Default (Downloads)'}
+                {destinationDir || t('clone_default_dir')}
             </div>
         </div>
 

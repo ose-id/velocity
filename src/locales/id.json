@@ -65,6 +65,9 @@
   "clone_delete_git": "Hapus folder .git setelah clone",
   "clone_custom_folder": "Gunakan nama folder kustom",
   "clone_folder_placeholder": "Masukkan nama folder...",
+  "clone_destination": "Tujuan",
+  "clone_change": "Ubah",
+  "clone_default_dir": "Bawaan (Unduhan)",
   "cancel": "Batal",
   
 

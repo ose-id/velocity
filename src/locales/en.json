@@ -65,6 +65,9 @@
   "clone_delete_git": "Delete .git folder after clone",
   "clone_custom_folder": "Use custom folder name",
   "clone_folder_placeholder": "Enter folder name...",
+  "clone_destination": "Destination",
+  "clone_change": "Change",
+  "clone_default_dir": "Default (Downloads)",
   "cancel": "Cancel",
   
 
