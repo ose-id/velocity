@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Octokit } from '@octokit/rest';
 import { Icon } from '@iconify/react';
 import { toSshUrl } from '../../utils/helpers';
+import GitHubStatusIndicator from '../atoms/GitHubStatusIndicator';
 import { BUTTON_COLOR_STYLES, getButtonColorStyles } from '../../utils/constants';
 import { getProjectIcon } from '../../utils/projectIcons';
 import BatchActionBar from '../molecules/BatchActionBar';
@@ -563,10 +564,7 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                                     </div>
 
                                     <div className="flex items-center gap-2">
-                                        <div className="relative flex h-2 w-2">
-                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-emerald-400" />
-                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                                        </div>
+                                        <GitHubStatusIndicator repoUrl={repo.html_url} token={token} />
 
                                         <div className="inline-flex items-center gap-1 rounded-full bg-black/30 px-2 py-0.5">
                                             <Icon

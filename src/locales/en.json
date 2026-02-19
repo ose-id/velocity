@@ -241,5 +241,16 @@
   "update_now": "Update Now",
   "update_later": "Remind Me Later",
   "page": "Page",
-  "all": "All"
+  "all": "All",
+  "ci_passed": "Passed",
+  "ci_failed": "Failed",
+  "ci_running": "Running",
+  "ci_checks_failed": "Checks Failed",
+  "ci_checks_running": "Checks Running",
+  "ci_all_passed": "All Checks Passed",
+  "ci_no_config": "No CI/CD configured",
+  "ci_check": "check",
+  "ci_checks": "checks",
+  "ci_loading": "Loading status...",
+  "ci_unavailable": "Status unavailable"
 }

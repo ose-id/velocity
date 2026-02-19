@@ -241,5 +241,16 @@
   "update_now": "Update Sekarang",
   "update_later": "Nanti Saja",
   "page": "Halaman",
-  "all": "Semua"
+  "all": "Semua",
+  "ci_passed": "Lolos",
+  "ci_failed": "Gagal",
+  "ci_running": "Berjalan",
+  "ci_checks_failed": "Pemeriksaan Gagal",
+  "ci_checks_running": "Pemeriksaan Berjalan",
+  "ci_all_passed": "Semua Pemeriksaan Lolos",
+  "ci_no_config": "Tidak ada konfigurasi CI/CD",
+  "ci_check": "pemeriksaan",
+  "ci_checks": "pemeriksaan",
+  "ci_loading": "Memuat status...",
+  "ci_unavailable": "Status tidak tersedia"
 }
