@@ -65,15 +65,15 @@ export default function UpdatePopup({ updateStatus, onDownload, onQuitAndInstall
             <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-4 ring-1 ring-emerald-500/20">
             <Icon icon="mdi:check-circle-outline" className="text-3xl text-emerald-400" />
             </div>
-            <h2 className="text-xl font-bold text-white mb-2">Update Ready</h2>
+            <h2 className="text-xl font-bold text-white mb-2">{t('update_ready')}</h2>
             <p className="text-neutral-400 mb-6 text-center">
-            Version {version} has been downloaded. Restart now to install.
+            {t('update_downloaded_desc').replace('{version}', version)}
             </p>
             <Button
             onClick={handleRestart}
             className="w-full justify-center bg-emerald-600 text-white hover:bg-emerald-500 py-3 rounded-xl shadow-lg shadow-emerald-900/20 font-medium"
             >
-            Restart & Install
+            {t('update_restart')}
             </Button>
         </div>
       );
@@ -87,7 +87,7 @@ export default function UpdatePopup({ updateStatus, onDownload, onQuitAndInstall
              <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-4 ring-1 ring-blue-500/20">
                 <Icon icon="mdi:cloud-download-outline" className="text-3xl text-blue-400 animate-pulse" />
             </div>
-            <h2 className="text-xl font-bold text-white mb-2">Downloading Update...</h2>
+            <h2 className="text-xl font-bold text-white mb-2">{t('update_downloading')}</h2>
             
             {/* Progress Bar */}
             <div className="w-full h-2 bg-neutral-800 rounded-full overflow-hidden mb-2">
@@ -98,7 +98,7 @@ export default function UpdatePopup({ updateStatus, onDownload, onQuitAndInstall
                     transition={{ duration: 0.2 }}
                 />
             </div>
-            <p className="text-sm text-neutral-400 mb-6">{percent}% completed</p>
+            <p className="text-sm text-neutral-400 mb-6">{t('update_completed').replace('{percent}', percent)}</p>
         </div>
       );
     }
@@ -110,13 +110,13 @@ export default function UpdatePopup({ updateStatus, onDownload, onQuitAndInstall
                 <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mb-4 ring-1 ring-red-500/20">
                     <Icon icon="mdi:alert-circle-outline" className="text-3xl text-red-400" />
                 </div>
-                <h2 className="text-xl font-bold text-white mb-2">Update Failed</h2>
-                <p className="text-red-400 mb-6 text-center text-sm">{error || 'Unknown error occurred'}</p>
+                <h2 className="text-xl font-bold text-white mb-2">{t('update_failed')}</h2>
+                <p className="text-red-400 mb-6 text-center text-sm">{error || t('log_error')}</p>
                 <Button
                     onClick={() => setShow(false)}
                     className="w-full justify-center bg-neutral-800 text-neutral-300 hover:bg-neutral-700 py-3 rounded-xl border border-neutral-700 font-medium"
                 >
-                    Close
+                    {t('update_close')}
                 </Button>
             </div>
         )

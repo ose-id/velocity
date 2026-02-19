@@ -252,5 +252,12 @@
   "ci_check": "pemeriksaan",
   "ci_checks": "pemeriksaan",
   "ci_loading": "Memuat status...",
-  "ci_unavailable": "Status tidak tersedia"
+  "ci_unavailable": "Status tidak tersedia",
+  "update_ready": "Update Siap",
+  "update_downloaded_desc": "Versi {version} berhasil diunduh. Restart sekarang untuk menginstal.",
+  "update_restart": "Restart & Pasang",
+  "update_downloading": "Mengunduh Update...",
+  "update_completed": "{percent}% selesai",
+  "update_failed": "Update Gagal",
+  "update_close": "Tutup"
 }

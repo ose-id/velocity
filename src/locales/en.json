@@ -252,5 +252,12 @@
   "ci_check": "check",
   "ci_checks": "checks",
   "ci_loading": "Loading status...",
-  "ci_unavailable": "Status unavailable"
+  "ci_unavailable": "Status unavailable",
+  "update_ready": "Update Ready",
+  "update_downloaded_desc": "Version {version} has been downloaded. Restart now to install.",
+  "update_restart": "Restart & Install",
+  "update_downloading": "Downloading Update...",
+  "update_completed": "{percent}% completed",
+  "update_failed": "Update Failed",
+  "update_close": "Close"
 }
