@@ -585,9 +585,18 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                     )}
                 </div>
 
-                {/* Pagination Controls */}
                 {totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-4 mt-8">
+                    <div className="flex items-center justify-center gap-2 mt-8">
+                        {/* First Page */}
+                        <button
+                            onClick={() => setCurrentPage(1)}
+                            disabled={currentPage === 1}
+                            className="p-2 rounded-lg hover:bg-neutral-800 text-neutral-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                            title="First Page"
+                        >
+                            <Icon icon="mdi:chevron-double-left" className="text-xl" />
+                        </button>
+
                         <button
                             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                             disabled={currentPage === 1}
@@ -596,7 +605,7 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                             <Icon icon="mdi:chevron-left" className="text-xl" />
                         </button>
                         
-                        <span className="text-sm text-neutral-400">
+                        <span className="text-sm text-neutral-400 mx-2">
                             {t('page')} <span className="text-white font-medium">{currentPage}</span> {t('table_of')} <span className="text-white font-medium">{totalPages}</span>
                         </span>
 
@@ -606,6 +615,16 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                             className="p-2 rounded-lg hover:bg-neutral-800 text-neutral-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
                         >
                             <Icon icon="mdi:chevron-right" className="text-xl" />
+                        </button>
+
+                        {/* Last Page */}
+                        <button
+                            onClick={() => setCurrentPage(totalPages)}
+                            disabled={currentPage === totalPages}
+                            className="p-2 rounded-lg hover:bg-neutral-800 text-neutral-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                            title="Last Page"
+                        >
+                            <Icon icon="mdi:chevron-double-right" className="text-xl" />
                         </button>
                     </div>
                 )}
