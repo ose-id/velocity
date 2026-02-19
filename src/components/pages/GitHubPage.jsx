@@ -493,7 +493,13 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
             ) : (
                 <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {paginatedRepos.map(repo => {
+                    {paginatedRepos.map((repo) => {
+                        
+                        // Performance optimization: 
+                        // If not visible, we hide deeply to prevent layout thrashing but keep React components mounted to avoid "blink" on page switch.
+                        // However, rendering 100+ components might be heavy. 
+                        // But for < 100 items, this is acceptable for smooth UX.
+
                         const colorId = githubColors?.[repo.name] || 'neutral';
                         const colorStyles = getButtonColorStyles(colorId);
                         const isSelected = selectedIds.includes(repo.id);
@@ -564,7 +570,7 @@ export default function GitHubPage({ baseDir, onClone, editor, githubColors, onO
                                     </div>
 
                                     <div className="flex items-center gap-2">
-                                        <GitHubStatusIndicator repoUrl={repo.html_url} token={token} />
+                                        <GitHubStatusIndicator repo={repo} token={token} />
 
                                         <div className="inline-flex items-center gap-1 rounded-full bg-black/30 px-2 py-0.5">
                                             <Icon

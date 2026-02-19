@@ -3,59 +3,56 @@ import { Octokit } from '@octokit/rest';
 import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getCachedStatus, setCachedStatus } from '../../utils/statusCache';
 
 import Tooltip from './Tooltip';
 
-export default function GitHubStatusIndicator({ repoUrl, token }) {
-  const [status, setStatus] = useState('loading'); // loading, success, failure, pending, neutral
-  const [url, setUrl] = useState(null);
-  const [details, setDetails] = useState([]);
-  const [summary, setSummary] = useState('');
+export default function GitHubStatusIndicator({ repo, token }) {
   const { t } = useLanguage();
+  const repoUrl = repo?.html_url;
+
+  // Initialize state directly from cache to avoid "blink"
+  const [data, setData] = useState(() => {
+    if (!repoUrl) return { status: 'neutral', details: [], summary: '', url: null };
+    
+    const cached = getCachedStatus(repoUrl);
+    if (cached) return cached;
+    return {
+      status: 'loading',
+      details: [],
+      summary: '',
+      url: null
+    };
+  });
+
+  const { status, details, summary, url } = data;
 
   useEffect(() => {
-    if (!token || !repoUrl) {
-      setStatus('neutral');
+    if (!token || !repo || !repoUrl) {
+      if (status !== 'neutral') setData(prev => ({ ...prev, status: 'neutral' }));
       return;
     }
 
-    let owner, repo;
-    try {
-      if (repoUrl.startsWith('git@')) {
-        const parts = repoUrl.split(':');
-        if (parts.length > 1) {
-          const path = parts[1].replace('.git', '');
-          [owner, repo] = path.split('/');
-        }
-      } else {
-        const urlObj = new URL(repoUrl);
-        const parts = urlObj.pathname.split('/').filter(Boolean);
-        if (parts.length >= 2) {
-          owner = parts[0];
-          repo = parts[1].replace('.git', '');
-        }
-      }
-    } catch (e) {
-      console.error("Invalid repo URL", repoUrl);
-      setStatus('neutral');
-      return;
-    }
+    // If we already have data (from cache init), don't fetch again
+    if (status !== 'loading') return;
 
-    if (!owner || !repo) {
-      setStatus('neutral');
+    const owner = repo.owner.login;
+    const name = repo.name;
+    const defaultBranch = repo.default_branch;
+
+    if (!owner || !name) {
+       setData(prev => ({ ...prev, status: 'neutral' }));
       return;
     }
 
     const fetchStatus = async () => {
       try {
         const octokit = new Octokit({ auth: token });
-        const { data: repoData } = await octokit.repos.get({ owner, repo });
-        const defaultBranch = repoData.default_branch;
 
         // Fetch checks
         const { data: checkRuns } = await octokit.checks.listForRef({
           owner,
-          repo,
+          repo: name,
           ref: defaultBranch,
           per_page: 20
         });
@@ -63,7 +60,7 @@ export default function GitHubStatusIndicator({ repoUrl, token }) {
         // Fetch legacy status for context
         const { data: legacyStatus } = await octokit.repos.getCombinedStatusForRef({
             owner,
-            repo,
+            repo: name,
             ref: defaultBranch
         });
 
@@ -71,6 +68,7 @@ export default function GitHubStatusIndicator({ repoUrl, token }) {
         let finalStatus = 'neutral';
         let checkDetails = [];
         let summaryText = 'ci_no_config';
+        let repoActionUrl = '';
 
         if (checkRuns.total_count > 0) {
           const runs = checkRuns.check_runs;
@@ -89,7 +87,7 @@ export default function GitHubStatusIndicator({ repoUrl, token }) {
           }));
           
           summaryText = hasFailure ? 'ci_checks_failed' : isRunning ? 'ci_checks_running' : 'ci_all_passed';
-          setUrl(`${repoData.html_url}/actions`);
+          repoActionUrl = `${repo.html_url}/actions`;
 
         } else if (legacyStatus.total_count > 0) {
              finalStatus = legacyStatus.state; // success, failure, pending
@@ -100,21 +98,35 @@ export default function GitHubStatusIndicator({ repoUrl, token }) {
                  id: s.id
              }));
              summaryText = finalStatus === 'success' ? 'ci_all_passed' : 'ci_checks_failed';
-             setUrl(`${repoData.html_url}/commits/${defaultBranch}`);
+             repoActionUrl = `${repo.html_url}/commits/${defaultBranch}`;
         }
 
-        setStatus(finalStatus);
-        setDetails(checkDetails);
-        setSummary(summaryText);
+        const newData = {
+          status: finalStatus,
+          details: checkDetails,
+          summary: summaryText,
+          url: repoActionUrl
+        };
+
+        // Cache the result
+        setCachedStatus(repoUrl, newData);
+        setData(newData);
 
       } catch (err) {
         console.warn("Failed to fetch status", err);
-        setStatus('error');
+        // Don't show error state for 404s on checks, just neutral
+        if (err.status === 404) {
+             const newData = { status: 'neutral', details: [], summary: 'ci_no_config', url: null };
+             setCachedStatus(repoUrl, newData);
+             setData(newData);
+        } else {
+             setData(prev => ({ ...prev, status: 'error' }));
+        }
       }
     };
 
     fetchStatus();
-  }, [repoUrl, token]);
+  }, [repo?.id, token, status]);
 
   if (status === 'loading') return <span className="w-2 h-2 rounded-full bg-neutral-700 animate-pulse" title={t('ci_loading')} />;
   if (status === 'neutral') return <span className="w-2 h-2 rounded-full bg-neutral-700 opacity-30" title={t('ci_no_config')} />;
