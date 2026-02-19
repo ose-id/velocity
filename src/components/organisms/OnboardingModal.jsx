@@ -328,6 +328,7 @@ export default function OnboardingModal({ open, onFinish }) {
           />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/80" />
           <div className="absolute bottom-12 left-12 max-w-md">
+            <img src="./velocity-logo.svg" alt="Velocity Logo" className="w-16 h-16 object-contain mb-6" />
             <h1 className="text-4xl font-bold text-white mb-4">Velocity</h1>
             <p className="text-neutral-400 text-lg">
               Streamline your development setup.

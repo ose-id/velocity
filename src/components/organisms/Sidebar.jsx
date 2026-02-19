@@ -27,8 +27,8 @@ export default function Sidebar({ activePage, setActivePage, transparent }) {
     >
       <div className="px-4 py-4 border-b border-neutral-900">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-xl bg-neutral-800 flex items-center justify-center">
-            <Icon icon="mdi:source-branch" className="text-neutral-100 text-lg" />
+          <div className="h-8 w-8 flex items-center justify-center shrink-0">
+            <img src="./velocity-logo.svg" alt="App Logo" className="w-8 h-8 object-contain" />
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-semibold text-neutral-100">{t('app_name')}</span>
