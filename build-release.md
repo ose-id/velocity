@@ -37,10 +37,12 @@ After the build is complete, the build artifacts will be located in the `release
 
 Files you **MUST** retrieve:
 
-1.  `Velocity Setup X.X.X.exe` (Application Installer)
-2.  `latest.yml` (Auto-update Manifest)
+1.  `Velocity.Setup.X.X.X.x64.exe` (64-bit Installer)
+2.  `Velocity.Setup.X.X.X.ia32.exe` (32-bit Installer)
+3.  `Velocity.Setup.X.X.X.arm64.exe` (ARM64 Installer)
+4.  `latest.yml` (Auto-update Manifest)
 
-> **IMPORTANT:** Do not rename these files. Upload them as they are.
+> **IMPORTANT:** Do not rename these files. Upload them all as they are to ensure Auto-Update works for all architectures.
 
 ## 4. Create Release on GitHub
 

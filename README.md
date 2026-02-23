@@ -62,12 +62,15 @@ Example (adjust to match your existing scripts):
     "dev:vite": "vite",
     "dev:electron": "electron ./electron/main.cjs",
     "build:renderer": "vite build",
-    "build:win": "bun run build:renderer && bunx electron-builder@24.6.3 --win",
+    "clean:release": "node -e \"const fs=require('fs'),path=require('path');if(fs.existsSync('release'))fs.readdirSync('release').filter(f=>f.endsWith('.exe')||f.endsWith('.blockmap')).forEach(f=>fs.unlinkSync(path.join('release',f)))\"",
+    "build:win": "bun run clean:release && bun run build:renderer && bunx electron-builder@24.6.3 --win --x64 && bunx electron-builder@24.6.3 --win --ia32 && bunx electron-builder@24.6.3 --win --arm64",
     "lint": "eslint .",
     "preview": "vite preview",
   },
   "build": {
     "appId": "com.ose.velocity",
+    "target": "nsis",
+    "artifactName": "${productName}.Setup.${version}.${arch}.${ext}",
     "productName": "Velocity",
     "files": ["dist/", "electron/", "build/icon.ico", "config.json", "package.json"],
     "directories": {
@@ -102,7 +105,7 @@ Example (adjust to match your existing scripts):
 > Minimal explanation:
 >
 > - `build:renderer` – builds the React frontend into `dist/` using Vite
-> - `build:win` – runs Vite build, then runs electron-builder for Windows
+> - `build:win` – runs the cleanup script, then Vite build, then electron-builder 3 times for x64, ia32, and arm64.
 > - `directories.output` – installer output folder (here: `release/`)
 > - `win.icon` – path to your app icon (`.ico`), create this file yourself
 
@@ -112,13 +115,15 @@ Example (adjust to match your existing scripts):
 bun run build:win
 ```
 
-After it finishes, you’ll get something like:
+After it finishes, you’ll get 3 separate installers based on architecture:
 
 ```text
-release/Velocity Setup X.Y.Z.exe
+release/Velocity.Setup.X.Y.Z.x64.exe
+release/Velocity.Setup.X.Y.Z.ia32.exe
+release/Velocity.Setup.X.Y.Z.arm64.exe
 ```
 
-Send this `.exe` file to other PCs to install Velocity like standard Windows software.
+Send these `.exe` files to other PCs along with `latest.yml` to install Velocity and support Auto-Update across all architectures!
 
 ---
 
