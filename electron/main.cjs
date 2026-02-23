@@ -80,9 +80,10 @@ const DEFAULT_CONFIG = {
   shortcuts: {
     switchPage: 'Tab',
     openHome: '1',
-    openActivity: '2',
-    openShortcuts: '3',
-    openSettings: '4',
+    openGitHub: '2',
+    openActivity: '3',
+    openShortcuts: '4',
+    openSettings: '5',
     toggleGrid: '',
     search: '',
   },
