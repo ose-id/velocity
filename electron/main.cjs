@@ -61,11 +61,12 @@ const DEFAULT_CONFIG = {
     },
     {
       id: 'E',
-      label: 'Button E',
-      repoUrl: '',
-      folderName: '',
+      label: 'Astro Starter',
+      repoUrl: 'https://github.com/adydetra/astro-starter.git',
+      folderName: 'astro-starter',
       useSsh: false,
-      color: 'neutral',
+      color: 'red',
+      group: 'Starter',
     },
     {
       id: 'F',
