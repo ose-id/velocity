@@ -12,13 +12,14 @@
     "dev:vite": "vite",
     "dev:electron": "electron ./electron/main.cjs",
     "build:renderer": "vite build",
-    "build:win": "bun run build:renderer && bunx electron-builder@24.6.3 --win",
+    "clean:release": "node -e \"const fs=require('fs'),path=require('path');if(fs.existsSync('release'))fs.readdirSync('release').filter(f=>f.endsWith('.exe')||f.endsWith('.blockmap')).forEach(f=>fs.unlinkSync(path.join('release',f)))\"",
+    "build:win": "bun run clean:release && bun run build:renderer && bunx electron-builder@24.6.3 --win --x64 && bunx electron-builder@24.6.3 --win --ia32 && bunx electron-builder@24.6.3 --win --arm64",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "build": {
     "appId": "com.ose.velocity",
-    "artifactName": "${productName}.Setup.${version}.${ext}",
+    "artifactName": "${productName}.Setup.${version}.${arch}.${ext}",
     "productName": "Velocity",
     "files": [
       "dist/",
