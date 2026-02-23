@@ -184,8 +184,9 @@ export default function useGitOperations({ baseDir, editor, buttons, appendLog }
       setLastResult({ status: 'error', message: `Button ${btn.id} has no URL.` });
       return;
     }
-    const effectiveUrl = btn.useSsh ? toSshUrl(btn.repoUrl) : btn.repoUrl;
-    const { deleteGit, customName, baseDir: overrideBaseDir } = options;
+    const { deleteGit, customName, baseDir: overrideBaseDir, useSsh } = options;
+    const effectiveUseSsh = useSsh !== undefined ? useSsh : btn.useSsh;
+    const effectiveUrl = effectiveUseSsh ? toSshUrl(btn.repoUrl) : btn.repoUrl;
 
     setLoading(true);
     setActiveButtonId(btn.id);
