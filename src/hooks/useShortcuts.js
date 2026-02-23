@@ -67,7 +67,7 @@ export default function useShortcuts({
       } else if (pressed === shortcuts.openHome) {
         e.preventDefault();
         setActivePage('home');
-      } else if (pressed === shortcuts.openGithub) {
+      } else if (pressed === shortcuts.openGitHub) {
         e.preventDefault();
         setActivePage('github');
       } else if (pressed === shortcuts.openActivity) {

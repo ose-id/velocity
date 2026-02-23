@@ -27,7 +27,7 @@ export default function ShortcutsPage({
   const shortcutList = [
     { id: 'switchPage', label: t('shortcuts_switch_page'), description: t('shortcuts_switch_page_desc') },
     { id: 'openHome', label: t('shortcuts_open_home'), description: t('shortcuts_open_home_desc') },
-    { id: 'openGithub', label: t('shortcuts_open_github'), description: t('shortcuts_open_github_desc') },
+    { id: 'openGitHub', label: t('shortcuts_open_github'), description: t('shortcuts_open_github_desc') },
     { id: 'openActivity', label: t('shortcuts_open_activity'), description: t('shortcuts_open_activity_desc') },
     { id: 'openShortcuts', label: t('shortcuts_open_shortcuts'), description: t('shortcuts_open_shortcuts_desc') },
     { id: 'openSettings', label: t('shortcuts_open_settings'), description: t('shortcuts_open_settings_desc') },

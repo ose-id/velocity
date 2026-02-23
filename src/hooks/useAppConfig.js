@@ -14,7 +14,7 @@ export default function useAppConfig() {
   const [shortcuts, setShortcuts] = useState({
     switchPage: 'Tab',
     openHome: '1',
-    openGithub: '2',
+    openGitHub: '2',
     openActivity: '3',
     openShortcuts: '4',
     openSettings: '5'
