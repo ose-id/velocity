@@ -6,22 +6,23 @@ import useUpdateSystem from './hooks/useUpdateSystem';
 import useGitOperations from './hooks/useGitOperations';
 import useShortcuts from './hooks/useShortcuts';
 
-// Organisms
-import TopBar from './components/organisms/TopBar';
-import Sidebar from './components/organisms/Sidebar';
-import GlobalDialogs from './components/organisms/GlobalDialogs';
+// Layout & Dialogs
+import { TopBar, Sidebar } from '@/components/layout';
+import { GlobalDialogs } from '@/components/dialogs';
 
 // Pages
-import HomePage from './components/pages/HomePage';
-import ActivityPage from './components/pages/ActivityPage';
-import ShortcutsPage from './components/pages/ShortcutsPage';
-import ConfigPage from './components/pages/ConfigPage';
-import GitHubPage from './components/pages/GitHubPage';
+import {
+  HomePage,
+  ActivityPage,
+  ShortcutsPage,
+  ConfigPage,
+  GitHubPage,
+} from '@/components/pages';
+import type { PageId } from '@/types';
 
 function App() {
-  const [activePage, setActivePage] = useState('home');
+  const [activePage, setActivePage] = useState<PageId>('home');
   const [focusSearchTrigger, setFocusSearchTrigger] = useState(0);
-  const [isShortcutRecording, setIsShortcutRecording] = useState(false);
 
   // 1. App Config & State
   const config = useAppConfig();
@@ -31,7 +32,7 @@ function App() {
     baseDir: config.baseDir,
     editor: config.editor,
     buttons: config.buttons,
-    appendLog: config.appendLog
+    appendLog: config.appendLog,
   });
 
   // 3. Update System
@@ -44,7 +45,7 @@ function App() {
     setActivePage,
     handleToggleGrid: config.handleToggleGrid,
     setFocusSearchTrigger,
-    appendLog: config.appendLog
+    appendLog: config.appendLog,
   });
 
   // Render Page
@@ -55,10 +56,9 @@ function App() {
           <HomePage
             buttons={config.buttons}
             baseDir={config.baseDir}
-            editor={config.editor}
             effectiveGrid={config.effectiveGrid}
-            onAddButton={config.handleAddButton}
-            onRemoveButton={config.handleRemoveButton}
+            loading={gitOps.loading}
+            activeButtonId={gitOps.activeButtonId}
             onDragEnd={config.handleDragEnd}
             onClone={gitOps.handleCloneClick}
             onToggleGrid={config.handleToggleGrid}
@@ -70,7 +70,6 @@ function App() {
             onBatchClone={gitOps.handleBatchCloneClick}
             // Color Menu
             onOpenColorMenu={config.handleOpenColorMenu}
-            activeButtonId={gitOps.activeButtonId}
             focusSearchTrigger={focusSearchTrigger}
           />
         );
@@ -92,18 +91,18 @@ function App() {
       case 'activity':
         return (
           <ActivityPage
+            lastResult={gitOps.lastResult}
             logs={config.logs}
             onClearLogs={config.handleClearLogs}
-            lastSavedLabel={config.lastSavedLabel}
-            saving={config.saving}
-            configPath={config.configPath}
           />
         );
       case 'shortcuts':
         return (
           <ShortcutsPage
             shortcuts={config.shortcuts}
-            onUpdateShortcut={(k, v) => config.setShortcuts(p => ({ ...p, [k]: v }))}
+            onUpdateShortcut={(k: string, v: string | null) =>
+              config.setShortcuts((p) => ({ ...p, [k]: v || '' }))
+            }
             recordingKey={shortcutCtrl.recordingKey}
             onStartRecord={shortcutCtrl.startRecording}
             onStopRecord={shortcutCtrl.stopRecording}
@@ -120,6 +119,7 @@ function App() {
 
             baseDir={config.baseDir}
             setBaseDir={config.setBaseDir}
+            configPath={config.configPath}
             onPickDirectory={config.handlePickDirectory}
             editor={config.editor}
             onChangeEditor={config.handleChangeEditor}
@@ -151,19 +151,17 @@ function App() {
   };
 
   return (
-
     <>
       <div className="flex flex-col h-screen w-full bg-neutral-950 text-neutral-100 overflow-hidden font-sans selection:bg-blue-500/30">
-        
         {/* Background Overlay */}
-        {config.backgroundImage && (
+        {Boolean(config.backgroundImage) && (
           <div className="fixed inset-0 z-0 pointer-events-none">
             <div
               className="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-in-out"
               style={{
-                backgroundImage: `url('file://${config.backgroundImage.replace(/\\/g, '/')}')`,
-                opacity: config.bgOpacity / 100,
-                filter: `blur(${config.bgBlur}px)`,
+                backgroundImage: `url('file://${String(config.backgroundImage).replace(/\\/g, '/')}')`,
+                opacity: (config.bgOpacity ?? 60) / 100,
+                filter: `blur(${config.bgBlur ?? 4}px)`,
               }}
             />
             <div className="absolute inset-0 bg-black/40" />
@@ -175,9 +173,6 @@ function App() {
           <TopBar
             windowState={config.windowState}
             onWindowControl={config.handleWindowControl}
-            activePage={activePage}
-            loading={gitOps.loading}
-            updateStatus={updateSys.updateStatus}
           />
         </div>
 
@@ -186,8 +181,7 @@ function App() {
           <Sidebar
             activePage={activePage}
             setActivePage={setActivePage}
-            windowState={config.windowState}
-            transparent={!!config.backgroundImage && config.bgSidebar}
+            transparent={Boolean(config.backgroundImage && config.bgSidebar)}
           />
 
           <main className="flex-1 flex flex-col overflow-hidden relative min-w-0">

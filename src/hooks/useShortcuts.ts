@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/contexts/ToastContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { ShortcutMap, PageId } from '@/types';
+
+interface UseShortcutsProps {
+  shortcuts: ShortcutMap;
+  setShortcuts: React.Dispatch<React.SetStateAction<ShortcutMap>>;
+  setActivePage: React.Dispatch<React.SetStateAction<PageId>>;
+  handleToggleGrid: () => void;
+  setFocusSearchTrigger: React.Dispatch<React.SetStateAction<number>>;
+  appendLog: (msg: string) => void;
+}
 
 export default function useShortcuts({
   shortcuts,
@@ -8,20 +18,19 @@ export default function useShortcuts({
   setActivePage,
   handleToggleGrid,
   setFocusSearchTrigger,
-  appendLog
-}) {
-  const [recordingKey, setRecordingKey] = useState(null);
+  appendLog,
+}: UseShortcutsProps) {
+  const [recordingKey, setRecordingKey] = useState<string | null>(null);
   const { addToast } = useToast();
   const { t } = useLanguage();
 
-
-
   useEffect(() => {
-    const handleGlobalKeyDown = (e) => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
       // Ignore if typing in input/textarea
-      if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+      const target = e.target as HTMLElement | null;
+      if (target && ['INPUT', 'TEXTAREA'].includes(target.tagName)) return;
 
-      const modifiers = [];
+      const modifiers: string[] = [];
       if (e.ctrlKey) modifiers.push('Ctrl');
       if (e.altKey) modifiers.push('Alt');
       if (e.shiftKey) modifiers.push('Shift');
@@ -42,7 +51,9 @@ export default function useShortcuts({
         if (['Control', 'Shift', 'Alt', 'Meta'].includes(e.key)) return;
 
         // Validation
-        const isDuplicate = Object.entries(shortcuts).some(([id, val]) => val === pressed && id !== recordingKey);
+        const isDuplicate = Object.entries(shortcuts).some(
+          ([id, val]) => val === pressed && id !== recordingKey
+        );
         
         if (isDuplicate) {
           addToast(t('shortcut_already_used', { key: pressed }), 'error');
@@ -59,10 +70,10 @@ export default function useShortcuts({
       if (pressed === shortcuts.switchPage) {
         e.preventDefault();
         setActivePage((prev) => {
-          const order = ['home', 'github', 'activity', 'shortcuts', 'config'];
+          const order: PageId[] = ['home', 'github', 'activity', 'shortcuts', 'config'];
           const idx = order.indexOf(prev);
           const nextIdx = (idx + 1) % order.length;
-          return order[nextIdx];
+          return order[nextIdx] as PageId;
         });
       } else if (pressed === shortcuts.openHome) {
         e.preventDefault();

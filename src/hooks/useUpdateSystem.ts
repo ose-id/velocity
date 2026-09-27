@@ -1,17 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
+import type { UpdateStatus } from '@/types';
 
 export default function useUpdateSystem() {
-  const [updateStatus, setUpdateStatus] = useState({ status: 'idle' });
+  const [updateStatus, setUpdateStatus] = useState<UpdateStatus>({ status: 'idle' });
 
   // Update Status Listener
   useEffect(() => {
     if (!window.electronAPI?.onUpdateStatus) return;
-    window.electronAPI.onUpdateStatus((statusObj) => {
+    window.electronAPI.onUpdateStatus((statusObj: UpdateStatus) => {
       console.log('[App] Update status:', statusObj);
       setUpdateStatus(statusObj);
     });
     return () => {
-      if (window.electronAPI.removeUpdateStatusListener) {
+      if (window.electronAPI?.removeUpdateStatusListener) {
         window.electronAPI.removeUpdateStatusListener();
       }
     };
@@ -21,7 +22,7 @@ export default function useUpdateSystem() {
     if (!window.electronAPI?.checkForUpdates) return;
     setUpdateStatus({ status: 'checking' });
 
-    const timeoutPromise = new Promise((resolve) => {
+    const timeoutPromise = new Promise<{ status: 'timeout' }>((resolve) => {
       setTimeout(() => resolve({ status: 'timeout' }), 30000);
     });
 
@@ -34,12 +35,12 @@ export default function useUpdateSystem() {
       setUpdateStatus({ status: 'dev-mode' });
     } else if (result.status === 'error') {
       if (import.meta.env.DEV) {
-        setUpdateStatus({ status: 'error', error: result.error });
+        setUpdateStatus({ status: 'error', error: (result as { error?: string }).error });
       } else {
-        console.error("Update Check Error:", result.error);
+        console.error("Update Check Error:", (result as { error?: string }).error);
         setUpdateStatus({ status: 'error', error: "Update check failed." });
       }
-    } else if (result.status === 'checked' && !result.updateInfo) {
+    } else if (result.status === 'checked' && !(result as { updateInfo?: unknown }).updateInfo) {
       setUpdateStatus({ status: 'not-available' });
       setTimeout(() => {
         setUpdateStatus((prev) => (prev.status === 'not-available' ? { status: 'idle' } : prev));
