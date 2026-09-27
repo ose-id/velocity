@@ -2,7 +2,7 @@
 
 ## Current release
 
-- **Version**: 2.0.0
+- **Version**: 2.0.1
 - **Runtime**: Electron 43.7.5, React 19.3.0, Vite 8.3.1, TypeScript 5.9.3, Node/Bun runtime
 - **License**: MIT
 
