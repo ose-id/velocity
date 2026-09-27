@@ -2,22 +2,36 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { getButtonColorStyles } from '../../utils/constants';
-import Pill from '../atoms/Pill';
+import { getButtonColorStyles } from '@/utils/constants';
+import { Pill } from '@/components/ui';
+import type { ConfigButton, ButtonColor } from '@/types';
 
-export default function ProjectCard({ 
-  btn, 
-  loading, 
-  activeButtonId, 
-  onClone, 
+export interface ProjectCardProps {
+  btn: ConfigButton;
+  loading: boolean;
+  activeButtonId: string | number | null;
+  onClone: (btn: ConfigButton) => void;
+  onOpenColorMenu?: (btn: ConfigButton, e: React.MouseEvent) => void;
+  isSelectionMode?: boolean;
+  isSelected?: boolean;
+  onToggleSelection?: (id: string | number) => void;
+}
+
+export default function ProjectCard({
+  btn,
+  loading,
+  activeButtonId,
+  onClone,
   onOpenColorMenu,
-  isSelectionMode,
-  isSelected,
-  onToggleSelection
-}) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: btn.id });
+  isSelectionMode = false,
+  isSelected = false,
+  onToggleSelection,
+}: ProjectCardProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: btn.id,
+  });
 
-  const style = {
+  const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
     zIndex: isDragging ? 50 : 'auto',
@@ -25,11 +39,11 @@ export default function ProjectCard({
   };
 
   const isActive = activeButtonId === btn.id && loading;
-  const colorId = btn.color || 'neutral';
+  const colorId = (btn.color as ButtonColor) || 'neutral';
   const colorStyles = getButtonColorStyles(colorId);
   const hasUrl = !!btn.repoUrl;
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!hasUrl && !isSelectionMode) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -38,23 +52,20 @@ export default function ProjectCard({
     e.currentTarget.style.setProperty('--y', `${y}px`);
   };
 
-  const handleClick = (e) => {
-    // If disabled, do nothing
+  const handleClick = () => {
     if (!hasUrl) return;
-
-    // If we are in selection mode, any click toggles selection
-    if (isSelectionMode) {
+    if (isSelectionMode && onToggleSelection) {
       onToggleSelection(btn.id);
       return;
     }
-    
-    // Otherwise normal behavior
     onClone(btn);
   };
 
-  const handleCheckboxClick = (e) => {
+  const handleCheckboxClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onToggleSelection(btn.id);
+    if (onToggleSelection) {
+      onToggleSelection(btn.id);
+    }
   };
 
   return (
@@ -75,16 +86,17 @@ export default function ProjectCard({
 
         {/* Selection Checkbox */}
         {hasUrl && (
-          <div 
+          <div
             className="transition-all duration-200 opacity-100 scale-100"
             onClick={handleCheckboxClick}
           >
-            <div className={`
-              w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors duration-200 cursor-pointer
-              ${isSelected 
-                ? 'bg-emerald-500 border-emerald-500' 
-                : 'bg-black/40 border-neutral-500/50 hover:border-neutral-300'}
-            `}>
+            <div
+              className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors duration-200 cursor-pointer ${
+                isSelected
+                  ? 'bg-emerald-500 border-emerald-500'
+                  : 'bg-black/40 border-neutral-500/50 hover:border-neutral-300'
+              }`}
+            >
               {isSelected && <Icon icon="mdi:check" className="text-white text-sm" />}
             </div>
           </div>
@@ -102,7 +114,7 @@ export default function ProjectCard({
           colorStyles.card,
           loading ? 'opacity-90' : '',
           !hasUrl ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
-          isSelected ? 'ring-2 ring-neutral-100 ring-offset-2 ring-offset-neutral-950' : ''
+          isSelected ? 'ring-2 ring-neutral-100 ring-offset-2 ring-offset-neutral-950' : '',
         ].join(' ')}
       >
         {/* Spotlight Effect */}
@@ -115,15 +127,20 @@ export default function ProjectCard({
           />
         )}
 
-        <div className="relative z-10 flex items-center justify-between w-full gap-2 pr-6"> 
-          {/* Removed pl-6, reverted to standard padding */}
-          
+        <div className="relative z-10 flex items-center justify-between w-full gap-2 pr-6">
           <div className="flex items-center gap-2 overflow-hidden">
-            <div className={['h-7 w-7 rounded-lg flex-shrink-0 flex items-center justify-center', colorStyles.iconBg].join(' ')}>
+            <div
+              className={[
+                'h-7 w-7 rounded-lg flex-shrink-0 flex items-center justify-center',
+                colorStyles.iconBg,
+              ].join(' ')}
+            >
               <Icon icon="mdi:download-network-outline" className="text-neutral-100 text-lg" />
             </div>
             <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-medium text-neutral-50 truncate">{btn.label || `Button ${btn.id}`}</span>
+              <span className="text-sm font-medium text-neutral-50 truncate">
+                {btn.label || `Button ${btn.id}`}
+              </span>
               <span className="text-[11px] text-neutral-200/80 font-mono truncate max-w-[140px]">
                 {btn.repoUrl || '— no repo url —'}
               </span>
@@ -147,9 +164,6 @@ export default function ProjectCard({
           />
 
           <div className="flex items-center gap-2">
-            {/* Status Icon */}
-
-
             <div className="inline-flex items-center gap-1 rounded-full bg-black/30 px-2 py-0.5">
               <Icon
                 icon={btn.useSsh ? 'mdi:lock-outline' : 'mdi:lock-open-variant-outline'}

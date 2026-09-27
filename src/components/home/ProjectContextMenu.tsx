@@ -1,19 +1,38 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
-import { BUTTON_COLOR_OPTIONS } from '../../utils/constants';
-import { useClickOutside } from '../../hooks/useClickOutside';
+import { BUTTON_COLOR_OPTIONS } from '@/utils/constants';
+import { useClickOutside } from '@/hooks/useClickOutside';
+import type { ButtonColor } from '@/types';
 
-export default function ProjectContextMenu({ open, x, y, activeColor, repoUrl, onClose, onPickColor }) {
-  const menuRef = React.useRef(null);
+export interface ProjectContextMenuProps {
+  open: boolean;
+  x: number;
+  y: number;
+  activeColor: ButtonColor;
+  repoUrl?: string | null;
+  onClose: () => void;
+  onPickColor: (color: ButtonColor) => void;
+}
+
+export default function ProjectContextMenu({
+  open,
+  x,
+  y,
+  activeColor,
+  repoUrl,
+  onClose,
+  onPickColor,
+}: ProjectContextMenuProps) {
+  const menuRef = React.useRef<HTMLDivElement>(null);
   useClickOutside(menuRef, onClose);
 
   if (!open) return null;
 
-  const handleOpenBrowser = (browserId) => {
-      if (window.electronAPI?.openExternal && repoUrl) {
-          window.electronAPI.openExternal(repoUrl, browserId);
-      }
-      onClose();
+  const handleOpenBrowser = (browserId: string) => {
+    if (window.electronAPI?.openExternal && repoUrl) {
+      window.electronAPI.openExternal(repoUrl, browserId);
+    }
+    onClose();
   };
 
   return (
@@ -33,7 +52,7 @@ export default function ProjectContextMenu({ open, x, y, activeColor, repoUrl, o
           <button
             key={opt.id}
             type="button"
-            onClick={() => onPickColor(opt.id)}
+            onClick={() => onPickColor(opt.id as ButtonColor)}
             className="inline-flex items-center justify-between rounded-md px-2 py-1.5 text-[11px] text-neutral-200 hover:bg-neutral-800 hover:text-white cursor-pointer transition-colors"
           >
             <span className="inline-flex items-center gap-2">
@@ -49,16 +68,20 @@ export default function ProjectContextMenu({ open, x, y, activeColor, repoUrl, o
 
       {/* Separator */}
       {repoUrl && (
-          <>
-              <div className="h-px bg-neutral-800 my-1 mx-1" />
-              
-              <div className="flex flex-col gap-1 mt-1">
-                  <button onClick={() => handleOpenBrowser('default')} className="w-full text-left px-2 py-1.5 text-[11px] text-neutral-200 hover:bg-neutral-800 hover:text-white rounded-md cursor-pointer flex items-center gap-2">
-                      <Icon icon="mdi:web" />
-                      Open Repo in Browser
-                  </button>
-              </div>
-          </>
+        <>
+          <div className="h-px bg-neutral-800 my-1 mx-1" />
+
+          <div className="flex flex-col gap-1 mt-1">
+            <button
+              type="button"
+              onClick={() => handleOpenBrowser('default')}
+              className="w-full text-left px-2 py-1.5 text-[11px] text-neutral-200 hover:bg-neutral-800 hover:text-white rounded-md cursor-pointer flex items-center gap-2"
+            >
+              <Icon icon="mdi:web" />
+              Open Repo in Browser
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

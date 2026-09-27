@@ -1,10 +1,17 @@
 import React from 'react';
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function BatchActionBar({ selectedCount, onCancel, onClone }) {
+export interface BatchActionBarProps {
+  selectedCount: number;
+  onCancel: () => void;
+  onClone: () => void;
+}
+
+export default function BatchActionBar({ selectedCount, onCancel, onClone }: BatchActionBarProps) {
   const { t } = useLanguage();
+
   return (
     <AnimatePresence>
       {selectedCount > 0 && (
@@ -19,18 +26,20 @@ export default function BatchActionBar({ selectedCount, onCancel, onClone }) {
               <Icon icon="mdi:check" className="text-lg" />
             </div>
             <span className="text-sm font-medium text-neutral-200">
-              {t('batch_bar_selected').replace('{count}', selectedCount)}
+              {t('batch_bar_selected').replace('{count}', String(selectedCount))}
             </span>
           </div>
 
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={onCancel}
               className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition-colors cursor-pointer"
             >
               {t('batch_bar_cancel')}
             </button>
             <button
+              type="button"
               onClick={onClone}
               disabled={selectedCount < 1}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-emerald-900/20 cursor-pointer ${

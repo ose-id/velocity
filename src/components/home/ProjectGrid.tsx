@@ -7,13 +7,28 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  type DragEndEvent,
 } from '@dnd-kit/core';
 import {
   SortableContext,
   sortableKeyboardCoordinates,
   rectSortingStrategy,
 } from '@dnd-kit/sortable';
-import ProjectCard from '../molecules/ProjectCard';
+import ProjectCard from './ProjectCard';
+import type { ConfigButton } from '@/types';
+
+export interface ProjectGridProps {
+  buttons: ConfigButton[];
+  loading: boolean;
+  activeButtonId: string | number | null;
+  onClone: (btn: ConfigButton) => void;
+  onOpenColorMenu?: (btn: ConfigButton, e: React.MouseEvent) => void;
+  effectiveGrid: number;
+  onDragEnd: (event: DragEndEvent) => void;
+  isSelectionMode?: boolean;
+  selectedIds?: (string | number)[];
+  onToggleSelection?: (id: string | number) => void;
+}
 
 export default function ProjectGrid({
   buttons,
@@ -23,16 +38,17 @@ export default function ProjectGrid({
   onOpenColorMenu,
   effectiveGrid,
   onDragEnd,
-  isSelectionMode,
-  selectedIds,
-  onToggleSelection
-}) {
-  const gridClass = effectiveGrid === 3 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 md:grid-cols-2';
+  isSelectionMode = false,
+  selectedIds = [],
+  onToggleSelection,
+}: ProjectGridProps) {
+  const gridClass =
+    effectiveGrid === 3 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 md:grid-cols-2';
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8, // Require 8px movement before drag starts (prevents accidental drags on click)
+        distance: 8,
       },
     }),
     useSensor(KeyboardSensor, {
