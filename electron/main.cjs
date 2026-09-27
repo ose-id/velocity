@@ -262,7 +262,14 @@ function openInEditor(targetPath, editorId) {
       cmd = 'windsurf';
       break;
     case 'antigravity':
-      cmd = 'antigravity';
+    case 'antigravity-ide':
+      cmd = process.platform === 'win32' ? 'antigravity-ide' : 'antigravity';
+      break;
+    case 'vim':
+      cmd = 'vim';
+      break;
+    case 'visualstudio':
+      cmd = 'devenv';
       break;
     case 'vscode':
     default:

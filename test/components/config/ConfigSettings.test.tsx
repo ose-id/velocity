@@ -45,6 +45,6 @@ describe('ConfigSettings Component', () => {
     expect(screen.getByText('VS Code')).toBeInTheDocument();
     expect(screen.getByText('Cursor')).toBeInTheDocument();
     expect(screen.getByText('Windsurf')).toBeInTheDocument();
-    expect(screen.getByText('Antigravity')).toBeInTheDocument();
+    expect(screen.getByText('Antigravity IDE')).toBeInTheDocument();
   });
 });

@@ -7,7 +7,7 @@ const EDITOR_OPTIONS: Array<{ id: EditorId; label: string; icon: string }> = [
   { id: 'vscode', label: 'VS Code', icon: 'mdi:alpha-v-circle-outline' },
   { id: 'cursor', label: 'Cursor', icon: 'mdi:alpha-c-circle-outline' },
   { id: 'windsurf', label: 'Windsurf', icon: 'mdi:alpha-w-circle-outline' },
-  { id: 'antigravity', label: 'Antigravity', icon: 'mdi:alpha-a-circle-outline' },
+  { id: 'antigravity', label: 'Antigravity IDE', icon: 'mdi:alpha-a-circle-outline' },
   { id: 'vim', label: 'Vim', icon: 'mdi:alpha-v-box-outline' },
   { id: 'visualstudio', label: 'Visual Studio', icon: 'mdi:microsoft-visual-studio' },
 ];
@@ -55,7 +55,7 @@ export default function EditorSetting({ editor, onChangeEditor }: EditorSettingP
           <p className="text-[11px] text-neutral-500">
             {t('config_editor_path_note')} (<code className="font-mono">code</code>,{' '}
             <code className="font-mono">cursor</code>, <code className="font-mono">windsurf</code>,{' '}
-            <code className="font-mono">antigravity</code>).
+            <code className="font-mono">antigravity-ide</code>).
           </p>
         </div>
       </div>

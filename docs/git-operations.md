@@ -42,7 +42,7 @@ When opening a cloned repository in an editor, Velocity spawns a detached child 
 | `vscode` | `code` | Visual Studio Code |
 | `cursor` | `cursor` | Cursor AI Editor |
 | `windsurf` | `windsurf` | Codeium Windsurf |
-| `antigravity` | `antigravity` | Google Antigravity IDE |
+| `antigravity` / `antigravity-ide` | `antigravity-ide` | Google Antigravity IDE |
 | `vim` | `vim` | Terminal Vim |
 | `visualstudio` | `devenv` / Visual Studio | Microsoft Visual Studio |
 

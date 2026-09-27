@@ -1,7 +1,7 @@
 export type ButtonColorId = 'neutral' | 'emerald' | 'sky' | 'blue' | 'red' | 'violet';
 export type ButtonColor = ButtonColorId;
 
-export type EditorId = 'vscode' | 'cursor' | 'windsurf' | 'antigravity' | 'vim' | 'visualstudio';
+export type EditorId = 'vscode' | 'cursor' | 'windsurf' | 'antigravity' | 'antigravity-ide' | 'vim' | 'visualstudio';
 
 export type FontSize = 'default' | 'medium' | 'large';
 

@@ -14,7 +14,7 @@
 - **GitHub Browser**: Full integration with GitHub via OAuth Device flow or Personal Access Tokens (PAT). Visibility filters, organization grouping, search, and pagination.
 - **Git & ZIP Operations**: Multi-engine repository acquisition (Git CLI clone with optional `.git` cleanup, and ZIP archive download fallback).
 - **Activity Logging**: Real-time tracking of clone operations, failures, and system events.
-- **Config & Customization**: Customizable base directory, code editor presets (VS Code, Cursor, Windsurf, Antigravity, Vim, Visual Studio), custom background wallpaper with opacity/blur controls, font size selection, and i18n support (`en` and `id`).
+- **Config & Customization**: Customizable base directory, code editor presets (VS Code, Cursor, Windsurf, Antigravity IDE, Vim, Visual Studio), custom background wallpaper with opacity/blur controls, font size selection, and i18n support (`en` and `id`).
 - **Testing Infrastructure**: Automated unit and component test runner via Vitest mirroring `src/` 1:1 in dedicated `test/` directory.
 - **Packaging & Updates**: Automated Windows builds for `x64`, `ia32`, and `arm64`, integrated with GitHub Releases auto-updating.
 
