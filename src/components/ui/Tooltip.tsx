@@ -1,26 +1,31 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
-export default function Tooltip({ content, children }) {
+export interface TooltipProps {
+  content?: ReactNode;
+  children: ReactNode;
+}
+
+export default function Tooltip({ content, children }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const triggerRef = useRef(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     if (isVisible && triggerRef.current) {
       const updatePosition = () => {
+        if (!triggerRef.current) return;
         const rect = triggerRef.current.getBoundingClientRect();
         setCoords({
           top: rect.top,
-          left: rect.left + rect.width / 2
+          left: rect.left + rect.width / 2,
         });
       };
       
       updatePosition();
-      // Update on global events to keep attached
       window.addEventListener('resize', updatePosition);
-      window.addEventListener('scroll', updatePosition, true); // Capture to detect scroll in any parent
+      window.addEventListener('scroll', updatePosition, true);
       
       return () => {
         window.removeEventListener('resize', updatePosition);
@@ -39,7 +44,7 @@ export default function Tooltip({ content, children }) {
       >
         {children}
       </div>
-      {createPortal(
+      {typeof document !== 'undefined' && createPortal(
         <AnimatePresence>
           {isVisible && content && (
             <motion.div

@@ -1,6 +1,20 @@
 import React from 'react';
 
-export default function BaseInput({ value, onChange, placeholder, className, type = 'text' }) {
+export interface BaseInputProps {
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  className?: string;
+  type?: string;
+}
+
+export default function BaseInput({
+  value,
+  onChange,
+  placeholder,
+  className = '',
+  type = 'text',
+}: BaseInputProps) {
   return (
     <input
       type={type}

@@ -1,7 +1,13 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
 
-export default function Pill({ icon, label, className }) {
+export interface PillProps {
+  icon?: string;
+  label: string;
+  className?: string;
+}
+
+export default function Pill({ icon, label, className = '' }: PillProps) {
   return (
     <div className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 ${className}`}>
       {icon && <Icon icon={icon} className="text-neutral-200 text-xs" />}

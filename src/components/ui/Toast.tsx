@@ -1,14 +1,23 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Icon } from '@iconify/react';
+import type { ToastType } from '@/types';
 
-export default function Toast({ 
+export interface ToastProps {
+  id: string;
+  message: string;
+  type?: ToastType;
+  onClose: (id: string) => void;
+  duration?: number;
+}
+
+export default function Toast({
   id,
-  message, 
-  type = 'info', 
-  onClose, 
-  duration = 5000 
-}) {
+  message,
+  type = 'info',
+  onClose,
+  duration = 5000,
+}: ToastProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose(id);
@@ -16,7 +25,7 @@ export default function Toast({
     return () => clearTimeout(timer);
   }, [duration, onClose, id]);
 
-  const getStyles = () => {
+  const getStyles = (): string => {
     switch (type) {
       case 'error':
         return 'bg-red-500/10 border-red-500/50 text-red-200';
@@ -29,12 +38,16 @@ export default function Toast({
     }
   };
 
-  const getIcon = () => {
+  const getIcon = (): string => {
     switch (type) {
-      case 'error': return 'mdi:alert-circle';
-      case 'success': return 'mdi:check-circle';
-      case 'warning': return 'mdi:alert';
-      default: return 'mdi:information';
+      case 'error':
+        return 'mdi:alert-circle';
+      case 'success':
+        return 'mdi:check-circle';
+      case 'warning':
+        return 'mdi:alert';
+      default:
+        return 'mdi:information';
     }
   };
 
@@ -47,7 +60,7 @@ export default function Toast({
       className={`relative flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-md shadow-2xl min-w-[300px] max-w-md overflow-hidden ${getStyles()} mb-3`}
     >
       <Icon icon={getIcon()} className="text-xl shrink-0" />
-      
+
       <p className="text-sm font-medium flex-1">{message}</p>
 
       <button
@@ -58,15 +71,18 @@ export default function Toast({
       </button>
 
       {/* Progress Bar */}
-      <motion.div 
-        initial={{ width: "100%" }}
-        animate={{ width: "0%" }}
-        transition={{ duration: duration / 1000, ease: "linear" }}
+      <motion.div
+        initial={{ width: '100%' }}
+        animate={{ width: '0%' }}
+        transition={{ duration: duration / 1000, ease: 'linear' }}
         className={`absolute bottom-0 left-0 h-1 ${
-          type === 'error' ? 'bg-red-500/50' : 
-          type === 'success' ? 'bg-emerald-500/50' : 
-          type === 'warning' ? 'bg-amber-500/50' : 
-          'bg-neutral-500/50'
+          type === 'error'
+            ? 'bg-red-500/50'
+            : type === 'success'
+              ? 'bg-emerald-500/50'
+              : type === 'warning'
+                ? 'bg-amber-500/50'
+                : 'bg-neutral-500/50'
         }`}
       />
     </motion.div>

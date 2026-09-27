@@ -1,7 +1,21 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
 
-export default function IconButton({ icon, onClick, className, title, type = 'button' }) {
+export interface IconButtonProps {
+  icon: string;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  className?: string;
+  title?: string;
+  type?: 'button' | 'submit' | 'reset';
+}
+
+export default function IconButton({
+  icon,
+  onClick,
+  className = '',
+  title,
+  type = 'button',
+}: IconButtonProps) {
   return (
     <button
       type={type}
