@@ -1,4 +1,4 @@
-export const PROJECT_ICON_MAP = {
+export const PROJECT_ICON_MAP: Record<string, string> = {
   // Frameworks
   'vue': 'logos:vue',
   'react': 'logos:react',
@@ -7,7 +7,7 @@ export const PROJECT_ICON_MAP = {
   'svelte': 'logos:svelte-icon',
   'angular': 'logos:angular-icon',
   'laravel': 'logos:laravel',
-  'blade': 'logos:laravel', // Blade usually implies Laravel
+  'blade': 'logos:laravel',
 
   // Languages
   'javascript': 'logos:javascript',
@@ -42,10 +42,10 @@ export const PROJECT_ICON_MAP = {
   
   // Default
   'generic': 'mdi:folder-outline',
-  'github': 'mdi:github'
+  'github': 'mdi:github',
 };
 
-export const getProjectIcon = (type) => {
+export const getProjectIcon = (type?: string | null): string => {
   if (!type) return PROJECT_ICON_MAP['github'];
   
   const key = type.toLowerCase();

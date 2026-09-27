@@ -1,4 +1,18 @@
-export const BUTTON_COLOR_OPTIONS = [
+import type { ButtonColorId } from '@/types';
+
+export interface ButtonColorOption {
+  id: ButtonColorId;
+  label: string;
+  dotClass: string;
+}
+
+export interface ButtonColorStyle {
+  card: string;
+  pill: string;
+  iconBg: string;
+}
+
+export const BUTTON_COLOR_OPTIONS: ButtonColorOption[] = [
   { id: 'neutral', label: 'Default', dotClass: 'bg-neutral-600' },
   { id: 'emerald', label: 'Emerald', dotClass: 'bg-emerald-500' },
   { id: 'sky', label: 'Sky', dotClass: 'bg-sky-500' },
@@ -7,7 +21,7 @@ export const BUTTON_COLOR_OPTIONS = [
   { id: 'violet', label: 'Violet', dotClass: 'bg-violet-500' },
 ];
 
-export const BUTTON_COLOR_STYLES = {
+export const BUTTON_COLOR_STYLES: Record<ButtonColorId, ButtonColorStyle> = {
   neutral: {
     card: 'border-neutral-800 bg-neutral-900/60 hover:bg-neutral-800/80',
     pill: 'bg-neutral-800/70',
@@ -40,8 +54,11 @@ export const BUTTON_COLOR_STYLES = {
   },
 };
 
-export const GROUP_PRESETS = ['Starter', 'Work', 'Tools'];
+export const GROUP_PRESETS: string[] = ['Starter', 'Work', 'Tools'];
 
-export function getButtonColorStyles(colorId) {
-  return BUTTON_COLOR_STYLES[colorId] || BUTTON_COLOR_STYLES.neutral;
+export function getButtonColorStyles(colorId?: ButtonColorId | string): ButtonColorStyle {
+  if (colorId && colorId in BUTTON_COLOR_STYLES) {
+    return BUTTON_COLOR_STYLES[colorId as ButtonColorId];
+  }
+  return BUTTON_COLOR_STYLES.neutral;
 }

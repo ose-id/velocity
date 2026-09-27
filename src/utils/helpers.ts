@@ -1,4 +1,4 @@
-export function toSshUrl(httpsUrl) {
+export function toSshUrl(httpsUrl: string): string {
   if (!httpsUrl) return httpsUrl;
   if (/\.zip($|\?)/i.test(httpsUrl)) return httpsUrl;
 
@@ -18,7 +18,7 @@ export function toSshUrl(httpsUrl) {
   }
 }
 
-export function formatTimestamp(ts) {
+export function formatTimestamp(ts: string): string {
   try {
     const d = new Date(ts);
     const date = d.toLocaleDateString(undefined, {
