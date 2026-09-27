@@ -304,7 +304,51 @@ function createWindow() {
   Menu.setApplicationMenu(null);
 
   if (isDev) {
-    mainWindow.loadURL('http://localhost:5173/');
+    const devUrl = 'http://localhost:5173/';
+    let retryCount = 0;
+    const maxRetries = 6;
+
+    mainWindow.loadURL(devUrl).catch(() => {});
+
+    mainWindow.webContents.on('did-fail-load', (_event, errorCode) => {
+      // -102: ERR_CONNECTION_REFUSED, -105: ERR_NAME_NOT_RESOLVED
+      if (errorCode === -102 || errorCode === -105) {
+        if (retryCount < maxRetries) {
+          retryCount++;
+          setTimeout(() => {
+            if (mainWindow && !mainWindow.isDestroyed()) {
+              mainWindow.loadURL(devUrl).catch(() => {});
+            }
+          }, 1000);
+        } else {
+          const distIndex = path.join(__dirname, '..', 'dist', 'index.html');
+          if (fs.existsSync(distIndex)) {
+            console.log('[Velocity] Vite dev server not detected. Falling back to dist/index.html...');
+            mainWindow.loadFile(distIndex).catch(() => {});
+          } else {
+            mainWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(`
+              <!DOCTYPE html>
+              <html>
+              <head><meta charset="utf-8"><title>Velocity - Dev Server</title>
+              <style>
+                body { background: #020617; color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
+                h1 { font-size: 22px; font-weight: 600; margin-bottom: 8px; color: #f1f5f9; }
+                p { color: #94a3b8; font-size: 14px; margin: 6px 0; }
+                code { background: #0f172a; border: 1px solid #1e293b; padding: 4px 10px; border-radius: 6px; color: #38bdf8; font-family: monospace; font-size: 13px; }
+              </style>
+              </head>
+              <body>
+                <h1>Vite Dev Server Not Found</h1>
+                <p>Electron tried connecting to <code>http://localhost:5173/</code></p>
+                <p>To run both Vite and Electron together, execute:</p>
+                <p style="margin-top: 14px;"><code>bun run dev</code></p>
+              </body>
+              </html>
+            `)}`);
+          }
+        }
+      }
+    });
   } else {
     mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
   }
