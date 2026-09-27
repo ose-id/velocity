@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
-import LogItem from '../molecules/LogItem';
+import LogItem from './LogItem';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { LogEntry } from '@/types';
 
-export default function ActivityLog({ logs }) {
-  const [sortDir, setSortDir] = useState('desc'); // 'desc' = newest first
+export interface ActivityLogProps {
+  logs: LogEntry[];
+}
+
+export default function ActivityLog({ logs }: ActivityLogProps) {
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const { t } = useLanguage();
 
   const sortedLogs = [...logs].sort((a, b) => {
@@ -52,7 +57,9 @@ export default function ActivityLog({ logs }) {
       <div className="flex-1 px-3 py-2">
         <div className="min-h-[250px] lg:h-full rounded-lg bg-neutral-950 border border-neutral-900 overflow-auto custom-scroll">
           {sortedLogs.length === 0 ? (
-            <pre className="text-[11px] text-neutral-500 p-2 whitespace-pre-wrap font-mono">{t('log_ready')}</pre>
+            <pre className="text-[11px] text-neutral-500 p-2 whitespace-pre-wrap font-mono">
+              {t('log_ready')}
+            </pre>
           ) : (
             <div className="text-[11px] font-mono">
               {sortedLogs.map((entry) => (
@@ -65,4 +72,3 @@ export default function ActivityLog({ logs }) {
     </section>
   );
 }
-

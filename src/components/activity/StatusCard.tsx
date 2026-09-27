@@ -1,9 +1,15 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
-import Button from '../atoms/Button';
+import { Button } from '@/components/ui';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { LogResult } from '@/types';
 
-export default function StatusCard({ lastResult, onClearLogs }) {
+export interface StatusCardProps {
+  lastResult: LogResult | null;
+  onClearLogs: () => void;
+}
+
+export default function StatusCard({ lastResult, onClearLogs }: StatusCardProps) {
   const { t } = useLanguage();
 
   return (
@@ -31,20 +37,22 @@ export default function StatusCard({ lastResult, onClearLogs }) {
                   lastResult.status === 'success'
                     ? 'bg-emerald-400'
                     : lastResult.status === 'duplicate'
-                    ? 'bg-amber-400'
-                    : 'bg-red-400',
+                      ? 'bg-amber-400'
+                      : 'bg-red-400',
                 ].join(' ')}
               />
               <span className="text-[11px] font-medium text-neutral-100">
                 {lastResult.status === 'success'
                   ? t('activity_success')
                   : lastResult.status === 'duplicate'
-                  ? t('activity_already_exists')
-                  : t('activity_error')}
+                    ? t('activity_already_exists')
+                    : t('activity_error')}
               </span>
             </div>
             <div className="text-[11px] text-neutral-400">{lastResult.message}</div>
-            {lastResult.path && <div className="text-[11px] text-neutral-500 font-mono">{lastResult.path}</div>}
+            {lastResult.path && (
+              <div className="text-[11px] text-neutral-500 font-mono">{lastResult.path}</div>
+            )}
           </div>
         ) : (
           <p className="text-[11px] text-neutral-500">{t('activity_no_logs')}</p>
@@ -53,4 +61,3 @@ export default function StatusCard({ lastResult, onClearLogs }) {
     </section>
   );
 }
-

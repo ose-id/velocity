@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from '@iconify/react';
 
-export default function DevStartupInterceptor({ children }) {
+export interface DevStartupInterceptorProps {
+  children: React.ReactNode;
+}
+
+export default function DevStartupInterceptor({ children }: DevStartupInterceptorProps) {
   const isDev = import.meta.env.DEV;
 
   const [showInterceptor, setShowInterceptor] = useState(false);
@@ -13,7 +17,6 @@ export default function DevStartupInterceptor({ children }) {
   useEffect(() => {
     if (!isDev) return;
 
-    // Force focus to the window so keyboard events work immediately
     window.focus();
 
     const choiceMade = sessionStorage.getItem('dev_choice_made');
@@ -22,7 +25,7 @@ export default function DevStartupInterceptor({ children }) {
     }
   }, [isDev]);
 
-  const handleChoice = (skipOnboarding) => {
+  const handleChoice = (skipOnboarding: boolean) => {
     sessionStorage.setItem('dev_choice_made', 'true');
     if (skipOnboarding) {
       sessionStorage.setItem('onboarding_complete', 'true');
@@ -43,15 +46,14 @@ export default function DevStartupInterceptor({ children }) {
   useEffect(() => {
     if (!showInterceptor || selectionMade) return;
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
         setSelectedIndex(0);
       } else if (e.key === 'ArrowRight') {
         setSelectedIndex(1);
       } else if (e.key === 'Enter') {
-        handleChoice(selectedIndex === 1); // Confirm choice
+        handleChoice(selectedIndex === 1);
       } else if (e.key === ' ') {
-        // Space to toggle DevTools
         setOpenDevTools((prev) => !prev);
       }
     };
@@ -84,32 +86,54 @@ export default function DevStartupInterceptor({ children }) {
               <div className="bg-neutral-950/50 p-4 border-b border-neutral-800 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-neutral-400">
                   <Icon icon="mdi:console" className="w-4 h-4" />
-                  <span className="text-xs font-mono font-bold tracking-wider">DEV MODE SETUP</span>
+                  <span className="text-xs font-mono font-bold tracking-wider">
+                    DEV MODE SETUP
+                  </span>
                 </div>
-                <div className="text-xs text-neutral-600 font-mono">USE ARROW KEYS, SPACE & ENTER</div>
+                <div className="text-xs text-neutral-600 font-mono">
+                  USE ARROW KEYS, SPACE & ENTER
+                </div>
               </div>
 
               {/* Content */}
               <div className="flex h-64">
                 {/* Left Option: Show Onboarding */}
                 <button
+                  type="button"
                   onClick={() => handleChoice(false)}
                   onMouseEnter={() => setSelectedIndex(0)}
-                  className={`flex-1 flex flex-col items-center justify-center p-8 transition-all relative group
-                        ${selectedIndex === 0 ? 'bg-neutral-800/50' : 'bg-transparent hover:bg-neutral-800/30'}
-                      `}
+                  className={`flex-1 flex flex-col items-center justify-center p-8 transition-all relative group cursor-pointer ${
+                    selectedIndex === 0
+                      ? 'bg-neutral-800/50'
+                      : 'bg-transparent hover:bg-neutral-800/30'
+                  }`}
                 >
                   <div
-                    className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300
-                          ${selectedIndex === 0 ? 'bg-blue-500 text-white scale-110 shadow-lg shadow-blue-500/20' : 'bg-neutral-800 text-neutral-500'}
-                        `}
+                    className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 ${
+                      selectedIndex === 0
+                        ? 'bg-blue-500 text-white scale-110 shadow-lg shadow-blue-500/20'
+                        : 'bg-neutral-800 text-neutral-500'
+                    }`}
                   >
                     <Icon icon="mdi:rocket-launch" className="w-8 h-8" />
                   </div>
-                  <h3 className={`text-xl font-bold mb-2 transition-colors ${selectedIndex === 0 ? 'text-white' : 'text-neutral-500'}`}>Show Onboarding</h3>
-                  <p className="text-sm text-neutral-500 text-center max-w-[200px]">Run the full intro experience</p>
+                  <h3
+                    className={`text-xl font-bold mb-2 transition-colors ${
+                      selectedIndex === 0 ? 'text-white' : 'text-neutral-500'
+                    }`}
+                  >
+                    Show Onboarding
+                  </h3>
+                  <p className="text-sm text-neutral-500 text-center max-w-[200px]">
+                    Run the full intro experience
+                  </p>
 
-                  {selectedIndex === 0 && <motion.div layoutId="indicator" className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500" />}
+                  {selectedIndex === 0 && (
+                    <motion.div
+                      layoutId="indicator"
+                      className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"
+                    />
+                  )}
                 </button>
 
                 {/* Divider */}
@@ -117,23 +141,41 @@ export default function DevStartupInterceptor({ children }) {
 
                 {/* Right Option: Skip Onboarding */}
                 <button
+                  type="button"
                   onClick={() => handleChoice(true)}
                   onMouseEnter={() => setSelectedIndex(1)}
-                  className={`flex-1 flex flex-col items-center justify-center p-8 transition-all relative group
-                        ${selectedIndex === 1 ? 'bg-neutral-800/50' : 'bg-transparent hover:bg-neutral-800/30'}
-                      `}
+                  className={`flex-1 flex flex-col items-center justify-center p-8 transition-all relative group cursor-pointer ${
+                    selectedIndex === 1
+                      ? 'bg-neutral-800/50'
+                      : 'bg-transparent hover:bg-neutral-800/30'
+                  }`}
                 >
                   <div
-                    className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300
-                          ${selectedIndex === 1 ? 'bg-purple-500 text-white scale-110 shadow-lg shadow-purple-500/20' : 'bg-neutral-800 text-neutral-500'}
-                        `}
+                    className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 ${
+                      selectedIndex === 1
+                        ? 'bg-purple-500 text-white scale-110 shadow-lg shadow-purple-500/20'
+                        : 'bg-neutral-800 text-neutral-500'
+                    }`}
                   >
                     <Icon icon="mdi:fast-forward" className="w-8 h-8" />
                   </div>
-                  <h3 className={`text-xl font-bold mb-2 transition-colors ${selectedIndex === 1 ? 'text-white' : 'text-neutral-500'}`}>Skip Onboarding</h3>
-                  <p className="text-sm text-neutral-500 text-center max-w-[200px]">Go directly to dashboard</p>
+                  <h3
+                    className={`text-xl font-bold mb-2 transition-colors ${
+                      selectedIndex === 1 ? 'text-white' : 'text-neutral-500'
+                    }`}
+                  >
+                    Skip Onboarding
+                  </h3>
+                  <p className="text-sm text-neutral-500 text-center max-w-[200px]">
+                    Go directly to dashboard
+                  </p>
 
-                  {selectedIndex === 1 && <motion.div layoutId="indicator" className="absolute bottom-0 left-0 right-0 h-1 bg-purple-500" />}
+                  {selectedIndex === 1 && (
+                    <motion.div
+                      layoutId="indicator"
+                      className="absolute bottom-0 left-0 right-0 h-1 bg-purple-500"
+                    />
+                  )}
                 </button>
               </div>
 
@@ -141,14 +183,29 @@ export default function DevStartupInterceptor({ children }) {
               <div className="bg-neutral-950/30 p-4 border-t border-neutral-800 flex items-center justify-center">
                 <label className="flex items-center gap-3 cursor-pointer group">
                   <div
-                    className={`w-5 h-5 rounded border flex items-center justify-center transition-colors
-                         ${openDevTools ? 'bg-blue-500 border-blue-500' : 'bg-transparent border-neutral-600 group-hover:border-neutral-500'}
-                      `}
+                    className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${
+                      openDevTools
+                        ? 'bg-blue-500 border-blue-500'
+                        : 'bg-transparent border-neutral-600 group-hover:border-neutral-500'
+                    }`}
                   >
                     {openDevTools && <Icon icon="mdi:check" className="w-3 h-3 text-white" />}
                   </div>
-                  <input type="checkbox" className="hidden" checked={openDevTools} onChange={(e) => setOpenDevTools(e.target.checked)} />
-                  <span className={`text-sm font-medium transition-colors ${openDevTools ? 'text-white' : 'text-neutral-500 group-hover:text-neutral-400'}`}>Open DevTools</span>
+                  <input
+                    type="checkbox"
+                    className="hidden"
+                    checked={openDevTools}
+                    onChange={(e) => setOpenDevTools(e.target.checked)}
+                  />
+                  <span
+                    className={`text-sm font-medium transition-colors ${
+                      openDevTools
+                        ? 'text-white'
+                        : 'text-neutral-500 group-hover:text-neutral-400'
+                    }`}
+                  >
+                    Open DevTools
+                  </span>
                 </label>
               </div>
             </motion.div>
