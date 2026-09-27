@@ -1,15 +1,21 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import StatusCard from '../molecules/StatusCard';
-import ActivityLog from '../organisms/ActivityLog';
+import { StatusCard, ActivityLog } from '@/components/activity';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { LogResult, LogEntry } from '@/types';
 
-export default function ActivityPage({ lastResult, logs, onClearLogs }) {
+export interface ActivityPageProps {
+  lastResult: LogResult | null;
+  logs: LogEntry[];
+  onClearLogs: () => void;
+}
+
+export default function ActivityPage({ lastResult, logs, onClearLogs }: ActivityPageProps) {
   const { t } = useLanguage();
 
   return (
     <div className="flex-1 flex flex-col gap-4 p-4 overflow-auto custom-scroll">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col gap-4"
@@ -29,4 +35,3 @@ export default function ActivityPage({ lastResult, logs, onClearLogs }) {
     </div>
   );
 }
-

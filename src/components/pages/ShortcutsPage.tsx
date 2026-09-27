@@ -1,18 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { ShortcutsConfig } from '@/types';
 
-export default function ShortcutsPage({ 
-  shortcuts, 
-  onUpdateShortcut, 
-  recordingKey, 
-  onStartRecord, 
-  onStopRecord 
-}) {
+export interface ShortcutsPageProps {
+  shortcuts: ShortcutsConfig;
+  onUpdateShortcut: (id: string, key: string | null) => void;
+  recordingKey: string | null;
+  onStartRecord: (id: string) => void;
+  onStopRecord: () => void;
+}
+
+export default function ShortcutsPage({
+  shortcuts,
+  onUpdateShortcut,
+  recordingKey,
+  onStartRecord,
+  onStopRecord,
+}: ShortcutsPageProps) {
   const { t } = useLanguage();
 
-  const handleStartRecord = (id) => {
+  const handleStartRecord = (id: string) => {
     onStartRecord(id);
   };
 
@@ -20,19 +29,47 @@ export default function ShortcutsPage({
     onStopRecord();
   };
 
-  const handleRemoveShortcut = (id) => {
+  const handleRemoveShortcut = (id: string) => {
     onUpdateShortcut(id, null);
   };
 
   const shortcutList = [
-    { id: 'switchPage', label: t('shortcuts_switch_page'), description: t('shortcuts_switch_page_desc') },
+    {
+      id: 'switchPage',
+      label: t('shortcuts_switch_page'),
+      description: t('shortcuts_switch_page_desc'),
+    },
     { id: 'openHome', label: t('shortcuts_open_home'), description: t('shortcuts_open_home_desc') },
-    { id: 'openGitHub', label: t('shortcuts_open_github'), description: t('shortcuts_open_github_desc') },
-    { id: 'openActivity', label: t('shortcuts_open_activity'), description: t('shortcuts_open_activity_desc') },
-    { id: 'openShortcuts', label: t('shortcuts_open_shortcuts'), description: t('shortcuts_open_shortcuts_desc') },
-    { id: 'openSettings', label: t('shortcuts_open_settings'), description: t('shortcuts_open_settings_desc') },
-    { id: 'toggleGrid', label: t('shortcuts_toggle_grid'), description: t('shortcuts_toggle_grid_desc') },
-    { id: 'search', label: t('shortcuts_search_repo'), description: t('shortcuts_search_repo_desc') },
+    {
+      id: 'openGitHub',
+      label: t('shortcuts_open_github'),
+      description: t('shortcuts_open_github_desc'),
+    },
+    {
+      id: 'openActivity',
+      label: t('shortcuts_open_activity'),
+      description: t('shortcuts_open_activity_desc'),
+    },
+    {
+      id: 'openShortcuts',
+      label: t('shortcuts_open_shortcuts'),
+      description: t('shortcuts_open_shortcuts_desc'),
+    },
+    {
+      id: 'openSettings',
+      label: t('shortcuts_open_settings'),
+      description: t('shortcuts_open_settings_desc'),
+    },
+    {
+      id: 'toggleGrid',
+      label: t('shortcuts_toggle_grid'),
+      description: t('shortcuts_toggle_grid_desc'),
+    },
+    {
+      id: 'search',
+      label: t('shortcuts_search_repo'),
+      description: t('shortcuts_search_repo_desc'),
+    },
   ];
 
   return (
@@ -47,7 +84,7 @@ export default function ShortcutsPage({
       <div className="grid gap-3">
         {shortcutList.map((item) => {
           const isRecording = recordingKey === item.id;
-          const currentShortcut = shortcuts[item.id];
+          const currentShortcut = shortcuts[item.id as keyof ShortcutsConfig];
 
           return (
             <motion.div
@@ -55,13 +92,17 @@ export default function ShortcutsPage({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className={`border rounded-xl p-4 flex items-center justify-between transition-colors ${
-                isRecording 
-                  ? 'bg-emerald-500/10 border-emerald-500/50' 
+                isRecording
+                  ? 'bg-emerald-500/10 border-emerald-500/50'
                   : 'border-neutral-800 bg-neutral-900/60 hover:bg-neutral-800/80'
               }`}
             >
               <div>
-                <h3 className={`text-sm font-semibold ${isRecording ? 'text-emerald-400' : 'text-neutral-200'}`}>
+                <h3
+                  className={`text-sm font-semibold ${
+                    isRecording ? 'text-emerald-400' : 'text-neutral-200'
+                  }`}
+                >
                   {item.label}
                 </h3>
                 <p className="text-[11px] text-neutral-500 mt-0.5">{item.description}</p>
@@ -74,6 +115,7 @@ export default function ShortcutsPage({
                       {t('shortcuts_press_key')}
                     </span>
                     <button
+                      type="button"
                       onClick={handleCancelRecord}
                       className="p-1 hover:bg-neutral-800 rounded-full text-neutral-400 hover:text-white transition-colors cursor-pointer"
                     >
@@ -86,6 +128,7 @@ export default function ShortcutsPage({
                       {currentShortcut}
                     </span>
                     <button
+                      type="button"
                       onClick={() => handleRemoveShortcut(item.id)}
                       className="p-1.5 hover:bg-red-500/10 rounded-md text-neutral-500 hover:text-red-500 transition-colors group cursor-pointer"
                       title={t('shortcuts_remove')}
@@ -93,6 +136,7 @@ export default function ShortcutsPage({
                       <Icon icon="mdi:close" className="text-sm" />
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleStartRecord(item.id)}
                       className="p-1.5 hover:bg-amber-300/10 rounded-md text-neutral-500 hover:text-amber-300 transition-colors cursor-pointer"
                       title={t('shortcuts_edit')}
@@ -102,6 +146,7 @@ export default function ShortcutsPage({
                   </div>
                 ) : (
                   <button
+                    type="button"
                     onClick={() => handleStartRecord(item.id)}
                     className="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 rounded-md border border-red-500/50 hover:border-red-400 text-xs font-medium transition-all hover:scale-105 active:scale-95 cursor-pointer"
                   >
@@ -116,4 +161,3 @@ export default function ShortcutsPage({
     </div>
   );
 }
-

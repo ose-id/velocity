@@ -1,9 +1,28 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
-import ProjectGrid from '../organisms/ProjectGrid';
-import BatchActionBar from '../molecules/BatchActionBar';
+import { ProjectGrid, BatchActionBar } from '@/components/home';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { ConfigButton } from '@/types';
+import type { DragEndEvent } from '@dnd-kit/core';
+
+export interface HomePageProps {
+  buttons: ConfigButton[];
+  baseDir?: string;
+  onClone: (btn: ConfigButton) => void;
+  loading: boolean;
+  activeButtonId: number | string | null;
+  onOpenColorMenu?: (btn: ConfigButton, e: React.MouseEvent) => void;
+  effectiveGrid: number;
+  onToggleGrid: () => void;
+  onDragEnd: (event: DragEndEvent) => void;
+  isSelectionMode?: boolean;
+  selectedIds?: (string | number)[];
+  onToggleSelectionMode?: () => void;
+  onToggleSelection?: (id: string | number) => void;
+  onBatchClone?: () => void;
+  focusSearchTrigger?: number;
+}
 
 export default function HomePage({
   buttons,
@@ -15,16 +34,16 @@ export default function HomePage({
   effectiveGrid,
   onToggleGrid,
   onDragEnd,
-  isSelectionMode,
-  selectedIds,
+  isSelectionMode = false,
+  selectedIds = [],
   onToggleSelectionMode,
   onToggleSelection,
   onBatchClone,
-  focusSearchTrigger
-}) {
+  focusSearchTrigger,
+}: HomePageProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeGroup, setActiveGroup] = useState('All');
-  const searchInputRef = React.useRef(null);
+  const searchInputRef = React.useRef<HTMLInputElement>(null);
   const { t } = useLanguage();
 
   React.useEffect(() => {
@@ -33,7 +52,6 @@ export default function HomePage({
     }
   }, [focusSearchTrigger]);
 
-  // Extract unique groups
   const groups = ['All', ...new Set(buttons.map((b) => b.group).filter(Boolean))];
 
   const filteredButtons = buttons.filter((btn) => {
@@ -42,16 +60,15 @@ export default function HomePage({
       (btn.label && btn.label.toLowerCase().includes(query)) ||
       (btn.repoUrl && btn.repoUrl.toLowerCase().includes(query)) ||
       (btn.folderName && btn.folderName.toLowerCase().includes(query));
-    
+
     const matchesGroup = activeGroup === 'All' || btn.group === activeGroup;
 
     return matchesSearch && matchesGroup;
   });
 
   return (
-
     <div className="flex-1 flex flex-col gap-4 p-4 overflow-auto custom-scroll relative">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col gap-4 min-h-full"
@@ -61,7 +78,9 @@ export default function HomePage({
             <div>
               <h1 className="text-lg font-semibold text-neutral-100">{t('home_title')}</h1>
               <p className="text-xs text-neutral-500 mt-1">
-                {t('home_total_repo')} <span className="text-neutral-300 font-medium">{filteredButtons.length}</span> / {buttons.length} {t('home_repo')}.
+                {t('home_total_repo')}{' '}
+                <span className="text-neutral-300 font-medium">{filteredButtons.length}</span> /{' '}
+                {buttons.length} {t('home_repo')}.
               </p>
             </div>
             <div className="flex flex-col items-end gap-2">
@@ -89,6 +108,7 @@ export default function HomePage({
                   />
                   {searchQuery && (
                     <button
+                      type="button"
                       onClick={() => setSearchQuery('')}
                       className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300 cursor-pointer"
                     >
@@ -103,7 +123,7 @@ export default function HomePage({
                     type="button"
                     onClick={() => effectiveGrid !== 2 && onToggleGrid()}
                     className={[
-                      'flex items-center justify-center w-7 h-6 rounded-md transition-all',
+                      'flex items-center justify-center w-7 h-6 rounded-md transition-all cursor-pointer',
                       effectiveGrid === 2
                         ? 'bg-neutral-700 text-neutral-100 shadow-sm'
                         : 'text-neutral-500 hover:text-neutral-300',
@@ -116,7 +136,7 @@ export default function HomePage({
                     type="button"
                     onClick={() => effectiveGrid !== 3 && onToggleGrid()}
                     className={[
-                      'flex items-center justify-center w-7 h-6 rounded-md transition-all',
+                      'flex items-center justify-center w-7 h-6 rounded-md transition-all cursor-pointer',
                       effectiveGrid === 3
                         ? 'bg-neutral-700 text-neutral-100 shadow-sm'
                         : 'text-neutral-500 hover:text-neutral-300',
@@ -135,7 +155,8 @@ export default function HomePage({
             {groups.map((g) => (
               <button
                 key={g}
-                onClick={() => setActiveGroup(g)}
+                type="button"
+                onClick={() => setActiveGroup(g!)}
                 className={[
                   'px-3 py-1 rounded-full text-xs font-medium transition-colors whitespace-nowrap cursor-pointer',
                   activeGroup === g
@@ -163,10 +184,10 @@ export default function HomePage({
         />
       </motion.div>
 
-      <BatchActionBar 
+      <BatchActionBar
         selectedCount={selectedIds.length}
-        onCancel={onToggleSelectionMode}
-        onClone={onBatchClone}
+        onCancel={onToggleSelectionMode || (() => {})}
+        onClone={onBatchClone || (() => {})}
       />
     </div>
   );
