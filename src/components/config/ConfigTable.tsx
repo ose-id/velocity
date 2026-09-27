@@ -1,14 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
-import { BUTTON_COLOR_OPTIONS, GROUP_PRESETS } from '../../utils/constants';
-import Button from '../atoms/Button';
-import IconButton from '../atoms/IconButton';
-import BaseInput from '../atoms/BaseInput';
+import { BUTTON_COLOR_OPTIONS, GROUP_PRESETS } from '@/utils/constants';
+import { Button, IconButton, BaseInput } from '@/components/ui';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { ConfigButton, ButtonColor } from '@/types';
 
-export default function ConfigTable({ buttons, setButtons, onAddButton, onRemoveButton, saving, lastSavedLabel }) {
+export interface ConfigTableProps {
+  buttons: ConfigButton[];
+  setButtons: (buttons: ConfigButton[]) => void;
+  onAddButton: () => void;
+  onRemoveButton: (id: string | number) => void;
+  saving?: boolean;
+  lastSavedLabel?: string;
+}
+
+export default function ConfigTable({
+  buttons,
+  setButtons,
+  onAddButton,
+  onRemoveButton,
+  saving,
+  lastSavedLabel,
+}: ConfigTableProps) {
   const { t } = useLanguage();
-  // === PAGINATION STATE ===
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   const totalPages = Math.max(1, Math.ceil(buttons.length / pageSize));
@@ -22,7 +36,7 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
   const pageStart = (currentPage - 1) * pageSize;
   const pageButtons = buttons.slice(pageStart, pageStart + pageSize);
 
-  const handleButtonChange = (index, field, value) => {
+  const handleButtonChange = (index: number, field: keyof ConfigButton, value: unknown) => {
     const updated = [...buttons];
     updated[index] = { ...updated[index], [field]: value };
     setButtons(updated);
@@ -37,9 +51,15 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
         </div>
         <div className="flex items-center gap-3">
           {lastSavedLabel && (
-            <span className="text-[11px] text-neutral-500 hidden sm:inline">{saving ? t('table_saving') : lastSavedLabel}</span>
+            <span className="text-[11px] text-neutral-500 hidden sm:inline">
+              {saving ? t('table_saving') : lastSavedLabel}
+            </span>
           )}
-          <Button onClick={onAddButton} icon="mdi:plus" className="bg-neutral-900 text-neutral-100 border border-neutral-700 hover:bg-neutral-800">
+          <Button
+            onClick={onAddButton}
+            icon="mdi:plus"
+            className="bg-neutral-900 text-neutral-100 border border-neutral-700 hover:bg-neutral-800"
+          >
             {t('table_add')}
           </Button>
         </div>
@@ -63,7 +83,8 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
             {pageButtons.map((btn, idx) => {
               const rowIndex = pageStart + idx;
               const currentColorId = btn.color || 'neutral';
-              const colorMeta = BUTTON_COLOR_OPTIONS.find((c) => c.id === currentColorId) || BUTTON_COLOR_OPTIONS[0];
+              const colorMeta =
+                BUTTON_COLOR_OPTIONS.find((c) => c.id === currentColorId) || BUTTON_COLOR_OPTIONS[0];
 
               return (
                 <tr key={btn.id} className="border-b border-neutral-900 last:border-0">
@@ -110,10 +131,14 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
                   {/* COLOR */}
                   <td className="py-2 pr-3">
                     <div className="inline-flex items-center gap-1.5">
-                      <span className={['inline-flex h-3 w-3 rounded-full', colorMeta.dotClass].join(' ')} />
+                      <span
+                        className={['inline-flex h-3 w-3 rounded-full', colorMeta.dotClass].join(' ')}
+                      />
                       <select
                         value={currentColorId}
-                        onChange={(e) => handleButtonChange(rowIndex, 'color', e.target.value)}
+                        onChange={(e) =>
+                          handleButtonChange(rowIndex, 'color', e.target.value as ButtonColor)
+                        }
                         className="rounded-md bg-neutral-950 border border-neutral-800 px-2 py-1 text-[11px] text-neutral-100 focus:outline-none focus:ring-1 focus:ring-neutral-500 cursor-pointer"
                       >
                         {BUTTON_COLOR_OPTIONS.map((opt) => (
@@ -206,4 +231,3 @@ export default function ConfigTable({ buttons, setButtons, onAddButton, onRemove
     </section>
   );
 }
-
