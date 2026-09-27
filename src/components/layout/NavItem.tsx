@@ -1,7 +1,15 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
 
-export default function NavItem({ id, label, icon, isActive, onClick }) {
+export interface NavItemProps {
+  id: string;
+  label: string;
+  icon: string;
+  isActive: boolean;
+  onClick: (id: string) => void;
+}
+
+export default function NavItem({ id, label, icon, isActive, onClick }: NavItemProps) {
   return (
     <button
       type="button"

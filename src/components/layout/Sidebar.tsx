@@ -1,17 +1,29 @@
 import React from 'react';
-import { Icon } from '@iconify/react';
-import NavItem from '../molecules/NavItem';
+import NavItem from './NavItem';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { PageId } from '@/types';
 
-export default function Sidebar({ activePage, setActivePage, transparent }) {
+export interface SidebarProps {
+  activePage: PageId;
+  setActivePage: (page: PageId) => void;
+  transparent?: boolean;
+}
+
+interface NavConfig {
+  id: PageId;
+  label: string;
+  icon: string;
+}
+
+export default function Sidebar({ activePage, setActivePage, transparent }: SidebarProps) {
   const { t } = useLanguage();
 
-  const mainItems = [
+  const mainItems: NavConfig[] = [
     { id: 'home', label: t('nav_home'), icon: 'mdi:home-outline' },
     { id: 'github', label: t('nav_github'), icon: 'mdi:github' },
   ];
 
-  const otherItems = [
+  const otherItems: NavConfig[] = [
     { id: 'activity', label: t('nav_activity'), icon: 'mdi:clock-outline' },
     { id: 'shortcuts', label: t('nav_shortcuts'), icon: 'mdi:keyboard-outline' },
     { id: 'config', label: t('nav_config'), icon: 'mdi:cog-outline' },
@@ -45,12 +57,12 @@ export default function Sidebar({ activePage, setActivePage, transparent }) {
             label={item.label}
             icon={item.icon}
             isActive={activePage === item.id}
-            onClick={setActivePage}
+            onClick={(id) => setActivePage(id as PageId)}
           />
         ))}
 
         <div className="py-2">
-            <div className="h-px bg-neutral-800/50 mx-2" />
+          <div className="h-px bg-neutral-800/50 mx-2" />
         </div>
 
         {otherItems.map((item) => (
@@ -60,7 +72,7 @@ export default function Sidebar({ activePage, setActivePage, transparent }) {
             label={item.label}
             icon={item.icon}
             isActive={activePage === item.id}
-            onClick={setActivePage}
+            onClick={(id) => setActivePage(id as PageId)}
           />
         ))}
       </nav>
@@ -88,4 +100,3 @@ export default function Sidebar({ activePage, setActivePage, transparent }) {
     </div>
   );
 }
-

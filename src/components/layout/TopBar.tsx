@@ -1,15 +1,21 @@
 import React from 'react';
-import WindowControls from '../molecules/WindowControls';
+import WindowControls from './WindowControls';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Icon } from '@iconify/react';
 
-export default function TopBar({ onWindowControl, windowState }) {
-  const { language, setLanguage, t } = useLanguage();
+export interface TopBarProps {
+  onWindowControl: (action: 'minimize' | 'maximize' | 'unmaximize' | 'close') => void;
+  windowState?: {
+    isMaximized: boolean;
+  };
+}
+
+export default function TopBar({ onWindowControl, windowState }: TopBarProps) {
+  const { language, setLanguage } = useLanguage();
 
   return (
     <div
       className="flex items-center justify-between px-3 h-9 bg-neutral-900 border-b border-neutral-800 select-none"
-      style={{ WebkitAppRegion: 'drag' }}
+      style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
     >
       <div className="flex items-center gap-2 text-xs text-neutral-400">
         <span className="w-2 h-2 rounded-full bg-emerald-500" />
@@ -17,7 +23,10 @@ export default function TopBar({ onWindowControl, windowState }) {
         <span className="text-neutral-500">Git repo launcher</span>
       </div>
 
-      <div className="flex items-center gap-2" style={{ WebkitAppRegion: 'no-drag' }}>
+      <div
+        className="flex items-center gap-2"
+        style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+      >
         <button
           type="button"
           onClick={() => setLanguage(language === 'id' ? 'en' : 'id')}

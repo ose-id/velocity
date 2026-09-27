@@ -1,9 +1,19 @@
 import React from 'react';
-import IconButton from '../atoms/IconButton';
+import { IconButton } from '@/components/ui';
 
-export default function WindowControls({ onWindowControl, windowState }) {
+export interface WindowControlsProps {
+  onWindowControl: (action: 'minimize' | 'maximize' | 'unmaximize' | 'close') => void;
+  windowState?: {
+    isMaximized: boolean;
+  };
+}
+
+export default function WindowControls({ onWindowControl, windowState }: WindowControlsProps) {
   return (
-    <div className="flex items-center" style={{ WebkitAppRegion: 'no-drag' }}>
+    <div
+      className="flex items-center"
+      style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+    >
       <IconButton
         icon="mdi:minus"
         onClick={() => onWindowControl('minimize')}
