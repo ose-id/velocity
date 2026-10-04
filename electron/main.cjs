@@ -921,7 +921,10 @@ ipcMain.handle('download-update', async () => {
 });
 
 ipcMain.handle('quit-and-install', () => {
-  autoUpdater.quitAndInstall(true, true);
+  setImmediate(() => {
+    console.log('[AutoUpdate] Triggering silent update and restart...');
+    autoUpdater.quitAndInstall(true, true);
+  });
 });
 
 // Auto Update Events

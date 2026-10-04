@@ -8,7 +8,7 @@ Configured targets in `package.json`:
 - **App ID**: `com.ose.velocity`
 - **Output Directory**: `release/`
 - **Artifact Pattern**: `${productName}.Setup.${version}.${arch}.${ext}`
-- **Installer Graphics**: Custom header, sidebar, and uninstaller bitmaps located in `build/`.
+- **Installer Mode**: One-Click installer (`oneClick: true`, `perMachine: false`, `allowElevation: false`) for silent per-user installation and seamless auto-restart on update.
 - **Custom NSIS Script**: `build/installer.nsh`.
 
 ## Multi-architecture build
@@ -39,6 +39,9 @@ release/latest.yml
 
 - **Provider**: GitHub Releases (`owner: "ose-id"`, `repo: "velocity"`).
 - **Service**: Managed in `electron/main.cjs` using `electron-updater`.
+- **Seamless Restart**:
+  - `oneClick: true` enables full silent background update.
+  - When the user clicks "Restart & Install" (`quitAndInstall(true, true)`), the application shuts down cleanly via `setImmediate`, the new binary is installed silently without any setup wizard dialogs, and the updated app automatically relaunches.
 - **Options**:
   - `autoUpdater.autoDownload = false`: Velocity displays a prompt before starting download.
   - `autoUpdater.autoInstallOnAppQuit = true`: Update installs automatically upon app quit or when triggered via "Restart & Install".

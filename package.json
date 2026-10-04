@@ -40,13 +40,14 @@
       "verifyUpdateCodeSignature": false
     },
     "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
+      "oneClick": true,
+      "perMachine": false,
+      "allowElevation": false,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "Velocity",
       "installerIcon": "icon.ico",
       "uninstallerIcon": "icon.ico",
-      "installerHeader": "installerHeader.bmp",
-      "installerSidebar": "installerSidebar.bmp",
-      "uninstallerSidebar": "uninstallerSidebar.bmp",
       "uninstallDisplayName": "Velocity",
       "deleteAppDataOnUninstall": true,
       "include": "build/installer.nsh"
